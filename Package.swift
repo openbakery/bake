@@ -27,6 +27,20 @@ let package = Package(
 			sources: [
 				"Main/Sources",
 			]
+		),
+
+		.testTarget(
+			name: "BakeCLITest",
+			dependencies: [
+				"BakeCLI"
+			],
+			path: "Bake",
+			sources: [
+				"Test/Sources",
+			],
+			resources: [
+				.process("Test/Resources"),
+			]
 		)
 	]
 )
