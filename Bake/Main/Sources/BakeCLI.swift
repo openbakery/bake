@@ -1,25 +1,37 @@
+
 import Foundation
+import ArgumentParser
+
 
 @main
-struct BakeCLI {
+struct BakeCLI: ParsableCommand {
 	//let task = Process()
 
 	let logger: Logger
 
-	init(logger: Logger = Logger()) {
+	init() {
+		self.logger = Logger()
+	}
+
+	init(logger: Logger) {
 		self.logger = logger
 	}
 
-  static func main() {
-		BakeCLI().run()
-  }
 
-	func run() {
-		print("Baking...")
-		//task.executableURL = URL(fileURLWithPath: "/usr/bin/swift")
+  // static func main() {
+		// var bake = BakeCLI()
+		// do {
+		// 	try bake.run()
+		// } catch {
+		// 	bake.logger.message(error.localizedDescription)
+		// }
+  // }
+  //
+
+  public func run() throws {
+		logger.message("Usage: bake [options] command")
 	}
 
-	func swift(_ arguments: String...) {
-	}
+
 
 }

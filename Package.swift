@@ -3,6 +3,10 @@ import PackageDescription
 
 let package = Package(
 	name: "Bake",
+
+	platforms: [
+	.macOS(.v10_15)
+	],
   products: [
     .library(name: "Bake", type: .dynamic, targets: ["Bake"]),
 	 	.executable(name: "BakeCLI", targets: ["BakeCLI"]),
@@ -12,6 +16,7 @@ let package = Package(
 		url: "https://github.com/nschum/SwiftHamcrest/",
 		.upToNextMajor(from: "2.2.0")
 		),
+	.package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.0"),
 	],
 	targets: [
 		.target(
@@ -27,18 +32,22 @@ let package = Package(
 
 		.executableTarget(
 			name: "BakeCLI",
+			dependencies: [
+			.product(name: "ArgumentParser", package: "swift-argument-parser")
+			],
 			path: "Bake/Main",
 			sources: [
 				"Sources",
-			],
-			resources: [
-				.process("Resources"),
 			]
+			// resources: [
+			// 	.process("Resources"),
+			// ]
 		),
 		.testTarget(
 			name: "BakeCLITest",
 			dependencies: [
-				"BakeCLI", "SwiftHamcrest"
+			"BakeCLI",
+			"SwiftHamcrest",
 			],
 			path: "Bake/Test",
 			sources: [
