@@ -7,8 +7,12 @@ let package = Package(
     .library(name: "Bake", type: .dynamic, targets: ["Bake"]),
 	 	.executable(name: "BakeCLI", targets: ["BakeCLI"]),
   ],
-  dependencies: [
-  ],
+	dependencies: [
+	.package(
+		url: "https://github.com/nschum/SwiftHamcrest/",
+		.upToNextMajor(from: "2.2.0")
+		),
+	],
 	targets: [
 		.target(
 			name: "Bake",
@@ -23,23 +27,25 @@ let package = Package(
 
 		.executableTarget(
 			name: "BakeCLI",
-			path: "Bake",
+			path: "Bake/Main",
 			sources: [
-				"Main/Sources",
+				"Sources",
+			],
+			resources: [
+				.process("Resources"),
 			]
 		),
-
 		.testTarget(
 			name: "BakeCLITest",
 			dependencies: [
-				"BakeCLI"
+				"BakeCLI", "SwiftHamcrest"
 			],
-			path: "Bake",
+			path: "Bake/Test",
 			sources: [
-				"Test/Sources",
+				"Sources",
 			],
 			resources: [
-				.process("Test/Resources"),
+				.process("Resources"),
 			]
 		)
 	]

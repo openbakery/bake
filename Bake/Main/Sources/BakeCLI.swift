@@ -4,6 +4,12 @@ import Foundation
 struct BakeCLI {
 	//let task = Process()
 
+	let logger: Logger
+
+	init(logger: Logger = Logger()) {
+		self.logger = logger
+	}
+
   static func main() {
 		BakeCLI().run()
   }
