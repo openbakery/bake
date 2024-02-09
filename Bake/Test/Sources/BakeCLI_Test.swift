@@ -37,7 +37,8 @@ class BakeCLI_Test: XCTestCase {
 
 	func test_print_usage_when_run_without_parameters() throws {
 		// given
-		let bake = BakeCLI(logger: logger)
+		var bake = BakeCLI(logger: logger)
+		bake.command = ""
 
 		// when
 		try bake.run()
@@ -52,6 +53,33 @@ class BakeCLI_Test: XCTestCase {
 
 		// the
 		assertThat(bake, presentAnd(instanceOf(ParsableCommand.self)))
+	}
+
+	func test_has_build_command() throws {
+		// given
+		var bake = BakeCLI(logger: logger)
+		bake.command = "build"
+
+		// when
+		try bake.run()
+
+		// the
+		assertThat(logger.messages.first, not(equalTo("Usage: bake [options] command")))
+	}
+
+	func test_execute_unknown_command_prints_usage() throws {
+		// given
+		var bake = BakeCLI(logger: logger)
+		bake.command = "foobar"
+
+		// when
+		try bake.run()
+
+		// the
+		var iterator = logger.messages.makeIterator()
+		assertThat(iterator.next(), equalTo("Command not found \"foobar\""))
+		assertThat(iterator.next(), equalTo(""))
+		assertThat(iterator.next(), equalTo("Usage: bake [options] command"))
 	}
 
 }

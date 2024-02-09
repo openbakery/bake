@@ -9,6 +9,9 @@ struct BakeCLI: ParsableCommand {
 
 	let logger: Logger
 
+  @Argument(help: "The command to run")
+  public var command: String
+
 	init() {
 		self.logger = Logger()
 	}
@@ -18,19 +21,21 @@ struct BakeCLI: ParsableCommand {
 	}
 
 
-  // static func main() {
-		// var bake = BakeCLI()
-		// do {
-		// 	try bake.run()
-		// } catch {
-		// 	bake.logger.message(error.localizedDescription)
-		// }
-  // }
-  //
+ 	func run() throws {
+		if command == "build" {
+			return
+		}
+		printUsage()
+	}
 
-  public func run() throws {
+	private func printUsage() {
+		if command.count > 0 {
+			logger.message("Command not found \"\(command)\"")
+			logger.message("")
+		}
 		logger.message("Usage: bake [options] command")
 	}
+
 
 
 
