@@ -57,6 +57,20 @@ let package = Package(
 			resources: [
 				.process("Resources"),
 			]
+		),
+		.testTarget(
+			name: "BakeTest",
+			dependencies: [
+				"Bake",
+				"SwiftHamcrest",
+			],
+			path: "Library/Test",
+				sources: [
+				"Sources",
+				]
+				// resources: [
+				// .process("Resources"),
+				// ]
 		)
 	]
 )

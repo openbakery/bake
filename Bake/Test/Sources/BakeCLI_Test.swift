@@ -79,7 +79,7 @@ class BakeCLI_Test: XCTestCase {
 	}
 
 	func test_execute_present_target() throws {
-		let target = Command(name: "foo")
+		let target = Command(name: "foo", command: "")
 		bake.targets.append(target)
 		bake.target = "foo"
 
@@ -92,8 +92,8 @@ class BakeCLI_Test: XCTestCase {
 	}
 
 	func test_when_multiple_targets_then_execute_target_with_proper_name() throws {
-		bake.targets.append(Command(name: "foo"))
-		bake.targets.append(Command(name: "bar"))
+		bake.targets.append(Command(name: "foo", command: ""))
+		bake.targets.append(Command(name: "bar", command: ""))
 		bake.target = "bar"
 
 		// when
