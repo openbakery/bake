@@ -8,22 +8,23 @@ import ArgumentParser
 class BakeCLI_Test: XCTestCase {
 
 	var logger: LoggerFake!
+	var bake: BakeCLI!
 
 	override func setUp() {
 		super.setUp()
+		bake = BakeCLI()
 		logger = LoggerFake()
+		bake.logger = logger
 	}
 
 	override func tearDown() {
 		logger = nil
+		bake = nil
 		super.tearDown()
 	}
 
 
 	func test_instance() {
-		// when
-		let bake = BakeCLI()
-
 		// then
 		assertThat(bake, present())
 	}
@@ -38,7 +39,6 @@ class BakeCLI_Test: XCTestCase {
 
 	func test_print_usage_when_run_without_parameters() throws {
 		// given
-		var bake = BakeCLI(logger: logger)
 		bake.target = ""
 
 		// when
@@ -49,16 +49,12 @@ class BakeCLI_Test: XCTestCase {
 	}
 
 	func test_is_parsabletarget() {
-		// given
-		let bake = BakeCLI(logger: logger)
-
 		// the
 		assertThat(bake, presentAnd(instanceOf(ParsableCommand.self)))
 	}
 
 	func test_has_build_target() throws {
 		// given
-		var bake = BakeCLI(logger: logger)
 		bake.target = "build"
 
 		// when
@@ -70,7 +66,6 @@ class BakeCLI_Test: XCTestCase {
 
 	func test_execute_unknown_command_prints_usage() throws {
 		// given
-		var bake = BakeCLI(logger: logger)
 		bake.target = "foobar"
 
 		// when
@@ -84,8 +79,7 @@ class BakeCLI_Test: XCTestCase {
 	}
 
 	func test_execute_present_target() throws {
-		let target = Target(name: "foo")
-		var bake = BakeCLI(logger: logger)
+		let target = Command(name: "foo")
 		bake.targets.append(target)
 		bake.target = "foo"
 
@@ -98,9 +92,8 @@ class BakeCLI_Test: XCTestCase {
 	}
 
 	func test_when_multiple_targets_then_execute_target_with_proper_name() throws {
-		var bake = BakeCLI(logger: logger)
-		bake.targets.append(Target(name: "foo"))
-		bake.targets.append(Target(name: "bar"))
+		bake.targets.append(Command(name: "foo"))
+		bake.targets.append(Command(name: "bar"))
 		bake.target = "bar"
 
 		// when

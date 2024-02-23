@@ -1,4 +1,6 @@
 .build
+.swiftpm
 bakeCLI
 libBake.dylib
 libBake.dylib.dSYM
+

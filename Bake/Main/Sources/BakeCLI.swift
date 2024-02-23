@@ -5,26 +5,24 @@ import Bake
 
 
 @main
-struct BakeCLI: ParsableCommand {
+class BakeCLI: ParsableCommand {
 	//let task = Process()
 
-	let logger: Logger
+	lazy var logger: Logger = Logger()
 
   @Argument(help: "The target to run")
   var target: String = ""
 
-	var targets = [Target]()
+	var targets = [any Target]()
 
-	init() {
-		self.logger = Logger()
+	required init() {
 	}
 
-	init(logger: Logger) {
-		self.logger = logger
+	required init(from decoder:Decoder) throws {
 	}
+	
 
-
- 	mutating func run() throws {
+ 	func run() throws {
 		if executeTarget() {
 			return
 		}
