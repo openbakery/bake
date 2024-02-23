@@ -1,6 +1,7 @@
 
 import Foundation
 import ArgumentParser
+import Bake
 
 
 @main
@@ -9,8 +10,10 @@ struct BakeCLI: ParsableCommand {
 
 	let logger: Logger
 
-  @Argument(help: "The command to run")
-  public var command: String
+  @Argument(help: "The target to run")
+  var target: String = ""
+
+	var targets = [Target]()
 
 	init() {
 		self.logger = Logger()
@@ -21,19 +24,23 @@ struct BakeCLI: ParsableCommand {
 	}
 
 
- 	func run() throws {
-		if command == "build" {
+ 	mutating func run() throws {
+		if let target = targets.first {
+			logger.message("Executing target \"foo\"")
+			return
+		}
+		if target == "build" {
 			return
 		}
 		printUsage()
 	}
 
 	private func printUsage() {
-		if command.count > 0 {
-			logger.message("Command not found \"\(command)\"")
+		if target.count > 0 {
+			logger.message("Target not found \"\(target)\"")
 			logger.message("")
 		}
-		logger.message("Usage: bake [options] command")
+		logger.message("Usage: bake target [options]")
 	}
 
 

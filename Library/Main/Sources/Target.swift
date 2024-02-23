@@ -1,12 +1,10 @@
 
 
-public struct Target {
+open class Target: Decodable {
     let name: String
-    let arch: String
 
-    public init(name: String, arch: String) {
+    public init(name: String) {
         self.name = name
-        self.arch = arch
     }
 }
 

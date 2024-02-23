@@ -33,6 +33,7 @@ let package = Package(
 		.executableTarget(
 			name: "BakeCLI",
 			dependencies: [
+			"Bake",
 			.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
 			path: "Bake/Main",
