@@ -6,7 +6,6 @@ import Bake
 
 @main
 class BakeCLI: ParsableCommand {
-	//let task = Process()
 
 	lazy var logger: Logger = Logger()
 
@@ -20,7 +19,7 @@ class BakeCLI: ParsableCommand {
 
 	required init(from decoder:Decoder) throws {
 	}
-	
+
 
  	func run() throws {
 		if executeTarget() {
