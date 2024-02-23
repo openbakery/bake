@@ -95,7 +95,20 @@ class BakeCLI_Test: XCTestCase {
 		// then
 		var iterator = logger.messages.makeIterator()
 		assertThat(iterator.next(), equalTo("Executing target \"foo\""))
+	}
 
+	func test_when_multiple_targets_then_execute_target_with_proper_name() throws {
+		var bake = BakeCLI(logger: logger)
+		bake.targets.append(Target(name: "foo"))
+		bake.targets.append(Target(name: "bar"))
+		bake.target = "bar"
+
+		// when
+		try bake.run()
+
+		// then
+		var iterator = logger.messages.makeIterator()
+		assertThat(iterator.next(), equalTo("Executing target \"bar\""))
 	}
 
 }

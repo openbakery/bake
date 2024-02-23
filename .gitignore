@@ -1,2 +1,4 @@
 .build
 bakeCLI
+libBake.dylib
+libBake.dylib.dSYM

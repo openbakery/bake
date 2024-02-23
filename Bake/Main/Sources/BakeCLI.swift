@@ -25,14 +25,24 @@ struct BakeCLI: ParsableCommand {
 
 
  	mutating func run() throws {
-		if let target = targets.first {
-			logger.message("Executing target \"foo\"")
+		if executeTarget() {
 			return
 		}
+
 		if target == "build" {
 			return
 		}
 		printUsage()
+	}
+
+	private func executeTarget() -> Bool {
+		for target in self.targets {
+			if target.name == self.target {
+				logger.message("Executing target \"\(target.name)\"")
+				return true
+			}
+		}
+		return false
 	}
 
 	private func printUsage() {
