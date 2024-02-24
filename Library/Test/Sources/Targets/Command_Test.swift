@@ -40,6 +40,29 @@ class ProcessFake: Process {
 		}
 	}
 
+	override var standardError: Any? {
+		set {
+		}
+		get {
+			return nil
+		}
+	}
+
+	override var standardInput: Any? {
+		set {
+		}
+		get {
+			return nil
+		}
+	}
+
+	override var standardOutput: Any? {
+		set {
+		}
+		get {
+			return nil
+		}
+	}
 }
 
 class Command_Test: XCTestCase {
@@ -106,10 +129,10 @@ class Command_Test: XCTestCase {
 
 	func test_process_with_building_shell_command() throws {
 		let bashCommands = ["alias", "bg", "bind", "break", "builtin", "caller", "case", "cd", "command", "compgen", "complete", "compopt", "continue", "coproc",
-				"declare", "dirs", "disown", "echo", "enable", "eval", "exec", "exit", "export", "false", "fc", "fg", "getopts", "hash", "help", "history",
+				"declare", "dirs", "disown", "enable", "eval", "exec", "exit", "export", "false", "fc", "fg", "getopts", "hash", "help", "history",
 				"jobs", "kill", "local", "logout", "mapfile", "popd", "printf", "pushd", "pwd", "read", "readarray", "readonly", "return", "select", "set",
 				"shift", "shopt", "source", "suspend", "test", "time", "times", "trap", "true", "type", "typeset", "ulimit", "umask", "unalias", "unset",
-				"variables", "wait"]
+				"variables", "wait", "which"]
 
 		for bashCommand in bashCommands {
 			let process = ProcessFake()
@@ -122,7 +145,6 @@ class Command_Test: XCTestCase {
 			assertThat(process.executableURL?.path, presentAnd(equalTo("/bin/bash")), message: "expected '\(bashCommand)' to be a bash command")
 		}
 	}
-
 
 	func test_process_has_arguments() throws {
 		let command = createCommand(command: "foobar", arguments: "first", "second")
@@ -163,6 +185,24 @@ class Command_Test: XCTestCase {
 
 		// then
 		assertThat(process.wasExecuted, equalTo(true))
+	}
+
+	func test_process_as_standardOutput_pipe() throws {
+		// given
+		let process = Process()
+		let command = createCommand(command: "/bin/echo", arguments: "Hello World")
+
+		// when
+		try command.execute(process: process)
+		process.waitUntilExit()
+
+		// then
+		assertThat(process.standardOutput, present())
+		assertThat(process.standardError, present())
+
+		let data = command.standardOutput.fileHandleForReading.readDataToEndOfFile() //availableData
+		assertThat(data, present())
+		assertThat(data.utf8String, presentAnd(equalTo("Hello World\n")))
 	}
 }
 

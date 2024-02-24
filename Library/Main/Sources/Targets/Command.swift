@@ -6,6 +6,7 @@ public class Command: Target {
 	public let name: String
 	public let command: String
 	public let arguments: [String]
+	let standardOutput = Pipe()
 
 	public convenience init(name: String, command: String, arguments: String...) {
 		self.init(name: name, command: command, arguments: arguments)
@@ -29,6 +30,9 @@ public class Command: Target {
 	func execute(process: Process) throws {
 		process.executableURL = self.executableURL
 		process.arguments = processArguments
+		let standardError = Pipe()
+		process.standardOutput = standardOutput
+		process.standardError = standardError
 		try process.run()
 	}
 
@@ -53,7 +57,7 @@ public class Command: Target {
 				"declare", "dirs", "disown", "echo", "enable", "eval", "exec", "exit", "export", "false", "fc", "fg", "getopts", "hash", "help", "history",
 				"jobs", "kill", "local", "logout", "mapfile", "popd", "printf", "pushd", "pwd", "read", "readarray", "readonly", "return", "select", "set",
 				"shift", "shopt", "source", "suspend", "test", "time", "times", "trap", "true", "type", "typeset", "ulimit", "umask", "unalias", "unset",
-				"variables", "wait"]
+				"variables", "wait", "which"]
 
 		return bashCommands.contains(command)
 	}
