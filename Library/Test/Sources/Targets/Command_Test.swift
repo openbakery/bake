@@ -1,4 +1,6 @@
-
+//
+//
+//
 
 import XCTest
 import SwiftHamcrest
@@ -14,53 +16,53 @@ class ProcessFake: Process {
 		wasExecuted = true
 	}
 
-	override var launchPath : String? {
-		set {
-		}
+	override var launchPath: String? {
 		get {
 			return nil
+		}
+		set {
 		}
 	}
 
 	override var arguments: [String]? {
-		set {
-			argumentsFake = newValue
-		}
 		get {
 			argumentsFake
+		}
+		set {
+			argumentsFake = newValue
 		}
 	}
 
 	override var executableURL: URL? {
-		set {
-			executeableURLFake = newValue
-		}
 		get {
 			executeableURLFake
+		}
+		set {
+			executeableURLFake = newValue
 		}
 	}
 
 	override var standardError: Any? {
-		set {
-		}
 		get {
 			return nil
+		}
+		set {
 		}
 	}
 
 	override var standardInput: Any? {
-		set {
-		}
 		get {
 			return nil
+		}
+		set {
 		}
 	}
 
 	override var standardOutput: Any? {
-		set {
-		}
 		get {
 			return nil
+		}
+		set {
 		}
 	}
 }
@@ -207,5 +209,3 @@ class Command_Test: XCTestCase {
 
 
 }
-
-

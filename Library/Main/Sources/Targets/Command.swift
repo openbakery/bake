@@ -19,7 +19,7 @@ public class Command: Target {
 		self.arguments = arguments
 	}
 
-	public required init(from decoder:Decoder) throws {
+	public required init(from decoder: Decoder) throws {
 		fatalError("not implemented")
 	}
 
