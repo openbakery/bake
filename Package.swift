@@ -9,21 +9,22 @@ let package = Package(
 	],
   products: [
     .library(name: "Bake", type: .dynamic, targets: ["Bake"]),
-	 	.executable(name: "BakeCLI", targets: ["BakeCLI"]),
+	 	.executable(name: "BakeCLI", targets: ["BakeCLI"])
   ],
 	dependencies: [
-	.package(
-		url: "https://github.com/nschum/SwiftHamcrest/",
-		.upToNextMajor(from: "2.2.0")
-		),
-	.package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0"),
+	.package(url: "https://github.com/nschum/SwiftHamcrest/", .upToNextMajor(from: "2.2.0")),
+	.package(url: "https://github.com/openbakery/OBCoder/", branch: "main"),
+	.package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0")
 	],
 	targets: [
 		.target(
 			name: "Bake",
+			dependencies: [
+			"OBCoder"
+			],
 			path: "Library",
 			sources: [
-				"Main/Sources",
+				"Main/Sources"
 			],
 			swiftSettings: [
 				.unsafeFlags(["-emit-module", "-emit-library"])
@@ -38,7 +39,7 @@ let package = Package(
 			],
 			path: "Bake/Main",
 			sources: [
-				"Sources",
+				"Sources"
 			]
 			// resources: [
 			// 	.process("Resources"),
@@ -48,25 +49,25 @@ let package = Package(
 			name: "BakeCLITest",
 			dependencies: [
 			"BakeCLI",
-			"SwiftHamcrest",
+			"SwiftHamcrest"
 			],
 			path: "Bake/Test",
 			sources: [
-				"Sources",
+				"Sources"
 			],
 			resources: [
-				.process("Resources"),
+				.process("Resources")
 			]
 		),
 		.testTarget(
 			name: "BakeTest",
 			dependencies: [
 				"Bake",
-				"SwiftHamcrest",
+				"SwiftHamcrest"
 			],
 			path: "Library/Test",
 				sources: [
-				"Sources",
+				"Sources"
 				]
 				// resources: [
 				// .process("Resources"),

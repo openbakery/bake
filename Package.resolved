@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "obcoder",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/openbakery/OBCoder/",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0241a20711b6c829e97bcfae3d05401759b23ebc"
+      }
+    },
+    {
       "identity" : "swift-argument-parser",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
