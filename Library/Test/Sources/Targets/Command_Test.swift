@@ -7,14 +7,14 @@ import SwiftHamcrest
 class ProcessFake: Process {
 
 	var wasExecuted = false
-	var _arguments: [String]?
-	var _executableURL: URL?
+	var argumentsFake: [String]?
+	var executeableURLFake: URL?
 
 	override func run() throws {
 		wasExecuted = true
 	}
 
-	override var launchPath: String? {
+	override var launchPath : String? {
 		set {
 		}
 		get {
@@ -24,19 +24,19 @@ class ProcessFake: Process {
 
 	override var arguments: [String]? {
 		set {
-			_arguments = newValue
+			argumentsFake = newValue
 		}
 		get {
-			_arguments
+			argumentsFake
 		}
 	}
 
 	override var executableURL: URL? {
 		set {
-			_executableURL = newValue
+			executeableURLFake = newValue
 		}
 		get {
-			_executableURL
+			executeableURLFake
 		}
 	}
 
@@ -99,7 +99,7 @@ class Command_Test: XCTestCase {
 	}
 
 
-	func test_command_has_one_arguments() {
+	func test_command_has_oneargumentsFake() {
 		let command = createCommand(arguments: "one")
 
 		// then
@@ -107,7 +107,7 @@ class Command_Test: XCTestCase {
 		assertThat(command.arguments.first, presentAnd(equalTo("one")))
 	}
 
-	func test_command_has_multiple_arguments() {
+	func test_command_has_multipleargumentsFake() {
 		let command = createCommand(arguments: "one", "two", "three")
 
 		// then
@@ -146,7 +146,7 @@ class Command_Test: XCTestCase {
 		}
 	}
 
-	func test_process_has_arguments() throws {
+	func test_process_hasargumentsFake() throws {
 		let command = createCommand(command: "foobar", arguments: "first", "second")
 
 		// when
@@ -158,7 +158,7 @@ class Command_Test: XCTestCase {
 		assertThat(process.arguments?.last, presentAnd(equalTo("second")))
 	}
 
-	func test_process_has_arguments_for_bash_command() throws {
+	func test_process_hasargumentsFake_for_bash_command() throws {
 		let command = createCommand(command: "echo", arguments: "Hello World")
 
 		// when
@@ -200,10 +200,12 @@ class Command_Test: XCTestCase {
 		assertThat(process.standardOutput, present())
 		assertThat(process.standardError, present())
 
-		let data = command.standardOutput.fileHandleForReading.readDataToEndOfFile() //availableData
+		let data = command.standardOutput.fileHandleForReading.availableData
 		assertThat(data, present())
 		assertThat(data.utf8String, presentAnd(equalTo("Hello World\n")))
 	}
+
+
 }
 
 
