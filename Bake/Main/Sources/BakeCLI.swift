@@ -1,4 +1,3 @@
-
 import Foundation
 import ArgumentParser
 import Bake
@@ -17,7 +16,7 @@ class BakeCLI: ParsableCommand {
 	required init() {
 	}
 
-	required init(from decoder:Decoder) throws {
+	required init(from decoder: Decoder) throws {
 	}
 
 
@@ -33,11 +32,9 @@ class BakeCLI: ParsableCommand {
 	}
 
 	private func executeTarget() -> Bool {
-		for target in self.targets {
-			if target.name == self.target {
-				logger.message("Executing target \"\(target.name)\"")
-				return true
-			}
+		for target in self.targets where target.name == self.target {
+			logger.message("Executing target \"\(target.name)\"")
+			return true
 		}
 		return false
 	}
@@ -49,8 +46,5 @@ class BakeCLI: ParsableCommand {
 		}
 		logger.message("Usage: bake target [options]")
 	}
-
-
-
 
 }

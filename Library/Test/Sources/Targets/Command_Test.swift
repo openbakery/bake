@@ -93,6 +93,13 @@ class Command_Test: XCTestCase {
 		assertThat(command.name, equalTo("one"))
 	}
 
+	func test_command_name_is_command_when_name_was_not_specified() {
+		let command = Command(command: "echo")
+
+		// then
+		assertThat(command.name, equalTo("echo"))
+	}
+
 	func test_command_has_command() {
 		let command = createCommand(command: "one")
 
@@ -100,6 +107,13 @@ class Command_Test: XCTestCase {
 		assertThat(command.command, equalTo("one"))
 	}
 
+
+	func test_command_arguments_are_optional() {
+		let command = Command(command: "pwd")
+
+		// then
+		assertThat(command.arguments.count, equalTo(0))
+	}
 
 	func test_command_has_oneargumentsFake() {
 		let command = createCommand(arguments: "one")

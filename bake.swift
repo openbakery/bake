@@ -1,8 +1,5 @@
-
-
 import Bake
 
-let target = Target(name: "target", arch: "iOS")
-
+let target = Command(command: "echo", arguments: "Hello World!")
 
 print(target)
