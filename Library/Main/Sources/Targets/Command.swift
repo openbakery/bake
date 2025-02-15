@@ -1,7 +1,7 @@
 //
 import Foundation
 
-public class Command: Target {
+public class Command: Target, CustomStringConvertible {
 
 	public let name: String
 	public let command: String
@@ -65,5 +65,8 @@ public class Command: Target {
 		return bashCommands.contains(command)
 	}
 
+	public var description: String {
+		"Command \"\(name)\""
+	}
 
 }

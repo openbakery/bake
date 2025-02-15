@@ -221,5 +221,13 @@ class Command_Test: XCTestCase {
 		assertThat(data.utf8String, presentAnd(equalTo("Hello World\n")))
 	}
 
+	func test_has_proper_description() {
+		let command = Command(name: "Foo", command: "bar", arguments: "first")
+
+		// then
+		assertThat(command, instanceOf(CustomStringConvertible.self))
+		assertThat(command.description, presentAnd(equalTo("Command: \"Foo\"")))
+	}
+
 
 }

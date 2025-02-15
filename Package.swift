@@ -20,7 +20,8 @@ let package = Package(
 		.target(
 			name: "Bake",
 			dependencies: [
-			"OBCoder"
+			"OBCoder",
+			.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
 			path: "Library",
 			sources: [

@@ -1,15 +1,14 @@
-import Foundation
 import ArgumentParser
 import Bake
-
+import Foundation
 
 @main
 class BakeCLI: ParsableCommand {
 
 	lazy var logger: Logger = Logger()
 
-  @Argument(help: "The target to run")
-  var target: String = ""
+	@Argument(help: "The target to run")
+	var target: String = ""
 
 	var targets = [any Target]()
 
@@ -19,8 +18,7 @@ class BakeCLI: ParsableCommand {
 	required init(from decoder: Decoder) throws {
 	}
 
-
- 	func run() throws {
+	func run() throws {
 		if executeTarget() {
 			return
 		}
@@ -32,7 +30,7 @@ class BakeCLI: ParsableCommand {
 	}
 
 	private func executeTarget() -> Bool {
-		for target in self.targets where target.name == self.target {
+		for target in targets where target.name == self.target {
 			logger.message("Executing target \"\(target.name)\"")
 			return true
 		}

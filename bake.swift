@@ -1,5 +1,7 @@
-import Bake
+import OBCoder
+// import Bake
+//
+// let target = Command(command: "echo", arguments: "Hello World!")
+//
+// print(target)
 
-let target = Command(command: "echo", arguments: "Hello World!")
-
-print(target)
