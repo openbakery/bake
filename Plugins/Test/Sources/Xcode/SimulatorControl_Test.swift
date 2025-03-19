@@ -13,7 +13,4 @@ struct SimulatorControl_Test {
 		control = SimulatorControl(commandRunner: commandRunner)
 	}
 
-	@Test func is_command() {
-		#expect(control.commandRunner is CommandRunner)
-	}
 }

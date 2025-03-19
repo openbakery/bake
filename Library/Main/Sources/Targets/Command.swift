@@ -16,6 +16,10 @@ public class Command: Target, CustomStringConvertible {
 		self.init(name: command, command: command, arguments: arguments)
 	}
 
+	public convenience init(command: String, arguments: [String]) {
+		self.init(name: command, command: command, arguments: arguments)
+	}
+
 	public required init(name: String, command: String, arguments: [String]) {
 		self.name = name
 		self.command = command
