@@ -1,8 +1,8 @@
 import Foundation
+import Hamcrest
 import XCTest
-import SwiftHamcrest
-@testable import Bake
 
+@testable import Bake
 
 class OutputHandler_Test: XCTestCase {
 

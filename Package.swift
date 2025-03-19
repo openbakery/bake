@@ -13,7 +13,7 @@ let package = Package(
 		.executable(name: "BakeCLI", targets: ["BakeCLI"])
 	],
 	dependencies: [
-		.package(url: "https://github.com/nschum/SwiftHamcrest/", .upToNextMajor(from: "2.2.0")),
+		.package(url: "https://github.com/nschum/SwiftHamcrest/", .upToNextMajor(from: "2.3.0")),
 		.package(url: "https://github.com/openbakery/OBCoder/", branch: "main"),
 		.package(url: "https://github.com/apple/swift-argument-parser", .upToNextMajor(from: "1.0.0")),
 		.package(url: "https://github.com/swiftlang/swift-testing", revision: "18c42c19cac3fafd61cab1156d4088664b7424ae")
@@ -60,7 +60,7 @@ let package = Package(
 			dependencies: [
 				"BakeCLI",
 				.product(name: "Testing", package: "swift-testing"),
-				"SwiftHamcrest"
+				.product(name: "Hamcrest", package: "SwiftHamcrest")
 			],
 			path: "Bake/Test",
 			sources: [
@@ -75,7 +75,7 @@ let package = Package(
 			dependencies: [
 				"Bake",
 				.product(name: "Testing", package: "swift-testing"),
-				"SwiftHamcrest"
+				.product(name: "Hamcrest", package: "SwiftHamcrest")
 			],
 			path: "Library/Test",
 			sources: [

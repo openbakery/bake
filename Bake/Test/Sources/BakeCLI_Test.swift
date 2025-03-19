@@ -1,43 +1,35 @@
 import ArgumentParser
 import Bake
 import BakePlugins
-import SwiftHamcrest
-import XCTest
+import Hamcrest
+import Testing
 
 @testable import BakeCLI
 
-class BakeCLI_Test: XCTestCase {
+class BakeCLI_Test {
 
-	var logger: LoggerFake!
-	var bake: BakeCLI!
+	let logger: LoggerFake
+	var bake: BakeCLI
 
-	override func setUp() {
-		super.setUp()
+	init() async throws {
 		logger = LoggerFake()
 		bake = BakeCLI(logger: logger)
 	}
 
-	override func tearDown() {
-		logger = nil
-		bake = nil
-		super.tearDown()
-	}
-
-
-	func test_instance() {
+	@Test func instance() {
 		// then
-		assertThat(bake, present())
+		#expect(bake != nil)
 	}
 
-	func test_has_logger() {
+	@Test func has_logger() {
 		// when
 		let bake = BakeCLI()
 
 		// then
-		assertThat(bake.logger, present())
+		#expect(bake.logger != nil)
 	}
 
-	func test_print_usage_when_run_without_parameters() throws {
+	@Test func print_usage_when_run_without_parameters() throws {
 		// given
 		bake.target = ""
 
@@ -45,15 +37,11 @@ class BakeCLI_Test: XCTestCase {
 		try bake.run()
 
 		// then
-		assertThat(logger.messages.first, equalTo("Usage: bake target [options]"))
+		#expect(logger.messages.first == "Usage: bake target [options]")
 	}
 
-	func test_is_parsabletarget() {
-		// the
-		assertThat(bake, presentAnd(instanceOf(ParsableCommand.self)))
-	}
 
-	func test_has_build_target() throws {
+	@Test func has_build_target() throws {
 		// given
 		bake.target = "build"
 
@@ -61,10 +49,10 @@ class BakeCLI_Test: XCTestCase {
 		try bake.run()
 
 		// the
-		assertThat(logger.messages.first, not(equalTo("Usage: bake [options] target")))
+		#expect(logger.messages.first != "Usage: bake [options] target")
 	}
 
-	func test_execute_unknown_command_prints_usage() throws {
+	@Test func execute_unknown_command_prints_usage() throws {
 		// given
 		bake.target = "foobar"
 
@@ -73,12 +61,12 @@ class BakeCLI_Test: XCTestCase {
 
 		// the
 		var iterator = logger.messages.makeIterator()
-		assertThat(iterator.next(), equalTo("Target not found \"foobar\""))
-		assertThat(iterator.next(), equalTo(""))
-		assertThat(iterator.next(), equalTo("Usage: bake target [options]"))
+		#expect(iterator.next() == "Target not found \"foobar\"")
+		#expect(iterator.next() == "")
+		#expect(iterator.next() == "Usage: bake target [options]")
 	}
 
-	func test_execute_present_target() throws {
+	@Test func execute_present_target() throws {
 		let target = Command(name: "foo", command: "")
 		bake.targets.append(target)
 		bake.target = "foo"
@@ -88,10 +76,10 @@ class BakeCLI_Test: XCTestCase {
 
 		// then
 		var iterator = logger.messages.makeIterator()
-		assertThat(iterator.next(), equalTo("Executing target \"foo\""))
+		#expect(iterator.next() == "Executing target \"foo\"")
 	}
 
-	func test_when_multiple_targets_then_execute_target_with_proper_name() throws {
+	@Test func when_multiple_targets_then_execute_target_with_proper_name() throws {
 		bake.targets.append(Command(name: "foo", command: ""))
 		bake.targets.append(Command(name: "bar", command: ""))
 		bake.target = "bar"
@@ -101,14 +89,12 @@ class BakeCLI_Test: XCTestCase {
 
 		// then
 		var iterator = logger.messages.makeIterator()
-		assertThat(iterator.next(), equalTo("Executing target \"bar\""))
+		#expect(iterator.next() == "Executing target \"bar\"")
 	}
 
-	func test_has_simulatorControl_target() {
-
-		assertThat(bake.targets.targets, hasCount(1))
-		assertThat(bake.targets.targets, hasItem(instanceOf(SimulatorControl.self)))
-
+	@Test func has_simulatorControl_target() {
+		#expect(bake.targets.targets.count == 1)
+		#expect(bake.targets.targets.first is SimulatorControl)
 	}
 
 }

@@ -40,8 +40,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nschum/SwiftHamcrest/",
       "state" : {
-        "revision" : "8c679c859fd5e12b83aea68a51045b0a11dfddef",
-        "version" : "2.2.4"
+        "revision" : "d251ecd67cb87a336d37c59ff0698730f0b15c91",
+        "version" : "2.3.1"
       }
     }
   ],

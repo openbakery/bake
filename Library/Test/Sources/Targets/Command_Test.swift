@@ -2,8 +2,9 @@
 //
 //
 
+import Hamcrest
 import XCTest
-import SwiftHamcrest
+
 @testable import Bake
 
 class ProcessFake: Process {
@@ -72,9 +73,9 @@ class Command_Test: XCTestCase {
 	var process: ProcessFake!
 
 	override func setUp() {
-	 	super.setUp()
+		super.setUp()
 		process = ProcessFake()
- 	}
+	}
 
 	override func tearDown() {
 		process = nil
@@ -144,11 +145,13 @@ class Command_Test: XCTestCase {
 
 
 	func test_process_with_building_shell_command() throws {
-		let bashCommands = ["alias", "bg", "bind", "break", "builtin", "caller", "case", "cd", "command", "compgen", "complete", "compopt", "continue", "coproc",
-				"declare", "dirs", "disown", "enable", "eval", "exec", "exit", "export", "false", "fc", "fg", "getopts", "hash", "help", "history",
-				"jobs", "kill", "local", "logout", "mapfile", "popd", "printf", "pushd", "pwd", "read", "readarray", "readonly", "return", "select", "set",
-				"shift", "shopt", "source", "suspend", "test", "time", "times", "trap", "true", "type", "typeset", "ulimit", "umask", "unalias", "unset",
-				"variables", "wait", "which"]
+		let bashCommands = [
+			"alias", "bg", "bind", "break", "builtin", "caller", "case", "cd", "command", "compgen", "complete", "compopt", "continue", "coproc",
+			"declare", "dirs", "disown", "enable", "eval", "exec", "exit", "export", "false", "fc", "fg", "getopts", "hash", "help", "history",
+			"jobs", "kill", "local", "logout", "mapfile", "popd", "printf", "pushd", "pwd", "read", "readarray", "readonly", "return", "select", "set",
+			"shift", "shopt", "source", "suspend", "test", "time", "times", "trap", "true", "type", "typeset", "ulimit", "umask", "unalias", "unset",
+			"variables", "wait", "which"
+		]
 
 		for bashCommand in bashCommands {
 			let process = ProcessFake()
