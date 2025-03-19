@@ -1,5 +1,6 @@
 import ArgumentParser
 import Bake
+import BakePlugins
 import SwiftHamcrest
 import XCTest
 
@@ -101,6 +102,13 @@ class BakeCLI_Test: XCTestCase {
 		// then
 		var iterator = logger.messages.makeIterator()
 		assertThat(iterator.next(), equalTo("Executing target \"bar\""))
+	}
+
+	func test_has_simulatorControl_target() {
+
+		assertThat(bake.targets.targets, hasCount(1))
+		assertThat(bake.targets.targets, hasItem(instanceOf(SimulatorControl.self)))
+
 	}
 
 }
