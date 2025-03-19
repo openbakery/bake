@@ -12,7 +12,8 @@ class TargetManager: Decodable {
 
 	init(logger: Logger) {
 		self.logger = logger
-		self.append(SimulatorControl())
+		let commandRunner = CommandRunner()
+		self.append(SimulatorControl(commandRunner: commandRunner))
 	}
 
 	required init(from: any Decoder) throws {

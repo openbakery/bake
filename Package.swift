@@ -81,9 +81,17 @@ let package = Package(
 			sources: [
 				"Sources"
 			]
-			// resources: [
-			// .process("Resources"),
-			// ]
+		),
+		.testTarget(
+			name: "BakePluginsTest",
+			dependencies: [
+				"Bake",
+				.product(name: "Testing", package: "swift-testing")
+			],
+			path: "Plugins/Test",
+			sources: [
+				"Sources"
+			]
 		)
 	]
 )
