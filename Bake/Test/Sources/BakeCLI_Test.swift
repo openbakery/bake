@@ -1,8 +1,8 @@
-
-import Bake
-import XCTest
-import SwiftHamcrest
 import ArgumentParser
+import Bake
+import SwiftHamcrest
+import XCTest
+
 @testable import BakeCLI
 
 class BakeCLI_Test: XCTestCase {
@@ -12,9 +12,8 @@ class BakeCLI_Test: XCTestCase {
 
 	override func setUp() {
 		super.setUp()
-		bake = BakeCLI()
 		logger = LoggerFake()
-		bake.logger = logger
+		bake = BakeCLI(logger: logger)
 	}
 
 	override func tearDown() {

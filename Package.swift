@@ -5,23 +5,24 @@ let package = Package(
 	name: "Bake",
 
 	platforms: [
-	.macOS(.v10_15)
+		.macOS(.v10_15)
 	],
-  products: [
-    .library(name: "Bake", type: .dynamic, targets: ["Bake"]),
-	 	.executable(name: "BakeCLI", targets: ["BakeCLI"])
-  ],
+	products: [
+		.library(name: "Bake", type: .dynamic, targets: ["Bake"]),
+		.library(name: "BakePlugins", type: .dynamic, targets: ["BakePlugins"]),
+		.executable(name: "BakeCLI", targets: ["BakeCLI"])
+	],
 	dependencies: [
-	.package(url: "https://github.com/nschum/SwiftHamcrest/", .upToNextMajor(from: "2.2.0")),
-	.package(url: "https://github.com/openbakery/OBCoder/", branch: "main"),
-	.package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0")
+		.package(url: "https://github.com/nschum/SwiftHamcrest/", .upToNextMajor(from: "2.2.0")),
+		.package(url: "https://github.com/openbakery/OBCoder/", branch: "main"),
+		.package(url: "https://github.com/apple/swift-argument-parser", from: "1.3.0")
 	],
 	targets: [
 		.target(
 			name: "Bake",
 			dependencies: [
-			"OBCoder",
-			.product(name: "ArgumentParser", package: "swift-argument-parser")
+				"OBCoder",
+				.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
 			path: "Library",
 			sources: [
@@ -31,12 +32,21 @@ let package = Package(
 				.unsafeFlags(["-emit-module", "-emit-library"])
 			]
 		),
-
+		.target(
+			name: "BakePlugins",
+			dependencies: [
+				"OBCoder"
+			],
+			path: "Plugins/Main",
+			sources: [
+				"Sources"
+			]
+		),
 		.executableTarget(
 			name: "BakeCLI",
 			dependencies: [
-			"Bake",
-			.product(name: "ArgumentParser", package: "swift-argument-parser")
+				"Bake",
+				.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
 			path: "Bake/Main",
 			sources: [
@@ -49,8 +59,8 @@ let package = Package(
 		.testTarget(
 			name: "BakeCLITest",
 			dependencies: [
-			"BakeCLI",
-			"SwiftHamcrest"
+				"BakeCLI",
+				"SwiftHamcrest"
 			],
 			path: "Bake/Test",
 			sources: [
@@ -67,12 +77,12 @@ let package = Package(
 				"SwiftHamcrest"
 			],
 			path: "Library/Test",
-				sources: [
+			sources: [
 				"Sources"
-				]
-				// resources: [
-				// .process("Resources"),
-				// ]
+			]
+			// resources: [
+			// .process("Resources"),
+			// ]
 		)
 	]
 )
