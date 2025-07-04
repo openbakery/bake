@@ -1,4 +1,5 @@
 import Bake
+import BakeTestHelper
 import Testing
 
 @testable import BakePlugins
@@ -6,11 +7,19 @@ import Testing
 struct SimulatorControl_Test {
 
 	let control: SimulatorControl
-	let commandRunner: CommandRunner
+	let commandRunner: CommandRunnerFake
 
 	init() async throws {
-		commandRunner = CommandRunner()
+		commandRunner = CommandRunnerFake()
 		control = SimulatorControl(commandRunner: commandRunner)
+	}
+
+	@Test func list() {
+		// then
+		control.list()
+
+		// then
+		// #expect(commandRunner.command == "xcrun")
 	}
 
 }

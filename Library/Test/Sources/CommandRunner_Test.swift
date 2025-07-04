@@ -1,3 +1,4 @@
+import BakeTestHelper
 import Testing
 
 @testable import Bake

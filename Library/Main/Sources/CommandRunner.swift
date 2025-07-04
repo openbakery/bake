@@ -6,7 +6,7 @@ open class CommandRunner {
 	}
 
 
-	func run(_ command: String, _ arguments: String..., process: Process = Process()) throws {
+	open func run(_ command: String, _ arguments: String..., process: Process = Process()) throws {
 		let command = Command(command: command, arguments: arguments)
 		try command.execute(process: process)
 	}

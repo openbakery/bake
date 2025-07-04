@@ -15,4 +15,8 @@ open class SimulatorControl: Target {
 	let commandRunner: CommandRunner
 
 
+	public func list() {
+	}
+
+
 }

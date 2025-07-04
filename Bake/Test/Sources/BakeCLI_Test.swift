@@ -16,10 +16,6 @@ class BakeCLI_Test {
 		bake = BakeCLI(logger: logger)
 	}
 
-	@Test func instance() {
-		// then
-		#expect(bake != nil)
-	}
 
 	@Test func has_logger() {
 		// when

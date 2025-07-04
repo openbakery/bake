@@ -36,9 +36,9 @@ let package = Package(
 				"Bake",
 				"OBCoder"
 			],
-			path: "Plugins/Main",
+			path: "Plugins",
 			sources: [
-				"Sources"
+				"Main/Sources"
 			]
 		),
 		.executableTarget(
@@ -47,13 +47,23 @@ let package = Package(
 				"BakePlugins",
 				.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
-			path: "Bake/Main",
+			path: "Bake",
 			sources: [
-				"Sources"
+				"Main/Sources"
 			]
 			// resources: [
 			// 	.process("Resources"),
 			// ]
+		),
+		.target(
+			name: "BakeTestHelper",
+			dependencies: [
+				"Bake"
+			],
+			path: "Library",
+			sources: [
+				"TestHelper/Sources"
+			]
 		),
 		.testTarget(
 			name: "BakeCLITest",
@@ -62,9 +72,9 @@ let package = Package(
 				.product(name: "Testing", package: "swift-testing"),
 				.product(name: "Hamcrest", package: "SwiftHamcrest")
 			],
-			path: "Bake/Test",
+			path: "Bake",
 			sources: [
-				"Sources"
+				"Test/Sources"
 			],
 			resources: [
 				.process("Resources")
@@ -74,23 +84,25 @@ let package = Package(
 			name: "BakeTest",
 			dependencies: [
 				"Bake",
+				"BakeTestHelper",
 				.product(name: "Testing", package: "swift-testing"),
 				.product(name: "Hamcrest", package: "SwiftHamcrest")
 			],
-			path: "Library/Test",
+			path: "Library",
 			sources: [
-				"Sources"
+				"Test/Sources"
 			]
 		),
 		.testTarget(
 			name: "BakePluginsTest",
 			dependencies: [
 				"Bake",
+				"BakeTestHelper",
 				.product(name: "Testing", package: "swift-testing")
 			],
-			path: "Plugins/Test",
+			path: "Plugins",
 			sources: [
-				"Sources"
+				"Test/Sources"
 			]
 		)
 	]

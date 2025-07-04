@@ -2,6 +2,7 @@
 //
 //
 
+import BakeTestHelper
 import Hamcrest
 import XCTest
 
