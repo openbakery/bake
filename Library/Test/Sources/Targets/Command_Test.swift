@@ -12,7 +12,7 @@ import Testing
 class Command_Test {
 
 	init() async throws {
-		HamcrestReporter.enable()
+		HamcrestSwiftTesting.enable()
 		process = ProcessFake()
 	}
 

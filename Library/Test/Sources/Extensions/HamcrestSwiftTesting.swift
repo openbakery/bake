@@ -5,7 +5,7 @@
 import Hamcrest
 import Testing
 
-class HamcrestReporter {
+class HamcrestSwiftTesting {
 
 	public static func enable() {
 		Hamcrest.SwiftTestingHamcrestReportFunction = { message, fileID, file, line, column in

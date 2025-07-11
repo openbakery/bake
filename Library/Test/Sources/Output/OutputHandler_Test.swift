@@ -1,10 +1,19 @@
+//
+// Created by René Pirringer
+//
+
+
 import Foundation
 import Hamcrest
-import XCTest
+import Testing
 
 @testable import Bake
 
-class OutputHandler_Test: XCTestCase {
+class OutputHandler_Test {
+
+	init() async throws {
+		HamcrestSwiftTesting.enable()
+	}
 
 	func test_instance() {
 		let handler = OutputHandler()
@@ -25,7 +34,7 @@ class OutputHandler_Test: XCTestCase {
 		let handler = OutputHandler()
 
 		// when
-		let data = try unwrap("Hello".data(using: .utf8))
+		let data = try #require(Data("Hello".utf8))
 		handler.handle(data: data)
 
 		// then
