@@ -32,4 +32,17 @@ class CommandRunner_Test {
 		#expect(process.arguments?.last == "Hello World")
 	}
 
+	@Test func run_command_with_arguments_array() throws {
+		// when
+		try commandRunner.run("echo", arguments: ["Hello World"], process: process)
+
+		// then
+		#expect(process.wasExecuted)
+		#expect(process.executableURL?.path == "/bin/bash")
+		#expect(process.arguments?.count == 3)
+		#expect(process.arguments?.first == "-c")
+		#expect(process.arguments?[1] == "echo")
+		#expect(process.arguments?.last == "Hello World")
+	}
+
 }
