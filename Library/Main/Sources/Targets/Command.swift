@@ -1,25 +1,25 @@
 //
 import Foundation
 
+
 public class Command: Target, CustomStringConvertible {
 
-	public convenience init(name: String, command: String, arguments: String..., outputHandler: OutputHandler = PrintOutputHandler()) {
-		self.init(name: name, command: command, arguments: arguments, outputHandler: outputHandler)
+	public convenience init(name: String, command: String, arguments: String...) {
+		self.init(name: name, command: command, arguments: arguments)
 	}
 
-	public convenience init(command: String, arguments: String..., outputHandler: OutputHandler = PrintOutputHandler()) {
-		self.init(name: command, command: command, arguments: arguments, outputHandler: outputHandler)
+	public convenience init(command: String, arguments: String...) {
+		self.init(name: command, command: command, arguments: arguments)
 	}
 
-	public convenience init(command: String, arguments: [String], outputHandler: OutputHandler = PrintOutputHandler()) {
-		self.init(name: command, command: command, arguments: arguments, outputHandler: outputHandler)
+	public convenience init(command: String, arguments: [String]) {
+		self.init(name: command, command: command, arguments: arguments)
 	}
 
-	public required init(name: String, command: String, arguments: [String], outputHandler: OutputHandler = PrintOutputHandler()) {
+	public required init(name: String, command: String, arguments: [String]) {
 		self.name = name
 		self.command = command
 		self.arguments = arguments
-		self.outputHandler = outputHandler
 	}
 
 	public required init(from decoder: Decoder) throws {
@@ -29,9 +29,7 @@ public class Command: Target, CustomStringConvertible {
 	public let name: String
 	public let command: String
 	public let arguments: [String]
-	let standardOutput = Pipe()
-	let standardError = Pipe()
-	public let outputHandler: OutputHandler
+	private var token: Any?
 
 
 	public enum CommandError: Error {
@@ -39,7 +37,11 @@ public class Command: Target, CustomStringConvertible {
 	}
 
 
-	func execute(process: Process = Process()) throws {
+	@MainActor
+	func execute(process: Process, outputHandler: OutputHandler = PrintOutputHandler()) throws {
+		let standardOutput = Pipe()
+		let standardError = Pipe()
+
 		process.executableURL = self.executableURL
 		process.arguments = processArguments
 		process.standardOutput = standardOutput
@@ -47,27 +49,40 @@ public class Command: Target, CustomStringConvertible {
 
 		try process.run()
 
-		Task {
-			for try await line in standardOutput.fileHandleForReading.bytes.lines {
-				if Task.isCancelled { break }
-				print(".")
-				outputHandler.process(line: line)
+		token = NotificationCenter.default.addObserver(forName: .NSFileHandleDataAvailable, object: nil, queue: OperationQueue.main) { note in
+			guard let handle = note.object as? FileHandle else { return }
+			guard handle === standardOutput.fileHandleForReading || handle == standardError.fileHandleForReading else { return }
+			defer { handle.waitForDataInBackgroundAndNotify() }
+			let data = handle.availableData
+			if let string = String(data: data, encoding: .utf8) {
+				for line in string.split(separator: "\n") {
+					outputHandler.process(line: String(line))
+				}
 			}
 		}
 
-		Task {
-			for try await line in standardError.fileHandleForReading.bytes.lines {
-				if Task.isCancelled { break }
-				outputHandler.process(line: line)
-			}
-		}
+		standardOutput.fileHandleForReading.waitForDataInBackgroundAndNotify()
+		standardError.fileHandleForReading.waitForDataInBackgroundAndNotify()
+
+		// for try await line in standardOutput.fileHandleForReading.bytes.lines {
+		// 	if Task.isCancelled { break }
+		// 	processLine(line)
+		// }
+
+		// for try await line in standardError.fileHandleForReading.bytes.lines {
+		// 	if Task.isCancelled { break }
+		// 	processLine(line)
+		// }
 
 		process.waitUntilExit()
+
 
 		if process.terminationStatus != 0 {
 			throw CommandError.failedExecution(terminationStatus: process.terminationStatus)
 		}
 	}
+
+
 
 
 	private var executableURL: URL {
@@ -102,4 +117,10 @@ public class Command: Target, CustomStringConvertible {
 		"Command: \"\(name)\""
 	}
 
+}
+
+extension OutputHandler {
+
+	func process(handler: FileHandle) {
+	}
 }

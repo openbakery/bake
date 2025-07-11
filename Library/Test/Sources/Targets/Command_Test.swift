@@ -9,7 +9,8 @@ import Testing
 
 @testable import Bake
 
-
+@MainActor
+@Suite(.serialized)
 class Command_Test {
 
 	init() async throws {
@@ -70,7 +71,7 @@ class Command_Test {
 		assertThat(command.arguments.last, presentAnd(equalTo("three")))
 	}
 
-	@Test func process_has_executable() throws {
+	@Test func process_has_executable() async throws {
 		let command = createCommand(command: "foobar")
 
 		// when
@@ -81,7 +82,7 @@ class Command_Test {
 	}
 
 
-	@Test func process_with_building_shell_command() throws {
+	@Test func process_with_building_shell_command() async throws {
 		let bashCommands = [
 			"alias", "bg", "bind", "break", "builtin", "caller", "case", "cd", "command", "compgen", "complete", "compopt", "continue", "coproc",
 			"declare", "dirs", "disown", "enable", "eval", "exec", "exit", "export", "false", "fc", "fg", "getopts", "hash", "help", "history",
@@ -102,7 +103,7 @@ class Command_Test {
 		}
 	}
 
-	@Test func process_hasargumentsFake() throws {
+	@Test func process_hasargumentsFake() async throws {
 		let command = createCommand(command: "foobar", arguments: "first", "second")
 
 		// when
@@ -114,7 +115,7 @@ class Command_Test {
 		assertThat(process.arguments?.last, presentAnd(equalTo("second")))
 	}
 
-	@Test func process_hasargumentsFake_for_bash_command() throws {
+	@Test func process_hasargumentsFake_for_bash_command() async throws {
 		let command = createCommand(command: "echo", arguments: "Hello World")
 
 		// when
@@ -133,7 +134,7 @@ class Command_Test {
 
 
 
-	@Test func process_was_executed() throws {
+	@Test func process_was_executed() async throws {
 		let command = createCommand(command: "foobar")
 
 		// when
@@ -141,24 +142,6 @@ class Command_Test {
 
 		// then
 		assertThat(process.wasExecuted, equalTo(true))
-	}
-
-	@Test func process_as_standardOutput_pipe() throws {
-		// given
-		let process = Process()
-		let command = createCommand(command: "/bin/echo", arguments: "Hello World")
-
-		// when
-		try command.execute(process: process)
-		process.waitUntilExit()
-
-		// then
-		assertThat(process.standardOutput, present())
-		assertThat(process.standardError, present())
-
-		let data = command.standardOutput.fileHandleForReading.availableData
-		assertThat(data, present())
-		assertThat(data.utf8String, presentAnd(equalTo("Hello World\n")))
 	}
 
 	@Test func has_proper_description() {
@@ -169,48 +152,36 @@ class Command_Test {
 		assertThat(command.description, presentAnd(equalTo("Command: \"Foo\"")))
 	}
 
-	@Test func default_outputHandler_is_PrintOutputHandler() {
-		let command = Command(name: "Foo", command: "bar", arguments: "first")
 
-		// then
-		assertThat(command.outputHandler, instanceOf(PrintOutputHandler.self))
-	}
-
-	@Test func default_outputHandler_is_PrintOutputHandler_2() {
-		let command = Command(command: "bar", arguments: "first")
-
-		// then
-		assertThat(command.outputHandler, instanceOf(PrintOutputHandler.self))
-	}
-
-	@Test(.disabled("only works if it is execute alone"))
+	@Test
 	func standardOutput_is_passed_to_outputHandler() async throws {
 		let outputHandler = TestOutputHandler()
 		let process = Process()
-		let command = Command(command: "/bin/ls", arguments: "-la", outputHandler: outputHandler)
+		let command = Command(command: "/bin/echo", arguments: "Hello World")
 
 		// when
 		await Confirmation.wait { outputHandler.lines.count > 0 } actionClosure: {
 			do {
-				try command.execute(process: process)
+				try command.execute(process: process, outputHandler: outputHandler)
 			} catch {
 			}
 		}
 
 		// then
 		assertThat(outputHandler.lines, hasCount(1))
+		assertThat(outputHandler.lines.first, presentAnd(equalTo("Hello World")))
 	}
 
-	@Test(.disabled("only works if it is execute alone"))
+	@Test
 	func standardError_is_passed_to_outputHandler() async throws {
 		let outputHandler = TestOutputHandler()
 		let process = Process()
-		let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd", outputHandler: outputHandler)
+		let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
 
 		// when
 		await Confirmation.wait { outputHandler.lines.count > 0 } actionClosure: {
 			do {
-				try command.execute(process: process)
+				try command.execute(process: process, outputHandler: outputHandler)
 			} catch {
 			}
 		}
@@ -219,7 +190,7 @@ class Command_Test {
 		assertThat(outputHandler.lines, hasCount(1))
 	}
 
-	@Test func throw_exception_when_command_failed() {
+	@Test func throw_exception_when_command_failed() async {
 		let process = ProcessFake()
 		process.customTerminationStatus = 123
 		let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")

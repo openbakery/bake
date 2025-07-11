@@ -10,6 +10,7 @@ class TargetManager: Decodable {
 
 	let logger: Logger
 
+	@MainActor
 	init(logger: Logger) {
 		self.logger = logger
 		let commandRunner = CommandRunner()
@@ -39,10 +40,12 @@ class TargetManager: Decodable {
 @main
 struct BakeCLI: ParsableCommand {
 
+	@MainActor
 	public init() {
 		self.init(logger: Logger())
 	}
 
+	@MainActor
 	public init(logger: Logger) {
 		self.logger = logger
 		self.targets = TargetManager(logger: logger)

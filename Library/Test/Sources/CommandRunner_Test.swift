@@ -3,6 +3,7 @@ import Testing
 
 @testable import Bake
 
+@MainActor
 class CommandRunner_Test {
 
 	init() async throws {

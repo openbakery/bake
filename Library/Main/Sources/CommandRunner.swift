@@ -1,5 +1,6 @@
 import Foundation
 
+@MainActor
 open class CommandRunner {
 
 	public init() {

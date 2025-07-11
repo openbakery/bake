@@ -6,6 +6,7 @@ import Testing
 
 @testable import BakeCLI
 
+@MainActor
 class BakeCLI_Test {
 
 	let logger: LoggerFake
@@ -17,13 +18,6 @@ class BakeCLI_Test {
 	}
 
 
-	@Test func has_logger() {
-		// when
-		let bake = BakeCLI()
-
-		// then
-		#expect(bake.logger != nil)
-	}
 
 	@Test func print_usage_when_run_without_parameters() throws {
 		// given
