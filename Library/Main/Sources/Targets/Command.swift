@@ -50,6 +50,7 @@ public class Command: Target, CustomStringConvertible {
 		Task {
 			for try await line in standardOutput.fileHandleForReading.bytes.lines {
 				if Task.isCancelled { break }
+				print(".")
 				outputHandler.process(line: line)
 			}
 		}
@@ -63,9 +64,9 @@ public class Command: Target, CustomStringConvertible {
 
 		process.waitUntilExit()
 
-		 if process.terminationStatus != 0 {
-		 	throw CommandError.failedExecution(terminationStatus: process.terminationStatus)
-		 }
+		if process.terminationStatus != 0 {
+			throw CommandError.failedExecution(terminationStatus: process.terminationStatus)
+		}
 	}
 
 
