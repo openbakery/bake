@@ -9,6 +9,7 @@ import Testing
 
 @testable import Bake
 
+
 class Command_Test {
 
 	init() async throws {
@@ -168,6 +169,71 @@ class Command_Test {
 		assertThat(command.description, presentAnd(equalTo("Command: \"Foo\"")))
 	}
 
+	@Test func default_outputHandler_is_PrintOutputHandler() {
+		let command = Command(name: "Foo", command: "bar", arguments: "first")
 
+		// then
+		assertThat(command.outputHandler, instanceOf(PrintOutputHandler.self))
+	}
 
+	@Test func default_outputHandler_is_PrintOutputHandler_2() {
+		let command = Command(command: "bar", arguments: "first")
+
+		// then
+		assertThat(command.outputHandler, instanceOf(PrintOutputHandler.self))
+	}
+
+	@Test(.disabled("only works if it is execute alone"))
+	func standardOutput_is_passed_to_outputHandler() async throws {
+		let outputHandler = TestOutputHandler()
+		let process = Process()
+		let command = Command(command: "/bin/ls", arguments: "-la", outputHandler: outputHandler)
+
+		// when
+		await Confirmation.wait { outputHandler.lines.count > 0 } actionClosure: {
+			do {
+				try command.execute(process: process)
+			} catch {
+			}
+		}
+
+		// then
+		assertThat(outputHandler.lines, hasCount(1))
+	}
+
+	@Test(.disabled("only works if it is execute alone"))
+	func standardError_is_passed_to_outputHandler() async throws {
+		let outputHandler = TestOutputHandler()
+		let process = Process()
+		let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd", outputHandler: outputHandler)
+
+		// when
+		await Confirmation.wait { outputHandler.lines.count > 0 } actionClosure: {
+			do {
+				try command.execute(process: process)
+			} catch {
+			}
+		}
+
+		// then
+		assertThat(outputHandler.lines, hasCount(1))
+	}
+
+	@Test func throw_exception_when_command_failed() {
+		let process = ProcessFake()
+		process.customTerminationStatus = 123
+		let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
+
+		// when
+		let error = #expect(throws: Command.CommandError.self) {
+			try command.execute(process: process)
+		}
+
+		if case .failedExecution(let terminationStatus) = error {
+				assertThat(terminationStatus, equalTo(123))
+		} else {
+			Issue.record("expected failedExecution")
+		}
+
+	}
 }

@@ -3,45 +3,69 @@ import Foundation
 
 public class Command: Target, CustomStringConvertible {
 
-	public let name: String
-	public let command: String
-	public let arguments: [String]
-	let standardOutput = Pipe()
-	// public let outputHandler: OutputHandler
-
-	public convenience init(name: String, command: String, arguments: String...) {
-		self.init(name: name, command: command, arguments: arguments)
+	public convenience init(name: String, command: String, arguments: String..., outputHandler: OutputHandler = PrintOutputHandler()) {
+		self.init(name: name, command: command, arguments: arguments, outputHandler: outputHandler)
 	}
 
-	public convenience init(command: String, arguments: String...) {
-		self.init(name: command, command: command, arguments: arguments)
+	public convenience init(command: String, arguments: String..., outputHandler: OutputHandler = PrintOutputHandler()) {
+		self.init(name: command, command: command, arguments: arguments, outputHandler: outputHandler)
 	}
 
-	public convenience init(command: String, arguments: [String]) {
-		self.init(name: command, command: command, arguments: arguments)
+	public convenience init(command: String, arguments: [String], outputHandler: OutputHandler = PrintOutputHandler()) {
+		self.init(name: command, command: command, arguments: arguments, outputHandler: outputHandler)
 	}
 
-	public required init(name: String, command: String, arguments: [String]) {
+	public required init(name: String, command: String, arguments: [String], outputHandler: OutputHandler = PrintOutputHandler()) {
 		self.name = name
 		self.command = command
 		self.arguments = arguments
+		self.outputHandler = outputHandler
 	}
 
 	public required init(from decoder: Decoder) throws {
 		fatalError("not implemented")
 	}
 
-	public func execute() throws {
-		try execute(process: Process())
+	public let name: String
+	public let command: String
+	public let arguments: [String]
+	let standardOutput = Pipe()
+	let standardError = Pipe()
+	public let outputHandler: OutputHandler
+
+
+	public enum CommandError: Error {
+		case failedExecution(terminationStatus: Int32)
 	}
 
-	func execute(process: Process) throws {
+
+	func execute(process: Process = Process()) throws {
 		process.executableURL = self.executableURL
 		process.arguments = processArguments
-		let standardError = Pipe()
 		process.standardOutput = standardOutput
 		process.standardError = standardError
+
 		try process.run()
+
+		Task {
+			for try await line in standardOutput.fileHandleForReading.bytes.lines {
+				if Task.isCancelled { break }
+				outputHandler.process(line: line)
+			}
+		}
+
+		Task {
+			for try await line in standardError.fileHandleForReading.bytes.lines {
+				if Task.isCancelled { break }
+				outputHandler.process(line: line)
+			}
+		}
+
+		process.waitUntilExit()
+
+		 if process.terminationStatus != 0 {
+		 	throw CommandError.failedExecution(terminationStatus: process.terminationStatus)
+		 }
 	}
 
 

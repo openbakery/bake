@@ -1,6 +1,5 @@
+import Bake
 import Foundation
-
-@testable import Bake
 
 open class ProcessFake: Process, @unchecked Sendable {
 
@@ -63,5 +62,13 @@ open class ProcessFake: Process, @unchecked Sendable {
 		}
 		set {
 		}
+	}
+
+	open var customTerminationStatus: Int32?
+	override open var terminationStatus: Int32 {
+		customTerminationStatus ?? 0
+	}
+
+	override open func waitUntilExit() {
 	}
 }

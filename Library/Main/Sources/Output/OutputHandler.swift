@@ -3,19 +3,8 @@
 import Foundation
 import OBCoder
 
-class OutputHandler {
+public protocol OutputHandler {
 
-	var data: Data?
+	func process(line: String)
 
-	var hasData: Bool {
-		if let data = self.data {
-			return data.count > 0
-		}
-		return false
-	}
-
-
-	func handle(data: Data) {
-		self.data = data
-	}
 }

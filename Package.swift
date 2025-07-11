@@ -5,7 +5,7 @@ let package = Package(
 	name: "Bake",
 
 	platforms: [
-		.macOS(.v10_15)
+		.macOS(.v12)
 	],
 	products: [
 		.library(name: "Bake", type: .dynamic, targets: ["Bake"]),
