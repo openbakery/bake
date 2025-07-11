@@ -13,10 +13,10 @@ let package = Package(
 		.executable(name: "BakeCLI", targets: ["BakeCLI"])
 	],
 	dependencies: [
-		.package(url: "https://github.com/nschum/SwiftHamcrest/", .upToNextMajor(from: "2.3.0")),
+		.package(url: "https://github.com/nschum/SwiftHamcrest/", branch: "master"),
 		.package(url: "https://github.com/openbakery/OBCoder/", branch: "main"),
 		.package(url: "https://github.com/apple/swift-argument-parser", .upToNextMajor(from: "1.0.0")),
-		.package(url: "https://github.com/swiftlang/swift-testing", revision: "18c42c19cac3fafd61cab1156d4088664b7424ae")
+		.package(url: "https://github.com/swiftlang/swift-testing", .revision("32cf2c500cbc1b45bd4b4803a2a108995f2d31e6"))  // is version 6.1.1 but the hash is used to allow the dependency when marked unsafe
 	],
 	targets: [
 		.target(

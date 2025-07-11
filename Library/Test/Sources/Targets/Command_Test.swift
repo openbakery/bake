@@ -3,45 +3,41 @@
 //
 
 import BakeTestHelper
+import Foundation
 import Hamcrest
-import XCTest
+import Testing
 
 @testable import Bake
 
-class Command_Test: XCTestCase {
+class Command_Test {
 
-	var process: ProcessFake!
-
-	override func setUp() {
-		super.setUp()
+	init() async throws {
+		HamcrestReporter.enable()
 		process = ProcessFake()
 	}
 
-	override func tearDown() {
-		process = nil
-		super.tearDown()
-	}
+	let process: ProcessFake
 
 
 	func createCommand(name: String = "one", command: String = "two", arguments: String...) -> Command {
 		return Command(name: name, command: command, arguments: arguments)
 	}
 
-	func test_command_has_proper_name() {
+	@Test func command_has_proper_name() {
 		let command = createCommand(name: "one")
 
 		// then
 		assertThat(command.name, equalTo("one"))
 	}
 
-	func test_command_name_is_command_when_name_was_not_specified() {
+	@Test func command_name_is_command_when_name_was_not_specified() {
 		let command = Command(command: "echo")
 
 		// then
 		assertThat(command.name, equalTo("echo"))
 	}
 
-	func test_command_has_command() {
+	@Test func command_has_command() {
 		let command = createCommand(command: "one")
 
 		// then
@@ -49,14 +45,14 @@ class Command_Test: XCTestCase {
 	}
 
 
-	func test_command_arguments_are_optional() {
+	@Test func command_arguments_are_optional() {
 		let command = Command(command: "pwd")
 
 		// then
 		assertThat(command.arguments.count, equalTo(0))
 	}
 
-	func test_command_has_oneargumentsFake() {
+	@Test func command_has_oneargumentsFake() {
 		let command = createCommand(arguments: "one")
 
 		// then
@@ -64,7 +60,7 @@ class Command_Test: XCTestCase {
 		assertThat(command.arguments.first, presentAnd(equalTo("one")))
 	}
 
-	func test_command_has_multipleargumentsFake() {
+	@Test func command_has_multipleargumentsFake() {
 		let command = createCommand(arguments: "one", "two", "three")
 
 		// then
@@ -73,7 +69,7 @@ class Command_Test: XCTestCase {
 		assertThat(command.arguments.last, presentAnd(equalTo("three")))
 	}
 
-	func test_process_has_executable() throws {
+	@Test func process_has_executable() throws {
 		let command = createCommand(command: "foobar")
 
 		// when
@@ -84,7 +80,7 @@ class Command_Test: XCTestCase {
 	}
 
 
-	func test_process_with_building_shell_command() throws {
+	@Test func process_with_building_shell_command() throws {
 		let bashCommands = [
 			"alias", "bg", "bind", "break", "builtin", "caller", "case", "cd", "command", "compgen", "complete", "compopt", "continue", "coproc",
 			"declare", "dirs", "disown", "enable", "eval", "exec", "exit", "export", "false", "fc", "fg", "getopts", "hash", "help", "history",
@@ -105,7 +101,7 @@ class Command_Test: XCTestCase {
 		}
 	}
 
-	func test_process_hasargumentsFake() throws {
+	@Test func process_hasargumentsFake() throws {
 		let command = createCommand(command: "foobar", arguments: "first", "second")
 
 		// when
@@ -117,14 +113,14 @@ class Command_Test: XCTestCase {
 		assertThat(process.arguments?.last, presentAnd(equalTo("second")))
 	}
 
-	func test_process_hasargumentsFake_for_bash_command() throws {
+	@Test func process_hasargumentsFake_for_bash_command() throws {
 		let command = createCommand(command: "echo", arguments: "Hello World")
 
 		// when
 		try command.execute(process: process)
 
 		// then
-		let arguments = try unwrap(process.arguments)
+		let arguments = try #require(process.arguments)
 		assertThat(arguments, presentAnd(hasCount(3)))
 		if arguments.count != 3 {
 			return
@@ -136,7 +132,7 @@ class Command_Test: XCTestCase {
 
 
 
-	func test_process_was_executed() throws {
+	@Test func process_was_executed() throws {
 		let command = createCommand(command: "foobar")
 
 		// when
@@ -146,7 +142,7 @@ class Command_Test: XCTestCase {
 		assertThat(process.wasExecuted, equalTo(true))
 	}
 
-	func test_process_as_standardOutput_pipe() throws {
+	@Test func process_as_standardOutput_pipe() throws {
 		// given
 		let process = Process()
 		let command = createCommand(command: "/bin/echo", arguments: "Hello World")
@@ -164,13 +160,14 @@ class Command_Test: XCTestCase {
 		assertThat(data.utf8String, presentAnd(equalTo("Hello World\n")))
 	}
 
-	func test_has_proper_description() {
+	@Test func has_proper_description() {
 		let command = Command(name: "Foo", command: "bar", arguments: "first")
 
 		// then
 		assertThat(command, instanceOf(CustomStringConvertible.self))
 		assertThat(command.description, presentAnd(equalTo("Command: \"Foo\"")))
 	}
+
 
 
 }

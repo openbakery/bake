@@ -7,6 +7,7 @@ public class Command: Target, CustomStringConvertible {
 	public let command: String
 	public let arguments: [String]
 	let standardOutput = Pipe()
+	// public let outputHandler: OutputHandler
 
 	public convenience init(name: String, command: String, arguments: String...) {
 		self.init(name: name, command: command, arguments: arguments)
@@ -42,6 +43,7 @@ public class Command: Target, CustomStringConvertible {
 		process.standardError = standardError
 		try process.run()
 	}
+
 
 	private var executableURL: URL {
 		if isBashCommand {
