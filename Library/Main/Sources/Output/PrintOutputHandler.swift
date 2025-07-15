@@ -3,12 +3,12 @@
 //
 
 
-open class PrintOutputHandler: OutputHandler {
+struct PrintOutputHandler: OutputHandler, Sendable {
 
 	public init() {
 	}
 
-	open func process(line: String) {
+	func process(line: String) {
 		print(line)
 	}
 

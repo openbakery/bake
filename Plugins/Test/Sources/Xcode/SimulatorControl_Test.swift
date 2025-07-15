@@ -10,7 +10,7 @@ struct SimulatorControl_Test {
 	let commandRunner: CommandRunnerFake
 
 	init() async throws {
-		commandRunner = CommandRunnerFake()
+		await commandRunner = CommandRunnerFake()
 		control = SimulatorControl(commandRunner: commandRunner)
 	}
 
