@@ -1,4 +1,5 @@
 {
+  "originHash" : "5c1a1c126060ee8cad61c947b99643a65ba562a341e6fb8271d78d4b1de95845",
   "pins" : [
     {
       "identity" : "obcoder",
@@ -7,6 +8,15 @@
       "state" : {
         "branch" : "main",
         "revision" : "e64eadf3725402529b4bb3cfa886c92830823395"
+      }
+    },
+    {
+      "identity" : "obextra",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/openbakery/OBExtra/",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c153b69ed0e0aeab7a6f618bc8d34c6ebed343c4"
       }
     },
     {
@@ -24,9 +34,9 @@
       "location" : "https://github.com/nschum/SwiftHamcrest/",
       "state" : {
         "branch" : "no-macro",
-        "revision" : "4b17ee13814dbe5600ca2f9aff0bf03459ace46a"
+        "revision" : "15b64b12384ed7a64a4ed6972a91d2ad9c4b6796"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

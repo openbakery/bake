@@ -1,17 +1,16 @@
 import Foundation
 
-@MainActor
 open class CommandRunner {
 
 	public init() {
 	}
 
-	open func run(_ command: String, arguments: [String], process: Process = Process()) throws {
+	open func run(_ command: String, arguments: [String], process: Process = Process()) async throws {
 		let command = Command(command: command, arguments: arguments)
-		try command.execute(process: process)
+		try await command.execute(process: process)
 	}
 
-	open func run(_ command: String, _ arguments: String..., process: Process = Process()) throws {
-		try run(command, arguments: arguments, process: process)
+	open func run(_ command: String, _ arguments: String..., process: Process = Process()) async throws {
+		try await run(command, arguments: arguments, process: process)
 	}
 }

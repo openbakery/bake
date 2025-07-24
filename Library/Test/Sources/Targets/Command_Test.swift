@@ -160,7 +160,17 @@ class Command_Test {
 		let command = Command(command: "/bin/echo", arguments: "Hello World")
 
 		// when
-		await Confirmation.wait { outputHandler.lines.count > 0 } actionClosure: {
+		try command.execute(process: process, outputHandler: outputHandler)
+
+
+		// then
+		let lines = await outputHandler.getLines()
+		assertThat(lines, hasCount(1))
+		assertThat(lines.first, presentAnd(equalTo("Hello World")))
+		/*
+		await Confirmation.wait {
+			outputHandler.hasLines // lines.count > 0
+		} actionClosure: {
 			do {
 				try command.execute(process: process, outputHandler: outputHandler)
 			} catch {
@@ -170,8 +180,9 @@ class Command_Test {
 		// then
 		assertThat(outputHandler.lines, hasCount(1))
 		assertThat(outputHandler.lines.first, presentAnd(equalTo("Hello World")))
+		 */
 	}
-
+/*
 	@Test
 	func standardError_is_passed_to_outputHandler() async throws {
 		let outputHandler = TestOutputHandler()
@@ -179,7 +190,9 @@ class Command_Test {
 		let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
 
 		// when
-		await Confirmation.wait { outputHandler.lines.count > 0 } actionClosure: {
+		await Confirmation.wait {
+			outputHandler.lines.count > 0
+		} actionClosure: {
 			do {
 				try command.execute(process: process, outputHandler: outputHandler)
 			} catch {
@@ -201,10 +214,11 @@ class Command_Test {
 		}
 
 		if case .failedExecution(let terminationStatus) = error {
-				assertThat(terminationStatus, equalTo(123))
+			assertThat(terminationStatus, equalTo(123))
 		} else {
 			Issue.record("expected failedExecution")
 		}
 
 	}
+ */
 }

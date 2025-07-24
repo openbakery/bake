@@ -1,6 +1,7 @@
 import ArgumentParser
 import Bake
 import BakePlugins
+import BakeTestHelper
 import Hamcrest
 import Testing
 
@@ -9,17 +10,17 @@ import Testing
 @MainActor
 class BakeCLI_Test {
 
-	let logger: LoggerFake
+	let output: TestOutputHandler
 	var bake: BakeCLI
 
 	init() async throws {
-		logger = LoggerFake()
-		bake = BakeCLI(logger: logger)
+		output = TestOutputHandler()
+		bake = BakeCLI(outputHandler: output)
 	}
 
 
 
-	@Test func print_usage_when_run_without_parameters() throws {
+	@Test func print_usage_when_run_without_parameters() async throws {
 		// given
 		bake.target = ""
 
@@ -27,11 +28,12 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// then
-		#expect(logger.messages.first == "Usage: bake target [options]")
+		let first = await output.lines.first
+		#expect(first == "Usage: bake target [options]")
 	}
 
 
-	@Test func has_build_target() throws {
+	@Test func has_build_target() async throws {
 		// given
 		bake.target = "build"
 
@@ -39,10 +41,11 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// the
-		#expect(logger.messages.first != "Usage: bake [options] target")
+		let first = await output.lines.first
+		#expect(first != "Usage: bake [options] target")
 	}
 
-	@Test func execute_unknown_command_prints_usage() throws {
+	@Test func execute_unknown_command_prints_usage() async throws {
 		// given
 		bake.target = "foobar"
 
@@ -50,13 +53,13 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// the
-		var iterator = logger.messages.makeIterator()
+		var iterator = await output.lines.makeIterator()
 		#expect(iterator.next() == "Target not found \"foobar\"")
 		#expect(iterator.next() == "")
 		#expect(iterator.next() == "Usage: bake target [options]")
 	}
 
-	@Test func execute_present_target() throws {
+	@Test func execute_present_target() async throws {
 		let target = Command(name: "foo", command: "")
 		bake.targets.append(target)
 		bake.target = "foo"
@@ -65,11 +68,11 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// then
-		var iterator = logger.messages.makeIterator()
+		var iterator = await output.lines.makeIterator()
 		#expect(iterator.next() == "Executing target \"foo\"")
 	}
 
-	@Test func when_multiple_targets_then_execute_target_with_proper_name() throws {
+	@Test func when_multiple_targets_then_execute_target_with_proper_name() async throws {
 		bake.targets.append(Command(name: "foo", command: ""))
 		bake.targets.append(Command(name: "bar", command: ""))
 		bake.target = "bar"
@@ -78,7 +81,7 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// then
-		var iterator = logger.messages.makeIterator()
+		var iterator = await output.lines.makeIterator()
 		#expect(iterator.next() == "Executing target \"bar\"")
 	}
 

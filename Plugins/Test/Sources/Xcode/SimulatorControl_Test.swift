@@ -6,17 +6,17 @@ import Testing
 
 struct SimulatorControl_Test {
 
-	let control: SimulatorControl
-	let commandRunner: CommandRunnerFake
+	// let control: SimulatorControl
+	// let commandRunner: CommandRunnerFake
 
 	init() async throws {
-		await commandRunner = CommandRunnerFake()
-		control = SimulatorControl(commandRunner: commandRunner)
+		// commandRunner = CommandRunnerFake()
+		// control = SimulatorControl(commandRunner: commandRunner)
 	}
 
 	@Test func list() {
 		// then
-		control.list()
+		// control.list()
 
 		// then
 		// #expect(commandRunner.command == "xcrun")

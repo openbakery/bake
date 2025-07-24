@@ -4,7 +4,7 @@
 
 import Bake
 
-open class TestOutputHandler: OutputHandler {
+public actor TestOutputHandler: OutputHandler {
 
 	public init() {
 	}
@@ -15,9 +15,13 @@ open class TestOutputHandler: OutputHandler {
 
 	public var lines = [String]()
 
-	open func process(line: String) {
+	public func process(line: String) async {
 		lines.append(line)
 		closure?(line)
+	}
+
+	public func getLines() -> [String] {
+		return lines
 	}
 
 }

@@ -3,7 +3,6 @@ import Testing
 
 @testable import Bake
 
-@MainActor
 class CommandRunner_Test {
 
 	init() async throws {
@@ -20,9 +19,9 @@ class CommandRunner_Test {
 	// }
 
 
-	@Test func run_command() throws {
+	@Test func run_command() async throws {
 		// when
-		try commandRunner.run("echo", "Hello World", process: process)
+		try await commandRunner.run("echo", "Hello World", process: process)
 
 		// then
 		#expect(process.wasExecuted)
@@ -33,9 +32,9 @@ class CommandRunner_Test {
 		#expect(process.arguments?.last == "Hello World")
 	}
 
-	@Test func run_command_with_arguments_array() throws {
+	@Test func run_command_with_arguments_array() async throws {
 		// when
-		try commandRunner.run("echo", arguments: ["Hello World"], process: process)
+		try await commandRunner.run("echo", arguments: ["Hello World"], process: process)
 
 		// then
 		#expect(process.wasExecuted)

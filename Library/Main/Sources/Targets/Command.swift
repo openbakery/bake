@@ -1,7 +1,6 @@
 //
 import Foundation
 
-
 public class Command: Target, CustomStringConvertible {
 
 	public convenience init(name: String, command: String, arguments: String...) {
@@ -55,8 +54,10 @@ public class Command: Target, CustomStringConvertible {
 			defer { handle.waitForDataInBackgroundAndNotify() }
 			let data = handle.availableData
 			if let string = String(data: data, encoding: .utf8) {
-				for line in string.split(separator: "\n") {
-					outputHandler.process(line: String(line))
+				Task {
+					for line in string.split(separator: "\n") {
+						await outputHandler.process(line: String(line))
+					}
 				}
 			}
 		}
@@ -81,7 +82,6 @@ public class Command: Target, CustomStringConvertible {
 			throw CommandError.failedExecution(terminationStatus: process.terminationStatus)
 		}
 	}
-
 
 
 

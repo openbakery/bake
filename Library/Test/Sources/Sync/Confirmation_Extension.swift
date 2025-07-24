@@ -9,13 +9,14 @@ import Testing
 public extension Confirmation {
 
 
-	static func waitForValue<T>(source: T, timeout: Double = 5, confirmation: (Testing.Confirmation), fulfillmentClosure: @escaping (T) -> Bool) -> _Concurrency.Task<Bool, Never> {
+	static func waitForValue<T: Sendable>(source: T, timeout: Double = 5, confirmation: (Testing.Confirmation), fulfillmentClosure: @escaping @Sendable (T) -> Bool) -> _Concurrency.Task<Bool, Never> {
 		let timeoutInMilliseconds = UInt64(timeout * 1000)
 		let intervalInMilliseconds = UInt64(50)
 
-		return _Concurrency.Task {
+		return Task { @MainActor in
 			var millisecondsPassed = UInt64(0)
 			while millisecondsPassed < timeoutInMilliseconds {
+
 				if fulfillmentClosure(source) {
 					confirmation()
 					return true
@@ -43,13 +44,13 @@ public extension Confirmation {
 		return await task.result
 	}
 
-	static func waitForValue(timeout: Double = 10, confirmation: (Testing.Confirmation), fulfillmentClosure: @escaping () -> Bool) -> _Concurrency.Task<Bool, Never> {
+	static func waitForValue(timeout: Double = 10, confirmation: (Testing.Confirmation), fulfillmentClosure: @escaping @Sendable () -> Bool) -> _Concurrency.Task<Bool, Never> {
 		self.waitForValue(source: "", timeout: timeout, confirmation: confirmation) { _ in
 			fulfillmentClosure()
 		}
 	}
 
-	static func wait(fulfillmentClosure: @escaping () -> Bool) async {
+	static func wait(fulfillmentClosure: @escaping @Sendable () -> Bool) async {
 		if fulfillmentClosure() {
 			return
 		}
@@ -59,7 +60,7 @@ public extension Confirmation {
 		}
 	}
 
-	static func wait<T>(_ source: T, fulfillmentClosure: @escaping (T) -> Bool) async {
+	static func wait<T: Sendable>(_ source: T, fulfillmentClosure: @escaping @Sendable (T) -> Bool) async {
 		if fulfillmentClosure(source) {
 			return
 		}
@@ -69,7 +70,7 @@ public extension Confirmation {
 		}
 	}
 
-	static func wait<T>(source: T, fulfillmentClosure: @escaping (T) -> Bool) async {
+	static func wait<T: Sendable>(source: T, fulfillmentClosure: @escaping @Sendable (T) -> Bool) async {
 		if fulfillmentClosure(source) {
 			return
 		}
@@ -79,7 +80,7 @@ public extension Confirmation {
 		}
 	}
 
-	static func wait<T, S>(fulfillmentSource: T, actionSource: S, fulfillmentClosure: @escaping (T) -> Bool, actionClosure: @escaping (S) -> Void) async {
+	static func wait<T: Sendable, S>(fulfillmentSource: T, actionSource: S, fulfillmentClosure: @escaping @Sendable (T) -> Bool, actionClosure: @escaping (S) -> Void) async {
 		if fulfillmentClosure(fulfillmentSource) {
 			return
 		}
@@ -90,7 +91,7 @@ public extension Confirmation {
 		}
 	}
 
-	static func wait(fulfillmentClosure: @escaping () -> Bool, actionClosure: @escaping () -> Void) async {
+	static func wait(fulfillmentClosure: @escaping @Sendable () -> Bool, actionClosure: @escaping () -> Void) async {
 		if fulfillmentClosure() {
 			return
 		}
@@ -101,4 +102,3 @@ public extension Confirmation {
 		}
 	}
 }
-

@@ -3,16 +3,31 @@
 //
 
 import Foundation
+import OBExtra
 
 public struct XcodePath {
 
 	init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) {
-		self.baseUrl = base
+		self.baseDirectory = base
 	}
 
-	let baseUrl: URL
+	let baseDirectory: URL
+	var buildDirectory: URL { baseDirectory.appendingPathComponent("build") }
+	var symbolDirectory: URL { buildDirectory.appendingPathComponent("sym") }
+	var destinationDirectory: URL { buildDirectory.appendingPathComponent("dst") }
+	var objectDirectory: URL { buildDirectory.appendingPathComponent("obj") }
+	var sharedPrecompiledHeadersDirectory: URL { buildDirectory.appendingPathComponent("shared") }
 
+	public func prepare() {
+		do {
+			try symbolDirectory.createDirectories()
+			try destinationDirectory.createDirectories()
+			try objectDirectory.createDirectories()
+			try sharedPrecompiledHeadersDirectory.createDirectories()
+		} catch {
+		}
 
+	}
 }
 
 /*

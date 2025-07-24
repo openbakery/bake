@@ -3,12 +3,12 @@
 //
 
 
-struct PrintOutputHandler: OutputHandler, Sendable {
+public actor PrintOutputHandler: OutputHandler {
 
 	public init() {
 	}
 
-	func process(line: String) {
+	nonisolated public func process(line: String) {
 		print(line)
 	}
 

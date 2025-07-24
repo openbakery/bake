@@ -8,15 +8,13 @@ class TargetManager: Decodable {
 
 	var targets = [any Target]()
 
-	let logger: Logger
+	let output: OutputHandler
 
-	@MainActor
-	init(logger: Logger) {
-		self.logger = logger
+	init(outputHandler: OutputHandler) {
+		self.output = outputHandler
 		let commandRunner = CommandRunner()
 		self.append(SimulatorControl(commandRunner: commandRunner))
 	}
-
 	required init(from: any Decoder) throws {
 		fatalError("init with Decoder is not implemented")
 	}
@@ -28,7 +26,7 @@ class TargetManager: Decodable {
 
 	func executeTarget(name: String) -> Bool {
 		for target in targets where target.name == name {
-			logger.message("Executing target \"\(target.name)\"")
+			output.message("Executing target \"\(target.name)\"")
 			return true
 		}
 		return false
@@ -40,25 +38,27 @@ class TargetManager: Decodable {
 @main
 struct BakeCLI: ParsableCommand {
 
-	@MainActor
 	public init() {
-		self.init(logger: Logger())
+		self.init(outputHandler: PrintOutputHandler())
 	}
 
-	@MainActor
-	public init(logger: Logger) {
-		self.logger = logger
-		self.targets = TargetManager(logger: logger)
+
+	public init(outputHandler: OutputHandler) {
+		self.output = outputHandler
+		self.targets = TargetManager(outputHandler: outputHandler)
 	}
 
+	public init(from: any Decoder) throws {
+		fatalError("init with Decoder is not implemented")
+	}
 
 	@Argument(help: "The target to run")
 	var target: String
-	let logger: Logger
+	let output: OutputHandler
 
 	let targets: TargetManager
 
-	mutating func run() throws {
+	func run() throws {
 		if executeTarget() {
 			return
 		}
@@ -79,10 +79,10 @@ struct BakeCLI: ParsableCommand {
 
 	private func printUsage() {
 		if target.count > 0 {
-			logger.message("Target not found \"\(target)\"")
-			logger.message("")
+			output.message("Target not found \"\(target)\"")
+			output.message("")
 		}
-		logger.message("Usage: bake target [options]")
+		output.message("Usage: bake target [options]")
 	}
 
 }

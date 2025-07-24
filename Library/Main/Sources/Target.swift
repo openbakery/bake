@@ -1,5 +1,5 @@
 //
 
-public protocol Target: Decodable {
-    var name: String { get }
+public protocol Target {
+	var name: String { get }
 }
