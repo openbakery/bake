@@ -41,7 +41,7 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// the
-		let first = await output.lines.first
+		let first = output.lines.first
 		#expect(first != "Usage: bake [options] target")
 	}
 
@@ -53,7 +53,7 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// the
-		var iterator = await output.lines.makeIterator()
+		var iterator = output.lines.makeIterator()
 		#expect(iterator.next() == "Target not found \"foobar\"")
 		#expect(iterator.next() == "")
 		#expect(iterator.next() == "Usage: bake target [options]")
@@ -68,7 +68,7 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// then
-		var iterator = await output.lines.makeIterator()
+		var iterator = output.lines.makeIterator()
 		#expect(iterator.next() == "Executing target \"foo\"")
 	}
 
@@ -81,7 +81,7 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// then
-		var iterator = await output.lines.makeIterator()
+		var iterator = output.lines.makeIterator()
 		#expect(iterator.next() == "Executing target \"bar\"")
 	}
 
