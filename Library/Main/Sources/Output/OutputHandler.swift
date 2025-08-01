@@ -5,14 +5,21 @@ import OBCoder
 
 public protocol OutputHandler: Sendable {
 
-	func process(line: String) async
+	@MainActor func process(line: String)
+
 
 }
 
 extension OutputHandler {
 	public func message(_ string: String) {
-		Task {
-			await self.process(line: string)
+		if Thread.isMainThread {
+			MainActor.assumeIsolated {
+				self.process(line: string)
+				return
+			}
+		}
+		Task { @MainActor in
+			self.process(line: string)
 		}
 	}
 

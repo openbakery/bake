@@ -160,11 +160,15 @@ class Command_Test {
 		let command = Command(command: "/bin/echo", arguments: "Hello World")
 
 		// when
-		try command.execute(process: process, outputHandler: outputHandler)
-
+		try await confirmation() { hasOutput in
+			outputHandler.closure = { _ in
+				hasOutput()
+			}
+			try command.execute(process: process, outputHandler: outputHandler)
+		}
 
 		// then
-		let lines = await outputHandler.getLines()
+		let lines = outputHandler.getLines()
 		assertThat(lines, hasCount(1))
 		assertThat(lines.first, presentAnd(equalTo("Hello World")))
 		/*

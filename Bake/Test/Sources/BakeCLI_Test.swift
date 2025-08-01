@@ -28,7 +28,7 @@ class BakeCLI_Test {
 		try bake.run()
 
 		// then
-		let first = await output.lines.first
+		let first = output.lines.first
 		#expect(first == "Usage: bake target [options]")
 	}
 
