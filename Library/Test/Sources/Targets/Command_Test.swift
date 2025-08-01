@@ -160,12 +160,11 @@ class Command_Test {
 		let command = Command(command: "/bin/echo", arguments: "Hello World")
 
 		// when
-		try await confirmation() { hasOutput in
-			outputHandler.closure = { _ in
-				hasOutput()
-			}
-			try command.execute(process: process, outputHandler: outputHandler)
-		}
+
+		try command.execute(process: process, outputHandler: outputHandler)
+		await wait(source: outputHandler) { $0.lines.count > 0 }
+/*
+*/
 
 		// then
 		let lines = outputHandler.getLines()
