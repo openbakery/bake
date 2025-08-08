@@ -36,6 +36,9 @@ public struct XcodePath: Sendable {
 		try sharedPrecompiledHeadersDirectory.createDirectories()
 	}
 
+	public func clean() {
+		buildDirectory.deleteIfExists()
+	}
 }
 
 /*

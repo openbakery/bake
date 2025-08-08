@@ -75,4 +75,12 @@ struct XcodePaths_Test {
 		assertThat(codesignPath, present())
 		assertThat(codesignPath?.fileExists(), presentAnd(equalTo(true)))
 	}
+
+	@Test func clean_deletes_the_build_directory() throws {
+		// when
+		path.clean()
+
+		// then
+		assertThat(URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build").fileExists(), equalTo(false))
+	}
 }
