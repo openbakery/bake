@@ -18,18 +18,18 @@ struct XcodePaths_Test {
 		HamcrestSwiftTesting.enable()
 	}
 
-	@Test func default_base_is_current_directory() {
+	@Test func default_base_is_current_directory() throws {
 		// when
-		let path = XcodePath()
+		let path = try XcodePath()
 
 		// then
 		let expectedUrl = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
 		assertThat(path.baseDirectory, presentAnd(equalTo(expectedUrl)))
 	}
 
-	@Test func has_build_buildDirectory() {
+	@Test func has_build_buildDirectory() throws {
 		// when
-		let path = XcodePath()
+		let path = try XcodePath()
 
 		// then
 		let expectedUrl = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build")
@@ -37,36 +37,36 @@ struct XcodePaths_Test {
 	}
 
 
-	@Test func has_symbol_directory() {
+	@Test func has_symbol_directory() throws {
 		// when
-		let path = XcodePath()
+		let path = try XcodePath()
 
 		// then
 		let expectedUrl = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/sym")
 		assertThat(path.symbolDirectory, presentAnd(equalTo(expectedUrl)))
 	}
 
-	@Test func has_destination_directory() {
+	@Test func has_destination_directory() throws {
 		// when
-		let path = XcodePath()
+		let path = try XcodePath()
 
 		// then
 		let expectedUrl = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/dst")
 		assertThat(path.destinationDirectory, presentAnd(equalTo(expectedUrl)))
 	}
 
-	@Test func has_object_directory() {
+	@Test func has_object_directory() throws {
 		// when
-		let path = XcodePath()
+		let path = try XcodePath()
 
 		// then
 		let expectedUrl = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/obj")
 		assertThat(path.objectDirectory, presentAnd(equalTo(expectedUrl)))
 	}
 
-	@Test func has_sharedPrecompiledHeaders_directory() {
+	@Test func has_sharedPrecompiledHeaders_directory() throws {
 		// when
-		let path = XcodePath()
+		let path = try XcodePath()
 
 		// then
 		let expectedUrl = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/shared")
@@ -74,18 +74,27 @@ struct XcodePaths_Test {
 	}
 
 
-	@Test func create_creates_the_directories() {
-		let path = XcodePath()
+	@Test func create_creates_the_directories() throws {
+		let path = try XcodePath()
 
 		//  when
-		path.prepare()
+		try path.prepare()
 
 		// then
 		assertThat(URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/sym").fileExists(), equalTo(true))
 		assertThat(URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/dst").fileExists(), equalTo(true))
 		assertThat(URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/obj").fileExists(), equalTo(true))
 		assertThat(URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("build/shared").fileExists(), equalTo(true))
+	}
 
+	@Test func has_codesignPath() throws {
+		let path = try XcodePath()
 
+		// when
+		let codesignPath = path.codesignPath
+
+		// then
+		assertThat(codesignPath, present())
+		assertThat(codesignPath?.fileExists(), presentAnd(equalTo(true)))
 	}
 }

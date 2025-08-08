@@ -7,66 +7,47 @@ import OBExtra
 
 public struct XcodePath {
 
-	init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) {
+	init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) throws {
 		self.baseDirectory = base
+		try prepare()
 	}
 
 	let baseDirectory: URL
-	var buildDirectory: URL { baseDirectory.appendingPathComponent("build") }
-	var symbolDirectory: URL { buildDirectory.appendingPathComponent("sym") }
-	var destinationDirectory: URL { buildDirectory.appendingPathComponent("dst") }
-	var objectDirectory: URL { buildDirectory.appendingPathComponent("obj") }
-	var sharedPrecompiledHeadersDirectory: URL { buildDirectory.appendingPathComponent("shared") }
-
-	public func prepare() {
+	public var buildDirectory: URL { baseDirectory.appendingPathComponent("build") }
+	public var symbolDirectory: URL { buildDirectory.appendingPathComponent("sym") }
+	public var destinationDirectory: URL { buildDirectory.appendingPathComponent("dst") }
+	public var objectDirectory: URL { buildDirectory.appendingPathComponent("obj") }
+	public var sharedPrecompiledHeadersDirectory: URL { buildDirectory.appendingPathComponent("shared") }
+	public var codesignPath: URL? {
 		do {
-			try symbolDirectory.createDirectories()
-			try destinationDirectory.createDirectories()
-			try objectDirectory.createDirectories()
-			try sharedPrecompiledHeadersDirectory.createDirectories()
+			let result = buildDirectory.appendingPathComponent("codesign")
+			try result.createDirectories()
+			return result
 		} catch {
+			// nil is returned
 		}
-
+		return nil
 	}
+
+	public func prepare() throws {
+		try symbolDirectory.createDirectories()
+		try destinationDirectory.createDirectories()
+		try objectDirectory.createDirectories()
+		try sharedPrecompiledHeadersDirectory.createDirectories()
+	}
+
 }
 
 /*
+
+I leave the comment for because I have played in a swift script a bit with codesigning.
+This is not implemented yet, but when it is this maybe could be useful.
+
 struct BuildInfo {
 
-	let buildDirectory: URL
-	let dst: URL
-	let obj: URL
-	let sym: URL
-	let sharedPrecomps: URL
-
-	init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) throws {
-
-		buildDirectory = base.appendingPathComponent("build")
-		dst = buildDirectory.appendingPathComponent("dst")
-		obj = buildDirectory.appendingPathComponent("obj")
-		sym = buildDirectory.appendingPathComponent("sym")
-		sharedPrecomps = buildDirectory.appendingPathComponent("shared")
-
-		try dst.mkdirs()
-		try obj.mkdirs()
-		try sym.mkdirs()
-		try sharedPrecomps.mkdirs()
-	}
-
-	var codesignPath: URL {
-		let result = buildDirectory.appendingPathComponent("codesign")
-		result.mkdirs()
-		return result
-	}
-
-	let keychainName = "_signing.keychain"
-
-	var keychain: URL {
-		codesignPath.appendingPathComponent(keychainName)
-	}
 
 	var appPath: URL {
-		sym.appendingPathComponent("Debug-iphoneos/ELO.app")
+		sym.appendingPathComponent("Debug-iphoneos/Example.app")
 	}
 
 	var appInfoPlist: URL {
@@ -99,11 +80,9 @@ struct BuildInfo {
 				}
 			}
 
-			// sym.appendingPathComponent("Debug-iphoneos/ELO.app")
+			// sym.appendingPathComponent("Debug-iphoneos/Example.app")
 		}
 		return result
-
-
 	}
 
 }
