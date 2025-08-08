@@ -7,7 +7,7 @@ import OBExtra
 
 public struct XcodePath {
 
-	init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) throws {
+	public init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) throws {
 		self.baseDirectory = base
 		try prepare()
 	}
