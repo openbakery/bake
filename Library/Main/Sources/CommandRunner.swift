@@ -2,12 +2,15 @@ import Foundation
 
 open class CommandRunner {
 
-	public init() {
+	public init(environment: [String: String] = [:]) {
+		self.environment = environment
 	}
+
+	let environment: [String: String]
 
 	open func run(_ command: String, arguments: [String], process: Process = Process()) async throws {
 		let command = Command(command: command, arguments: arguments)
-		try await command.execute(process: process)
+		try await command.execute(process: process, environment: environment)
 	}
 
 	open func run(_ command: String, _ arguments: String..., process: Process = Process()) async throws {

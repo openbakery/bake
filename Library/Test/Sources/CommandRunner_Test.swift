@@ -1,4 +1,5 @@
 import BakeTestHelper
+import Hamcrest
 import Testing
 
 @testable import Bake
@@ -8,6 +9,7 @@ class CommandRunner_Test {
 	init() async throws {
 		process = ProcessFake()
 		commandRunner = CommandRunner()
+		HamcrestSwiftTesting.enable()
 	}
 
 	let process: ProcessFake
@@ -45,4 +47,16 @@ class CommandRunner_Test {
 		#expect(process.arguments?.last == "Hello World")
 	}
 
+
+	@Test func run_command_with_enviroment() async throws {
+		// when
+		let process = ProcessFake()
+		let commandRunner = CommandRunner(environment: ["FOO": "bar"])
+
+
+		try await commandRunner.run("echo", arguments: ["Hello World"], process: process)
+
+		// then
+		assertThat(process.environment, presentAnd(hasEntry("FOO", "bar")))
+	}
 }
