@@ -153,75 +153,88 @@ class Command_Test {
 	}
 
 
-	@Test
-	func standardOutput_is_passed_to_outputHandler() async throws {
-		let outputHandler = TestOutputHandler()
-		let process = Process()
-		let command = Command(command: "/bin/echo", arguments: "Hello World")
-
-		// when
-
-		try command.execute(process: process, outputHandler: outputHandler)
-		await wait(source: outputHandler) { $0.lines.count > 0 }
-/*
-*/
-
-		// then
-		let lines = outputHandler.getLines()
-		assertThat(lines, hasCount(1))
-		assertThat(lines.first, presentAnd(equalTo("Hello World")))
-		/*
-		await Confirmation.wait {
-			outputHandler.hasLines // lines.count > 0
-		} actionClosure: {
-			do {
-				try command.execute(process: process, outputHandler: outputHandler)
-			} catch {
-			}
-		}
-
-		// then
-		assertThat(outputHandler.lines, hasCount(1))
-		assertThat(outputHandler.lines.first, presentAnd(equalTo("Hello World")))
-		 */
-	}
-/*
-	@Test
-	func standardError_is_passed_to_outputHandler() async throws {
-		let outputHandler = TestOutputHandler()
-		let process = Process()
-		let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
-
-		// when
-		await Confirmation.wait {
-			outputHandler.lines.count > 0
-		} actionClosure: {
-			do {
-				try command.execute(process: process, outputHandler: outputHandler)
-			} catch {
-			}
-		}
-
-		// then
-		assertThat(outputHandler.lines, hasCount(1))
-	}
-
-	@Test func throw_exception_when_command_failed() async {
+	@Test func has_environment_set() throws {
 		let process = ProcessFake()
-		process.customTerminationStatus = 123
-		let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
+		let command = Command(name: "Foo", command: "bar", arguments: "first")
 
 		// when
-		let error = #expect(throws: Command.CommandError.self) {
-			try command.execute(process: process)
-		}
+		try command.execute(process: process, environment: ["DEVELOPMENT_DIR": "/Application/Xcode.app/Contents/Developer"])
 
-		if case .failedExecution(let terminationStatus) = error {
-			assertThat(terminationStatus, equalTo(123))
-		} else {
-			Issue.record("expected failedExecution")
-		}
-
+		// then
+		assertThat(process.environment, presentAnd(hasCount(1)))
+		assertThat(process.environment, presentAnd(hasEntry("DEVELOPMENT_DIR", "/Application/Xcode.app/Contents/Developer")))
 	}
- */
+
+
+	//
+	// @Test
+	// func standardOutput_is_passed_to_outputHandler() async throws {
+	// 	let outputHandler = TestOutputHandler()
+	// 	let command = Command(command: "/bin/echo", arguments: "Hello World")
+	//
+	// 	// when
+	//
+	// 	try command.execute(process: process, outputHandler: outputHandler)
+	// 	await wait(source: outputHandler) { $0.lines.count > 0 }
+	//
+	// 	// then
+	// 	let lines = outputHandler.getLines()
+	// 	assertThat(lines, hasCount(1))
+	// 	assertThat(lines.first, presentAnd(equalTo("Hello World")))
+	// 	/*
+	// 	await Confirmation.wait {
+	// 		outputHandler.hasLines // lines.count > 0
+	// 	} actionClosure: {
+	// 		do {
+	// 			try command.execute(process: process, outputHandler: outputHandler)
+	// 		} catch {
+	// 		}
+	// 	}
+	//
+	// 	// then
+	// 	assertThat(outputHandler.lines, hasCount(1))
+	// 	assertThat(outputHandler.lines.first, presentAnd(equalTo("Hello World")))
+	// 	 */
+	// }
+
+
+	/*
+		@Test
+		func standardError_is_passed_to_outputHandler() async throws {
+			let outputHandler = TestOutputHandler()
+			let process = Process()
+			let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
+	
+			// when
+			await Confirmation.wait {
+				outputHandler.lines.count > 0
+			} actionClosure: {
+				do {
+					try command.execute(process: process, outputHandler: outputHandler)
+				} catch {
+				}
+			}
+	
+			// then
+			assertThat(outputHandler.lines, hasCount(1))
+		}
+	
+		@Test func throw_exception_when_command_failed() async {
+			let process = ProcessFake()
+			process.customTerminationStatus = 123
+			let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
+	
+			// when
+			let error = #expect(throws: Command.CommandError.self) {
+				try command.execute(process: process)
+			}
+	
+			if case .failedExecution(let terminationStatus) = error {
+				assertThat(terminationStatus, equalTo(123))
+			} else {
+				Issue.record("expected failedExecution")
+			}
+	
+		}
+	 */
 }

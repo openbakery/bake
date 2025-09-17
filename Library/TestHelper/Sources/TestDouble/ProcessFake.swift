@@ -64,6 +64,16 @@ open class ProcessFake: Process, @unchecked Sendable {
 		}
 	}
 
+	var customEnvironment: [String: String]?
+	override open var environment: [String: String]? {
+		get {
+			customEnvironment
+		}
+		set {
+			customEnvironment = newValue
+		}
+	}
+
 	open var customTerminationStatus: Int32?
 	override open var terminationStatus: Int32 {
 		customTerminationStatus ?? 0
