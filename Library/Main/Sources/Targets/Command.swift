@@ -58,6 +58,7 @@ public class Command: Target, CustomStringConvertible {
 				Task {
 					for line in string.split(separator: "\n") {
 						print(line)
+						print("has outputHander \(outputHandler)")
 						await outputHandler.process(line: String(line))
 					}
 				}
