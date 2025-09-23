@@ -37,7 +37,7 @@ public class Command: Target, CustomStringConvertible {
 
 
 	@MainActor
-	func execute(process: Process, environment: [String: String] = [:], outputHandler: OutputHandler = PrintOutputHandler()) throws {
+	func execute(process: Process, environment: [String: String]? = nil, outputHandler: OutputHandler = PrintOutputHandler()) throws {
 		let standardOutput = Pipe()
 		let standardError = Pipe()
 
