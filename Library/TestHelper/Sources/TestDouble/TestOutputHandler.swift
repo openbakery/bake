@@ -5,8 +5,7 @@
 import Bake
 import Foundation
 
-@MainActor
-public class TestOutputHandler: OutputHandler {
+public class TestOutputHandler: OutputHandler, @unchecked Sendable {
 
 	public init() {
 	}

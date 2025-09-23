@@ -26,7 +26,7 @@ class TargetManager: Decodable {
 
 	func executeTarget(name: String) -> Bool {
 		for target in targets where target.name == name {
-			output.message("Executing target \"\(target.name)\"")
+			output.process(line: "Executing target \"\(target.name)\"")
 			return true
 		}
 		return false
@@ -79,10 +79,10 @@ struct BakeCLI: ParsableCommand {
 
 	private func printUsage() {
 		if target.count > 0 {
-			output.message("Target not found \"\(target)\"")
-			output.message("")
+			output.process(line: "Target not found \"\(target)\"")
+			output.process(line: "")
 		}
-		output.message("Usage: bake target [options]")
+		output.process(line: "Usage: bake target [options]")
 	}
 
 }

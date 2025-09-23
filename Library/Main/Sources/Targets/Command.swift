@@ -45,7 +45,7 @@ public class Command: Target, CustomStringConvertible {
 		process.arguments = processArguments
 		process.standardOutput = standardOutput
 		process.standardError = standardError
-		// process.environment = environment
+		process.environment = environment
 
 		try process.run()
 
@@ -58,7 +58,7 @@ public class Command: Target, CustomStringConvertible {
 				Task {
 					for line in string.split(separator: "\n") {
 						print(line)
-						outputHandler.message(String(line))
+						outputHandler.process(line: String(line))
 					}
 				}
 			}
