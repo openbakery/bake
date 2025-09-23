@@ -9,7 +9,7 @@ public actor PrintOutputHandler: OutputHandler {
 	}
 
 	nonisolated public func process(line: String) {
-		print("... \(line)")
+		print(line)
 	}
 
 }

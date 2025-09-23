@@ -57,7 +57,6 @@ public class Command: Target, CustomStringConvertible {
 			if let string = String(data: data, encoding: .utf8) {
 				Task {
 					for line in string.split(separator: "\n") {
-						print(line)
 						outputHandler.process(line: String(line))
 					}
 				}
