@@ -58,7 +58,7 @@ public class Command: Target, CustomStringConvertible {
 				Task {
 					for line in string.split(separator: "\n") {
 						print(line)
-						await outputHandler.process(line: String(line))
+						outputHandler.message(String(line))
 					}
 				}
 			}
