@@ -45,7 +45,7 @@ public class Command: Target, CustomStringConvertible {
 		process.arguments = processArguments
 		process.standardOutput = standardOutput
 		process.standardError = standardError
-		process.environment = environment
+		// process.environment = environment
 
 		try process.run()
 
