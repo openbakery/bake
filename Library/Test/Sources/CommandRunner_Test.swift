@@ -59,4 +59,16 @@ class CommandRunner_Test {
 		// then
 		assertThat(process.environment, presentAnd(hasEntry("FOO", "bar")))
 	}
+
+	@Test func default_has_no_environment() async throws {
+		// when
+		let process = ProcessFake()
+		let commandRunner = CommandRunner()
+
+
+		try await commandRunner.run("echo", arguments: ["Hello World"], process: process)
+
+		// then
+		assertThat(process.environment, nilValue())
+	}
 }

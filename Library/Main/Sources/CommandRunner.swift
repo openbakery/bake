@@ -2,11 +2,11 @@ import Foundation
 
 open class CommandRunner {
 
-	public init(environment: [String: String] = [:]) {
+	public init(environment: [String: String]? = nil) {
 		self.environment = environment
 	}
 
-	let environment: [String: String]
+	let environment: [String: String]?
 
 	open func run(_ command: String, arguments: [String], process: Process = Process()) async throws {
 		let command = Command(command: command, arguments: arguments)
