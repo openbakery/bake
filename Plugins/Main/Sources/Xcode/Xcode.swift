@@ -5,7 +5,7 @@ import Bake
 
 public struct Xcode: CustomStringConvertible {
 
-	public init(xcodePath: String? = nil, commandRunner: CommandRunner = CommandRunner()) {
+	public init(xcodePath: String = "/Applications/Xcode.app", commandRunner: CommandRunner = CommandRunner()) {
 		self.commandRunner = commandRunner
 		self.xcodePath = xcodePath
 	}
@@ -24,7 +24,7 @@ public struct Xcode: CustomStringConvertible {
 	}
 
 	let commandRunner: CommandRunner
-	public let xcodePath: String?
+	public let xcodePath: String
 
 
 	static func installedXcodes(commandRunner: CommandRunner) async throws -> [String] {
@@ -60,7 +60,7 @@ public struct Xcode: CustomStringConvertible {
 
 
 	public var description: String {
-		"Xcode: \(xcodePath ?? "")"
+		"Xcode: \(xcodePath)"
 	}
 
 }
