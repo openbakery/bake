@@ -63,4 +63,8 @@ public struct Xcode: CustomStringConvertible {
 		"Xcode: \(xcodePath)"
 	}
 
+	public var environment: [String: String] {
+		["DEVELOPER_DIR": xcodePath]
+	}
+
 }

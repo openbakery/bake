@@ -14,7 +14,7 @@ import Testing
 
 @Suite(.serialized)
 final class Xcode_Test: Sendable {
-	
+
 	init() async throws {
 		HamcrestSwiftTesting.enable()
 	}
@@ -91,5 +91,21 @@ final class Xcode_Test: Sendable {
 		assertThat(xcode, nilValue())
 		assertThat(commandRunner.expectationFulfilled, equalTo(true))
 	}
+
+	@Test
+	func xcode_has_environment() async throws {
+		let commandRunner = CommandRunnerFake()
+
+		commandRunner.expect(command: "/usr/bin/mdfind", arguments: "kMDItemCFBundleIdentifier=com.apple.dt.Xcode", result: ["/Applications/Xcode-26.app"])
+		commandRunner.expect(command: "/Applications/Xcode-26.app/Contents/Developer/usr/bin/xcodebuild", arguments: "-version", result: ["Xcode 26.0", "Build version 17A324"])
+
+		let xcode = try await Xcode(version: Version(major: 26), commandRunner: commandRunner)
+
+
+		// then
+		assertThat(xcode, present())
+		assertThat(xcode?.environment, presentAnd(hasEntry("DEVELOPER_DIR", "/Applications/Xcode-26.app")))
+	}
+
 
 }
