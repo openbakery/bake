@@ -11,6 +11,10 @@ open class CommandRunnerFake: CommandRunner {
 		process: Process = ProcessFake(),
 		outputHandler: OutputHandler = PrintOutputHandler()
 	) async throws {
+
+		if hasCommand(command: command, arguments: arguments) != nil {
+			return
+		}
 		self.command = command
 		self.arguments = arguments
 		self.environment = environment
@@ -23,18 +27,46 @@ open class CommandRunnerFake: CommandRunner {
 		environment: [String: String]? = nil,
 		process: Process = Process()
 	) async throws -> [String] {
+
+		if let command = hasCommand(command: command, arguments: arguments) {
+			return command.result
+		}
+
 		self.command = command
 		self.arguments = arguments
 		self.environment = environment
-		if let result = results[command] {
-			return result
-		}
 		return []
 	}
 
+	open func expect(command: String, arguments: String..., result: [String] = []) {
+		let command = Command(command: command, arguments: arguments, result: result)
+		self.commands.append(command)
+	}
+
+	var commands = [Command]()
+
+	struct Command {
+		let command: String
+		let arguments: [String]
+		let result: [String]
+	}
+
+	func hasCommand(command: String, arguments: [String]) -> Command? {
+
+		for (index, item) in commands.enumerated() {
+			if item.command == command && item.arguments == arguments {
+				self.commands.remove(at: index)
+				return item
+			}
+		}
+		return nil
+	}
+
+	public var expectationFulfilled: Bool {
+		self.commands.count == 0
+	}
 
 	public var command: String?
 	public var arguments: [String]?
-	public var results = [String: [String]]()
 	public var environment: [String: String]?
 }

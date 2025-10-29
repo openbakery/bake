@@ -44,4 +44,5 @@ open class CommandRunner {
 		try await run(command, arguments: arguments, environment: environment, process: process, outputHandler: outputHandler)
 		return outputHandler.lines
 	}
+
 }
