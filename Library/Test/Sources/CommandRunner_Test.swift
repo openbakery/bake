@@ -51,10 +51,10 @@ class CommandRunner_Test {
 	@Test func run_command_with_enviroment() async throws {
 		// when
 		let process = ProcessFake()
-		let commandRunner = CommandRunner(environment: ["FOO": "bar"])
+		let commandRunner = CommandRunner()
 
 
-		try await commandRunner.run("echo", arguments: ["Hello World"], process: process)
+		try await commandRunner.run("echo", arguments: ["Hello World"], environment: ["FOO": "bar"], process: process)
 
 		// then
 		assertThat(process.environment, presentAnd(hasEntry("FOO", "bar")))
