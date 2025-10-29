@@ -16,9 +16,11 @@ class Command_Test {
 	init() async throws {
 		HamcrestSwiftTesting.enable()
 		process = ProcessFake()
+		outputHandler = StringOutputHandler()
 	}
 
 	let process: ProcessFake
+	let outputHandler: StringOutputHandler
 
 
 	func createCommand(name: String = "one", command: String = "two", arguments: String...) -> Command {
@@ -133,6 +135,20 @@ class Command_Test {
 	}
 
 
+	@Test func command_has_output() async throws {
+		let command = createCommand(command: "/bin/echo", arguments: "Hello World")
+
+		// when
+		print("WAIT FOR OUTPUT")
+		try command.execute(process: Process(), outputHandler: outputHandler)
+
+		// then
+		let lines = outputHandler.lines
+		assertThat(lines, hasCount(1))
+		assertThat(lines.first, presentAnd(equalTo("Hello World")))
+	}
+
+
 
 	@Test func process_was_executed() async throws {
 		let command = createCommand(command: "foobar")
@@ -204,7 +220,7 @@ class Command_Test {
 			let outputHandler = TestOutputHandler()
 			let process = Process()
 			let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
-	
+
 			// when
 			await Confirmation.wait {
 				outputHandler.lines.count > 0
@@ -214,27 +230,27 @@ class Command_Test {
 				} catch {
 				}
 			}
-	
+
 			// then
 			assertThat(outputHandler.lines, hasCount(1))
 		}
-	
+
 		@Test func throw_exception_when_command_failed() async {
 			let process = ProcessFake()
 			process.customTerminationStatus = 123
 			let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
-	
+
 			// when
 			let error = #expect(throws: Command.CommandError.self) {
 				try command.execute(process: process)
 			}
-	
+
 			if case .failedExecution(let terminationStatus) = error {
 				assertThat(terminationStatus, equalTo(123))
 			} else {
 				Issue.record("expected failedExecution")
 			}
-	
+
 		}
 	 */
 }

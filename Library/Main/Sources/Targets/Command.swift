@@ -57,10 +57,8 @@ public class Command: Target, CustomStringConvertible {
 			defer { handle.waitForDataInBackgroundAndNotify() }
 			let data = handle.availableData
 			if let string = String(data: data, encoding: .utf8) {
-				Task {
-					for line in string.split(separator: "\n") {
-						outputHandler.process(line: String(line))
-					}
+				for line in string.split(separator: "\n") {
+					outputHandler.process(line: String(line))
 				}
 			}
 		}
@@ -79,6 +77,7 @@ public class Command: Target, CustomStringConvertible {
 		// }
 
 		process.waitUntilExit()
+		print("FINISHED PROCESS")
 
 
 		if process.terminationStatus != 0 {
