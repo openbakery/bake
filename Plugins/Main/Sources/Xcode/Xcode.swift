@@ -24,7 +24,7 @@ public struct Xcode: CustomStringConvertible {
 	}
 
 	let commandRunner: CommandRunner
-	let xcodePath: String?
+	public let xcodePath: String?
 
 
 	static func installedXcodes(commandRunner: CommandRunner) async throws -> [String] {
