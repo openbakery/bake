@@ -3,7 +3,8 @@ import Foundation
 
 open class CommandRunnerFake: CommandRunner {
 
-	override open func run(_ command: String, arguments: [String], process: Process = ProcessFake()) async throws {
+
+	override open func run(_ command: String, arguments: [String], process: Process = ProcessFake(), outputHandler: OutputHandler = PrintOutputHandler()) async throws {
 		self.command = command
 		self.arguments = arguments
 	}

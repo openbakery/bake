@@ -77,7 +77,6 @@ public class Command: Target, CustomStringConvertible {
 		// }
 
 		process.waitUntilExit()
-		print("FINISHED PROCESS")
 
 
 		if process.terminationStatus != 0 {

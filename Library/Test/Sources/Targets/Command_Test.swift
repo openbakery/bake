@@ -139,7 +139,6 @@ class Command_Test {
 		let command = createCommand(command: "/bin/echo", arguments: "Hello World")
 
 		// when
-		print("WAIT FOR OUTPUT")
 		try command.execute(process: Process(), outputHandler: outputHandler)
 
 		// then
