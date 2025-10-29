@@ -176,7 +176,7 @@ class Command_Test {
 		try command.execute(process: process, environment: ["DEVELOPMENT_DIR": "/Application/Xcode.app/Contents/Developer"])
 
 		// then
-		assertThat(process.environment, presentAnd(hasCount(1)))
+		assertThat(process.environment, presentAnd(hasCount(greaterThan(1))))
 		assertThat(process.environment, presentAnd(hasEntry("DEVELOPMENT_DIR", "/Application/Xcode.app/Contents/Developer")))
 	}
 
@@ -219,7 +219,7 @@ class Command_Test {
 			let outputHandler = TestOutputHandler()
 			let process = Process()
 			let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
-
+	
 			// when
 			await Confirmation.wait {
 				outputHandler.lines.count > 0
@@ -229,27 +229,27 @@ class Command_Test {
 				} catch {
 				}
 			}
-
+	
 			// then
 			assertThat(outputHandler.lines, hasCount(1))
 		}
-
+	
 		@Test func throw_exception_when_command_failed() async {
 			let process = ProcessFake()
 			process.customTerminationStatus = 123
 			let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
-
+	
 			// when
 			let error = #expect(throws: Command.CommandError.self) {
 				try command.execute(process: process)
 			}
-
+	
 			if case .failedExecution(let terminationStatus) = error {
 				assertThat(terminationStatus, equalTo(123))
 			} else {
 				Issue.record("expected failedExecution")
 			}
-
+	
 		}
 	 */
 }

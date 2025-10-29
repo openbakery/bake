@@ -46,7 +46,9 @@ public class Command: Target, CustomStringConvertible {
 		process.standardOutput = standardOutput
 		process.standardError = standardError
 		if let environment {
-			process.environment = environment
+			var result = ProcessInfo.processInfo.environment
+			result.merge(environment) { $1 }
+			process.environment = result
 		}
 
 		try process.run()
