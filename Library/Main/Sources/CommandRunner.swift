@@ -17,13 +17,13 @@ open class CommandRunner {
 		try await run(command, arguments: arguments, process: process)
 	}
 
-	open func runWithResult(_ command: String, _ arguments: String..., process: Process = Process()) async throws -> String {
+	open func runWithResult(_ command: String, _ arguments: String..., process: Process = Process()) async throws -> [String] {
 		return try await runWithResult(command, arguments: arguments, process: process)
 	}
 
-	open func runWithResult(_ command: String, arguments: [String], process: Process = Process()) async throws -> String {
+	open func runWithResult(_ command: String, arguments: [String], process: Process = Process()) async throws -> [String] {
 		let outputHandler = StringOutputHandler()
 		try await run(command, arguments: arguments, process: process, outputHandler: outputHandler)
-		return outputHandler.lines.joined(separator: "\n")
+		return outputHandler.lines
 	}
 }

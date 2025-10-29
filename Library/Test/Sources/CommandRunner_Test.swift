@@ -75,6 +75,6 @@ class CommandRunner_Test {
 	@Test func executeWithResult() async throws {
 		let result = try await commandRunner.runWithResult("/bin/echo", "Hello World")
 
-		assertThat(result, presentAnd(equalTo("Hello World")))
+		assertThat(result.first, presentAnd(equalTo("Hello World")))
 	}
 }
