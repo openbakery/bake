@@ -3,11 +3,15 @@
 //
 import Bake
 
-public struct Xcode {
+public struct Xcode: CustomStringConvertible {
 
 	public init(xcodePath: String? = nil, commandRunner: CommandRunner = CommandRunner()) {
 		self.commandRunner = commandRunner
 		self.xcodePath = xcodePath
+	}
+
+	public init?(version: Int, commandRunner: CommandRunner = CommandRunner()) async throws {
+		try await self.init(version: Version(major: version), commandRunner: commandRunner)
 	}
 
 	public init?(version: Version, commandRunner: CommandRunner = CommandRunner()) async throws {
@@ -54,5 +58,9 @@ public struct Xcode {
 		return Version(string: versionString)
 	}
 
+
+	public var description: String {
+		"Xcode: \(xcodePath ?? "")"
+	}
 
 }
