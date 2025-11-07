@@ -1,4 +1,5 @@
 import BakeTestHelper
+import Foundation
 import Hamcrest
 import Testing
 
@@ -23,7 +24,8 @@ class CommandRunner_Test {
 
 	@Test func run_command() async throws {
 		// when
-		try await commandRunner.run("echo", "Hello World", process: process)
+		let workingDirectory = URL(fileURLWithPath: "/tmp")
+		try await commandRunner.run("echo", "Hello World", workingDirectory: workingDirectory, process: process)
 
 		// then
 		#expect(process.wasExecuted)
@@ -32,6 +34,7 @@ class CommandRunner_Test {
 		#expect(process.arguments?.first == "-c")
 		#expect(process.arguments?[1] == "echo")
 		#expect(process.arguments?.last == "Hello World")
+		#expect(process.currentDirectoryURL == workingDirectory)
 	}
 
 	@Test func run_command_with_arguments_array() async throws {

@@ -64,6 +64,16 @@ open class ProcessFake: Process, @unchecked Sendable {
 		}
 	}
 
+	var customCurrentDirectoryURL: URL?
+	override open var currentDirectoryURL: URL? {
+		get {
+			return customCurrentDirectoryURL
+		}
+		set {
+			customCurrentDirectoryURL = newValue
+		}
+	}
+
 	var customEnvironment: [String: String]?
 	override open var environment: [String: String]? {
 		get {

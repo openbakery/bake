@@ -8,21 +8,23 @@ open class CommandRunner {
 	open func run(
 		_ command: String,
 		arguments: [String],
+		workingDirectory: URL? = nil,
 		environment: [String: String]? = nil,
 		process: Process = Process(),
 		outputHandler: OutputHandler = PrintOutputHandler()
 	) async throws {
-		let command = Command(command: command, arguments: arguments)
+		let command = Command(command: command, arguments: arguments, workingDirectory: workingDirectory)
 		try await command.execute(process: process, environment: environment, outputHandler: outputHandler)
 	}
 
 	open func run(
 		_ command: String,
 		_ arguments: String...,
+		workingDirectory: URL? = nil,
 		environment: [String: String]? = nil,
 		process: Process = Process()
 	) async throws {
-		try await run(command, arguments: arguments, environment: environment, process: process)
+		try await run(command, arguments: arguments, workingDirectory: workingDirectory, environment: environment, process: process)
 	}
 
 	open func runWithResult(

@@ -7,6 +7,7 @@ open class CommandRunnerFake: CommandRunner {
 	override open func run(
 		_ command: String,
 		arguments: [String],
+		workingDirectory: URL? = nil,
 		environment: [String: String]? = nil,
 		process: Process = ProcessFake(),
 		outputHandler: OutputHandler = PrintOutputHandler()

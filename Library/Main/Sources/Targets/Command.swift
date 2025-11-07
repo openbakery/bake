@@ -3,22 +3,23 @@ import Foundation
 
 public class Command: Target, CustomStringConvertible {
 
-	public convenience init(name: String, command: String, arguments: String...) {
-		self.init(name: name, command: command, arguments: arguments)
+	public convenience init(name: String, command: String, arguments: String..., workingDirectory: URL? = nil) {
+		self.init(name: name, command: command, arguments: arguments, workingDirectory: workingDirectory)
 	}
 
-	public convenience init(command: String, arguments: String...) {
-		self.init(name: command, command: command, arguments: arguments)
+	public convenience init(command: String, arguments: String..., workingDirectory: URL? = nil) {
+		self.init(name: command, command: command, arguments: arguments, workingDirectory: workingDirectory)
 	}
 
-	public convenience init(command: String, arguments: [String]) {
-		self.init(name: command, command: command, arguments: arguments)
+	public convenience init(command: String, arguments: [String], workingDirectory: URL? = nil) {
+		self.init(name: command, command: command, arguments: arguments, workingDirectory: workingDirectory)
 	}
 
-	public required init(name: String, command: String, arguments: [String]) {
+	public required init(name: String, command: String, arguments: [String], workingDirectory: URL? = nil) {
 		self.name = name
 		self.command = command
 		self.arguments = arguments
+		self.workingDirectory = workingDirectory
 	}
 
 	public required init(from decoder: Decoder) throws {
@@ -28,6 +29,7 @@ public class Command: Target, CustomStringConvertible {
 	public let name: String
 	public let command: String
 	public let arguments: [String]
+	public let workingDirectory: URL?
 	private var token: Any?
 
 
@@ -45,6 +47,7 @@ public class Command: Target, CustomStringConvertible {
 		process.arguments = processArguments
 		process.standardOutput = standardOutput
 		process.standardError = standardError
+		process.currentDirectoryURL = self.workingDirectory
 		if let environment {
 			var result = ProcessInfo.processInfo.environment
 			result.merge(environment) { $1 }
