@@ -1,3 +1,14 @@
 #!/bin/sh
 
-swift test --quiet
+if [ $# -ge 1 ]; then
+if [ $1 = "--result" ]; then
+	# cat .build.log
+	exit
+fi
+fi
+
+rm .build.log
+
+# swift test --quiet > .build.log
+#
+./swift-test-result.swift
