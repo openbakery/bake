@@ -71,16 +71,6 @@ public class Command: Target, CustomStringConvertible {
 		standardOutput.fileHandleForReading.waitForDataInBackgroundAndNotify()
 		standardError.fileHandleForReading.waitForDataInBackgroundAndNotify()
 
-		// for try await line in standardOutput.fileHandleForReading.bytes.lines {
-		// 	if Task.isCancelled { break }
-		// 	processLine(line)
-		// }
-
-		// for try await line in standardError.fileHandleForReading.bytes.lines {
-		// 	if Task.isCancelled { break }
-		// 	processLine(line)
-		// }
-
 		process.waitUntilExit()
 
 
