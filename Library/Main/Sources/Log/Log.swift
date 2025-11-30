@@ -80,6 +80,12 @@ public class Log {
 
 	}
 
+	@MainActor
+	static var showLevel: Bool {
+		get { Log.instance.showLevel }
+		set { Log.instance.showLevel = newValue }
+	}
+
 	public static func log(_ level: Level, _ message: String) {
 
 		if Thread.isMainThread {

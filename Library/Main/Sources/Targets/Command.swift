@@ -56,6 +56,8 @@ public class Command: Target, CustomStringConvertible {
 
 		try process.run()
 
+		Log.debug("\(name) \(arguments.joined(separator: " "))")
+
 		token = NotificationCenter.default.addObserver(forName: .NSFileHandleDataAvailable, object: nil, queue: OperationQueue.main) { note in
 			guard let handle = note.object as? FileHandle else { return }
 			guard handle === standardOutput.fileHandleForReading || handle == standardError.fileHandleForReading else { return }
