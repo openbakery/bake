@@ -4,4 +4,5 @@ bakeCLI
 libBake.dylib
 libBake.dylib.dSYM
 .DS_Store
+.error.json
 
