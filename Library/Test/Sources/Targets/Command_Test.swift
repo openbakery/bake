@@ -142,7 +142,8 @@ class Command_Test {
 		try command.execute(process: Process(), outputHandler: outputHandler)
 
 		// then
-		let lines = outputHandler.lines
+		let lines = await outputHandler.waitForLines()
+
 		assertThat(lines, hasCount(1))
 		assertThat(lines.first, presentAnd(equalTo("Hello World")))
 	}
@@ -219,7 +220,7 @@ class Command_Test {
 			let outputHandler = TestOutputHandler()
 			let process = Process()
 			let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
-	
+
 			// when
 			await Confirmation.wait {
 				outputHandler.lines.count > 0
@@ -229,27 +230,27 @@ class Command_Test {
 				} catch {
 				}
 			}
-	
+
 			// then
 			assertThat(outputHandler.lines, hasCount(1))
 		}
-	
+
 		@Test func throw_exception_when_command_failed() async {
 			let process = ProcessFake()
 			process.customTerminationStatus = 123
 			let command = Command(command: "/bin/ls", arguments: "asdfasdfasdfsd")
-	
+
 			// when
 			let error = #expect(throws: Command.CommandError.self) {
 				try command.execute(process: process)
 			}
-	
+
 			if case .failedExecution(let terminationStatus) = error {
 				assertThat(terminationStatus, equalTo(123))
 			} else {
 				Issue.record("expected failedExecution")
 			}
-	
+
 		}
 	 */
 }

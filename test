@@ -1,14 +1,244 @@
-#!/bin/sh
+#!/usr/bin/swift sh
+import Bake
+import BakePlugins  // openbakery/Bake == main
+import Foundation
+import OBCoder
 
-if [ $# -ge 1 ]; then
-if [ $1 = "--result" ]; then
-	# cat .build.log
-	exit
-fi
-fi
+if CommandLine.arguments.count > 1 {
 
-rm .build.log
+	if CommandLine.arguments[1] == "--result" {
+		print("Result is not supported yet")
+		exit(0)
+	}
 
-# swift test --quiet > .build.log
-#
-./swift-test-result.swift
+
+}
+
+struct Failure: OBCoder.Encodable {
+	let testName: String
+	let filePath: String?
+	let lineNumber: Int
+	let message: String
+
+	init(
+		testName: String,
+		filePath: String?,
+		lineNumber: Int,
+		message: String
+	) {
+		self.testName = testName
+		self.filePath = filePath
+		self.lineNumber = lineNumber
+		self.message = message
+	}
+
+	init?(decoder: OBCoder.Decoder) {
+		return nil
+	}
+
+	func encode(with coder: OBCoder.Coder) {
+		coder.encode(message, forKey: "message")
+		coder.encode(lineNumber, forKey: "line")
+	}
+
+
+}
+
+
+struct TestResult: OBCoder.Encodable {
+
+	let filename: String
+	var failures: [Failure]
+
+	init(filename: String) {
+		self.filename = filename
+		self.failures = []
+	}
+
+	init?(decoder: OBCoder.Decoder) {
+		return nil
+	}
+
+	func encode(with coder: OBCoder.Coder) {
+		coder.encode(filename, forKey: "filename")
+		coder.encode(failures, forKey: "failures")
+		coder.encode(fullFilename, forKey: "fullFilename")
+	}
+
+	mutating func append(failure: Failure) {
+		failures.append(failure)
+	}
+
+	var fullFilename: String {
+		return failures.first?.filePath ?? filename
+	}
+
+
+
+}
+
+
+class SwiftTestParser {
+	private var failures: [Failure] = []
+
+	var currentSuite: String?
+	var currentTest: String?
+	var currentClass: String?
+	var currentLine: String?
+
+	func parse(_ output: String) {
+		let lines = output.components(separatedBy: .newlines)
+
+	}
+
+	func parse(lines: [String]) async {
+
+		let suiteString = "􁁛  Suite "
+		let testString = "􀢄  Test "
+		let gotString = "􀄵  GOT: "
+		for line in lines {
+			if line.hasPrefix(suiteString) {
+				let tokens = line.split(separator: " ")
+				if tokens.count > 3 {
+					currentSuite = String(tokens[2])
+					currentTest = nil
+				}
+			}
+
+			if line.hasPrefix(testString) {
+				let tokens = line.split(separator: " ")
+				if tokens.count > 6 {
+					currentTest = String(tokens[2])
+					if tokens[3] == "recorded" {
+						if tokens.count > 8 {
+							let parts = tokens[7].split(separator: ":")
+
+							if parts.count > 2 {
+								currentClass = String(parts[0])
+								currentLine = String(parts[1])
+							}
+						}
+					}
+				}
+			}
+
+			if line.hasPrefix(gotString) {
+				let message = line.dropFirst(gotString.count)
+				if let currentClass, let currentLine {
+					let failure = Failure(
+						testName: currentClass,
+						filePath: await getFullPath(currentClass),
+						lineNumber: Int(currentLine) ?? 0,
+						message: String(message))
+
+					self.failures.append(failure)
+				}
+			}
+
+			if let failure = parseCompileFailure(line: line) {
+				self.failures.append(failure)
+			}
+		}
+	}
+
+
+	let pattern = #/(.+):(\d+):(\d+):\serror:\s(.*)/#
+
+	func parseCompileFailure(line: String) -> Failure? {
+		guard line.hasPrefix("/") else { return nil }
+		if line.hasPrefix("/Application") {
+			// the regex is slow so skip this
+			return nil
+		}
+		guard let match = line.firstMatch(of: pattern) else { return nil }
+
+		return Failure(
+			testName: String(match.1),
+			filePath: String(match.1),
+			lineNumber: Int(match.2) ?? 0,
+			message: String(match.4)
+		)
+
+	}
+
+
+	func getFullPath(_ currentClass: String) async -> String? {
+		// print("currentClass: \(currentClass)")
+		let commandRunner = await CommandRunner()
+		do {
+			return await try commandRunner.runWithResult("/usr/bin/find", arguments: [".", "-name", currentClass]).first
+		} catch {
+			print("error: \(error)")
+			return nil
+		}
+	}
+
+
+	func printSummary() {
+		if failures.isEmpty {
+			print("✅ All tests passed!")
+			return
+		}
+
+		print("❌ Test Failures Summary")
+		print("========================")
+		print("Total failures: \(failures.count)\n")
+
+		for (index, failure) in failures.enumerated() {
+			print("\(index + 1). \(failure.testName)")
+
+			if let file = failure.filePath {
+				print("   📍 \(file):\(failure.lineNumber)")
+			}
+
+			print("   💬 \(failure.message)")
+
+			print()
+		}
+	}
+
+	func saveJson() {
+
+		var results = [String: TestResult]()
+		for failure in failures {
+			let name = failure.testName
+			var result: TestResult = results[name] ?? TestResult(filename: name)
+			result.append(failure: failure)
+			results[name] = result
+		}
+
+		let coder = JSONCoder()
+		coder.encode(Array(results.values), forKey: "results")
+		let fileURL = URL(fileURLWithPath: ".error.json")
+		do {
+			try coder.jsonString.write(to: fileURL, atomically: true, encoding: .utf8)
+			// print("File saved successfully to: \(fileURL)")
+		} catch {
+			print("Error writing file: \(error)")
+		}
+
+
+	}
+
+	var exitCode: Int32 {
+		Int32(failures.count)
+	}
+}
+
+
+
+let commandRunner = await CommandRunner()
+var output = [String]()
+let outputHandler = StringOutputHandler()
+do {
+	await try commandRunner.run("/usr/bin/xcrun", arguments: ["swift", "test"], outputHandler: outputHandler)
+} catch {
+	// ignore
+}
+
+let parser = SwiftTestParser()
+await parser.parse(lines: outputHandler.lines)
+parser.printSummary()
+parser.saveJson()
+
+exit(parser.exitCode)
