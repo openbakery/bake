@@ -62,7 +62,13 @@ let package = Package(
 				.product(name: "Hamcrest", package: "SwiftHamcrest"),
 				.product(name: "HamcrestSwiftTesting", package: "SwiftHamcrest")
 			],
-			path: "Plugins/Test/Sources"
+			path: "Plugins/Test",
+			sources: [
+				"Sources"
+			],
+			resources: [
+				.process("Resources/")
+			]
 		),
 		.executableTarget(
 			name: "BakeCLI",
