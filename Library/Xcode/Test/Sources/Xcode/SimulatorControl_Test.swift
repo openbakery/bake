@@ -2,7 +2,7 @@ import Bake
 import BakeTestHelper
 import Testing
 
-@testable import BakePlugins
+@testable import BakeXcode
 
 struct SimulatorControl_Test {
 

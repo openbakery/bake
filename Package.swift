@@ -9,7 +9,7 @@ let package = Package(
 	],
 	products: [
 		.library(name: "Bake", type: .dynamic, targets: ["Bake"]),
-		.library(name: "BakePlugins", type: .dynamic, targets: ["BakePlugins"]),
+		.library(name: "BakeXcode", type: .dynamic, targets: ["BakeXcode"]),
 		.executable(name: "BakeCLI", targets: ["BakeCLI"])
 	],
 	dependencies: [
@@ -25,7 +25,7 @@ let package = Package(
 				"OBCoder",
 				"OBExtra"
 			],
-			path: "Library/Main/Sources",
+			path: "Library/Bake/Main/Sources",
 		),
 		.target(
 			name: "BakeTestHelper",
@@ -42,27 +42,27 @@ let package = Package(
 				.product(name: "Hamcrest", package: "SwiftHamcrest"),
 				.product(name: "HamcrestSwiftTesting", package: "SwiftHamcrest")
 			],
-			path: "Library/Test/Sources",
+			path: "Library/Bake/Test/Sources",
 		),
 		.target(
-			name: "BakePlugins",
+			name: "BakeXcode",
 			dependencies: [
 				"Bake",
 				"OBCoder",
 				"OBExtra"
 			],
-			path: "Plugins/Main/Sources",
+			path: "Library/Xcode/Main/Sources",
 		),
 		.testTarget(
-			name: "BakePluginsTest",
+			name: "BakeXcodeTest",
 			dependencies: [
 				"Bake",
-				"BakePlugins",
+				"BakeXcode",
 				"BakeTestHelper",
 				.product(name: "Hamcrest", package: "SwiftHamcrest"),
 				.product(name: "HamcrestSwiftTesting", package: "SwiftHamcrest")
 			],
-			path: "Plugins/Test",
+			path: "Library/Xcode/Test",
 			sources: [
 				"Sources"
 			],
@@ -74,7 +74,7 @@ let package = Package(
 			name: "BakeCLI",
 			dependencies: [
 				"Bake",
-				"BakePlugins",
+				"BakeXcode",
 				.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
 			path: "Bake/Main/Sources",

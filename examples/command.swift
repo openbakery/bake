@@ -1,6 +1,6 @@
 #!/usr/bin/swift sh
 import Bake
-import BakePlugins  // openbakery/Bake == main
+import BakeXcode  // openbakery/Bake == main
 import Foundation
 
 Log.level = .debug

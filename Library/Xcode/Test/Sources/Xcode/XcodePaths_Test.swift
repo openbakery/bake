@@ -10,7 +10,7 @@ import HamcrestSwiftTesting
 import OBExtra
 import Testing
 
-@testable import BakePlugins
+@testable import BakeXcode
 
 @Suite(.serialized)
 final class XcodePaths_Test: Sendable {

@@ -1,6 +1,6 @@
 import ArgumentParser
 import Bake
-import BakePlugins
+import BakeXcode
 import Foundation
 
 class TargetManager: Decodable {

@@ -1,7 +1,7 @@
 import ArgumentParser
 import Bake
-import BakePlugins
 import BakeTestHelper
+import BakeXcode
 import Hamcrest
 import Testing
 
