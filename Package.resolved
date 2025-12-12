@@ -1,5 +1,5 @@
 {
-  "originHash" : "5c1a1c126060ee8cad61c947b99643a65ba562a341e6fb8271d78d4b1de95845",
+  "originHash" : "d9a735a45bc0d5031f5d1f2ccf54831b0a3fb0d868b9328b36b603d41d797c2b",
   "pins" : [
     {
       "identity" : "obcoder",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/openbakery/OBExtra/",
       "state" : {
         "branch" : "main",
-        "revision" : "c153b69ed0e0aeab7a6f618bc8d34c6ebed343c4"
+        "revision" : "ea569773b5ad6645c94ef5d3147b68836fcb1eee"
       }
     },
     {
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
-        "revision" : "309a47b2b1d9b5e991f36961c983ecec72275be3",
-        "version" : "1.6.1"
+        "revision" : "cdd0ef3755280949551dc26dee5de9ddeda89f54",
+        "version" : "1.6.2"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/nschum/SwiftHamcrest/",
       "state" : {
-        "branch" : "no-macro",
-        "revision" : "15b64b12384ed7a64a4ed6972a91d2ad9c4b6796"
+        "branch" : "master",
+        "revision" : "e32b5b62b4b9d070fd9e98c4d83aae62f55b9507"
       }
     }
   ],

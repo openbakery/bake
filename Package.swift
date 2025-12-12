@@ -14,7 +14,7 @@ let package = Package(
 	],
 	dependencies: [
 		.package(url: "https://github.com/openbakery/OBExtra/", branch: "main"),
-		.package(url: "https://github.com/nschum/SwiftHamcrest/", branch: "no-macro"),
+		.package(url: "https://github.com/nschum/SwiftHamcrest/", branch: "master"),
 		.package(url: "https://github.com/openbakery/OBCoder/", branch: "main"),
 		.package(url: "https://github.com/apple/swift-argument-parser", .upToNextMajor(from: "1.0.0"))
 	],
@@ -67,7 +67,7 @@ let package = Package(
 				"Sources"
 			],
 			resources: [
-				.process("Resources/")
+				.process("Resources")
 			]
 		),
 		.executableTarget(
