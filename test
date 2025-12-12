@@ -1,6 +1,6 @@
 #!/usr/bin/swift sh
 import Bake
-import BakeXcode  // openbakery/Bake == main
+import BakeXcode  // openbakery/Bake == develop
 import Foundation
 import OBCoder
 
