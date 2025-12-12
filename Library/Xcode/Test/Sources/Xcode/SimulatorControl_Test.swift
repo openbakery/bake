@@ -1,25 +1,43 @@
 import Bake
 import BakeTestHelper
+import Hamcrest
 import Testing
 
 @testable import BakeXcode
 
 struct SimulatorControl_Test {
 
-	// let control: SimulatorControl
-	// let commandRunner: CommandRunnerFake
-
 	init() async throws {
-		// commandRunner = CommandRunnerFake()
-		// control = SimulatorControl(commandRunner: commandRunner)
+		commandRunner = CommandRunnerFake()
+
+		outputHandler = StringOutputHandler()
+		control = SimulatorControl(commandRunner: commandRunner, outputHandler: outputHandler)
 	}
 
-	@Test func list() {
-		// then
-		// control.list()
+	let commandRunner: CommandRunnerFake
+	let control: SimulatorControl
+	let outputHandler: StringOutputHandler
+
+	@Test
+	func list() async throws {
+
+		commandRunner.expect(command: "/usr/bin/xcrun", arguments: "simctl", "list", result: [])
+
+		try await control.list()
 
 		// then
-		// #expect(commandRunner.command == "xcrun")
+		assertThat(commandRunner.expectationFulfilled, equalTo(true))
 	}
 
+
+	@Test
+	func list_has_output() async throws {
+
+		commandRunner.expect(command: "/usr/bin/xcrun", arguments: "simctl", "list", result: [])
+
+		try await control.list()
+
+		// then
+		assertThat(outputHandler.lines, hasCount(greaterThan(1)))
+	}
 }
