@@ -35,19 +35,32 @@ struct SimulatorControlParser_Test {
 		assertThat(contents, presentAnd(hasPrefix("== Device Types ==")))
 	}
 
-	@Test func parse_devices_types() throws {
+	func parse() throws -> Simulators? {
 		let contents = try #require(try load())
 		let parser = SimulatorControlParser()
-		let simulators = parser.parse(contents)
+		return parser.parse(contents)
+	}
+
+	@Test func parse_devices_types() throws {
+		let simulators = try parse()
 
 		// then
-		assertThat(simulators, present())
 		assertThat(simulators?.deviceTypes, presentAnd(hasCount(117)))
 		assertThat(simulators?.deviceTypes.first?.name, presentAnd(equalTo("iPhone 17 Pro")))
 		assertThat(simulators?.deviceTypes.first?.identifier, presentAnd(equalTo("com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro")))
-
 	}
 
+	@Test func parse_runtimes() throws {
+		let simulators = try parse()
+
+		// then
+		assertThat(simulators?.runtimes, presentAnd(hasCount(4)))
+		assertThat(simulators?.runtimes.first?.name, presentAnd(equalTo("iOS 18.6")))
+		assertThat(simulators?.runtimes.first?.identifier, presentAnd(equalTo("com.apple.CoreSimulator.SimRuntime.iOS-18-6")))
+		assertThat(simulators?.runtimes.first?.version.major, presentAnd(equalTo(18)))
+		assertThat(simulators?.runtimes.first?.version.minor, presentAnd(equalTo(6)))
+		assertThat(simulators?.runtimes.first?.version.build, presentAnd(equalTo("22G86")))
+	}
 
 
 }

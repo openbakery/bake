@@ -9,9 +9,9 @@ open class Version: Comparable, CustomStringConvertible {
 	public let major: Int
 	public let minor: Int
 	public let maintenance: Int
-	public let build: Int
+	public let build: String
 
-	public init(major: Int = 0, minor: Int = 0, maintenance: Int = 0, build: Int = 0) {
+	public init(major: Int = 0, minor: Int = 0, maintenance: Int = 0, build: String = "") {
 		self.major = major
 		self.minor = minor
 		self.maintenance = maintenance
@@ -23,21 +23,19 @@ open class Version: Comparable, CustomStringConvertible {
 		var major = 0
 		var minor = 0
 		var maintenance = 0
-		var build = 0
+		var build = ""
 		for (index, token) in tokens.enumerated() {
-			if let intValue = Int(token) {
-				switch index {
-				case 0:
-					major = intValue
-				case 1:
-					minor = intValue
-				case 2:
-					maintenance = intValue
-				case 3:
-					build = intValue
-				default:
-					break
-				}
+			switch index {
+			case 0:
+				major = Int(token) ?? 0
+			case 1:
+				minor = Int(token) ?? 0
+			case 2:
+				maintenance = Int(token) ?? 0
+			case 3:
+				build = token
+			default:
+				break
 			}
 		}
 		self.init(major: major, minor: minor, maintenance: maintenance, build: build)
@@ -47,7 +45,7 @@ open class Version: Comparable, CustomStringConvertible {
 	open var description: String {
 		var result = "\(major).\(minor)"
 
-		if build > 0 {
+		if build != "" {
 			result += ".\(maintenance).\(build)"
 		} else if maintenance > 0 {
 			result += ".\(maintenance)"
@@ -70,9 +68,16 @@ open class Version: Comparable, CustomStringConvertible {
 		if lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.maintenance < rhs.maintenance {
 			return true
 		}
-		if lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.maintenance == rhs.maintenance && lhs.build < rhs.build {
-			return true
-		}
 		return false
 	}
+
+
+	open func update(major: Int? = nil, minor: Int? = nil, maintenance: Int? = nil, build: String? = nil) -> Version {
+		return Version(
+			major: major ?? self.major,
+			minor: minor ?? self.minor,
+			maintenance: maintenance ?? self.maintenance,
+			build: build ?? self.build)
+	}
+
 }

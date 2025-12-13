@@ -4,7 +4,7 @@
 
 public struct Simulators {
 
-
 	let deviceTypes: [DeviceType]
+	let runtimes: [Runtime]
 
 }
