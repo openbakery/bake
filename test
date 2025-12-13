@@ -142,21 +142,57 @@ class SwiftTestParser {
 	}
 
 
-	let pattern = #/(.+):(\d+):(\d+):\serror:\s(.*)/#
+
+	var macroMessage: String?
 
 	func parseCompileFailure(line: String) -> Failure? {
+		if let message = self.macroMessage {
+			self.macroMessage = nil
+			if line.hasPrefix("`- ") {
+				return parseMacroNote(line: String(line.dropFirst(3)), message: message)
+			}
+			return nil
+		}
+		if line.hasPrefix("macro") {
+			if let range = line.range(of: "error: ") {
+				macroMessage = String(line[range.upperBound...])
+			}
+		}
+
 		guard line.hasPrefix("/") else { return nil }
+
+
+
 		if line.hasPrefix("/Application") {
 			// the regex is slow so skip this
 			return nil
 		}
-		guard let match = line.firstMatch(of: pattern) else { return nil }
+		return parseFailure(line: line)
+	}
+
+	static let errorPattern = #/(.+):(\d+):(\d+):\serror:\s(.*)/#
+	private func parseFailure(line: String) -> Failure? {
+		guard let match = line.firstMatch(of: Self.errorPattern) else { return nil }
 
 		return Failure(
 			testName: String(match.1),
 			filePath: String(match.1),
 			lineNumber: Int(match.2) ?? 0,
 			message: String(match.4)
+		)
+
+	}
+
+
+	static let macroNotePattern = #/(.+):(\d+):(\d+):(.*)/#
+	private func parseMacroNote(line: String, message: String) -> Failure? {
+		guard let match = line.firstMatch(of: Self.macroNotePattern) else { return nil }
+
+		return Failure(
+			testName: String(match.1),
+			filePath: String(match.1),
+			lineNumber: Int(match.2) ?? 0,
+			message: message
 		)
 
 	}
