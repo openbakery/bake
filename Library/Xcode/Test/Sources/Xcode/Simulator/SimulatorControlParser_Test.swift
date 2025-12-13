@@ -29,16 +29,23 @@ struct SimulatorControlParser_Test {
 	}
 
 	@Test func load_file() throws {
-
 		let contents = try load()
-		//
-		// assertThat(contents, nilValue())
+
+		// then
 		assertThat(contents, presentAnd(hasPrefix("== Device Types ==")))
-		// #expect(contents.hasPrefix("foo"))
-		// 	return result
-		// }
-		// let path = self.path(forDocument: document)
-		// return URL(fileURLWithPath: path)
+	}
+
+	@Test func parse_devices_types() throws {
+		let contents = try #require(try load())
+		let parser = SimulatorControlParser()
+		let simulators = parser.parse(contents)
+
+		// then
+		assertThat(simulators, present())
+		assertThat(simulators?.deviceTypes, presentAnd(hasCount(117)))
+		assertThat(simulators?.deviceTypes.first?.name, presentAnd(equalTo("iPhone 17 Pro")))
+		assertThat(simulators?.deviceTypes.first?.identifier, presentAnd(equalTo("com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro")))
+
 	}
 
 
