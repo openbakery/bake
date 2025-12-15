@@ -2,19 +2,27 @@
 // Created by René Pirringer on 13.12.2025
 //
 
+import OBCoder
 
-struct DeviceType {
+struct DeviceType: Encodable {
 
-	init?(_ line: String) {
-		// iPad Pro (11-inch) (4th generation) (16GB) (com.apple.CoreSimulator.SimDeviceType.iPad-Pro-11-inch-4th-generation-16GB)
-		guard let range = line.range(of: " (com") else {
+	init(name: String, identifier: String) {
+		self.name = name
+		self.identifier = identifier
+	}
+
+	public init?(decoder: OBCoder.Decoder) {
+		guard let name = decoder.string(forKey: "name") else {
 			return nil
 		}
-		name = String(line[line.startIndex..<range.lowerBound])
-		let startIndex = line.index(range.lowerBound, offsetBy: 2)
-		let endIndex = line.index(line.endIndex, offsetBy: -1)
-		identifier = String(line[startIndex..<endIndex])
+		guard let identifier = decoder.string(forKey: "identifier") else {
+			return nil
+		}
+		self.init(name: name, identifier: identifier)
+	}
 
+	public func encode(with coder: Coder) {
+		// only decode is supported
 	}
 
 	let name: String

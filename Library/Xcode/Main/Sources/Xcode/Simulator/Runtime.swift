@@ -3,22 +3,31 @@
 //
 
 import Bake
+import OBCoder
 
-struct Runtime {
+struct Runtime: Encodable {
 
-	public init?(_ string: String) {
-
-		guard let match = string.firstMatch(of: pattern) else { return nil }
-
-		name = "\(match.1) \(match.2)"
-		identifier = String(match.5)
-
-		version = Version(string: String(match.3)).update(build: String(match.4))
-
-
+	public init(identifier: String, name: String, version: Version) {
+		self.identifier = identifier
+		self.name = name
+		self.version = version
 	}
 
-	let pattern = #/(\w+)\s(\d+\.\d+)\s\((\d+\.\d+)\s-\s(\w+)\)\s-\s(.*)/#
+	public init?(decoder: OBCoder.Decoder) {
+		guard let name = decoder.string(forKey: "name") else { return nil }
+		guard let identifier = decoder.string(forKey: "identifier") else { return nil }
+		guard let versionNumber = decoder.string(forKey: "version") else { return nil }
+		guard let build = decoder.string(forKey: "buildversion") else { return nil }
+		let version = Version(string: versionNumber, build: build)
+
+		self.init(identifier: identifier, name: name, version: version)
+	}
+
+	public func encode(with coder: Coder) {
+		// only decode is supported
+	}
+
+
 
 	let identifier: String
 	let name: String

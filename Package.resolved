@@ -1,5 +1,5 @@
 {
-  "originHash" : "d9a735a45bc0d5031f5d1f2ccf54831b0a3fb0d868b9328b36b603d41d797c2b",
+  "originHash" : "37305645817e13141da6deb74f351e9eb20c20b8e8eae31476bc5ab0be0c5250",
   "pins" : [
     {
       "identity" : "obcoder",
@@ -7,7 +7,7 @@
       "location" : "https://github.com/openbakery/OBCoder/",
       "state" : {
         "branch" : "main",
-        "revision" : "e64eadf3725402529b4bb3cfa886c92830823395"
+        "revision" : "1d7c23aafd2718edfa7b11c8d7b26dcfd128dcc9"
       }
     },
     {

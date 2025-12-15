@@ -18,12 +18,12 @@ open class Version: Comparable, CustomStringConvertible {
 		self.build = build
 	}
 
-	public convenience init(string: String) {
+	public convenience init(string: String, build: String = "") {
 		let tokens = string.components(separatedBy: CharacterSet(charactersIn: ". "))
 		var major = 0
 		var minor = 0
 		var maintenance = 0
-		var build = ""
+		var buildString = build
 		for (index, token) in tokens.enumerated() {
 			switch index {
 			case 0:
@@ -33,12 +33,12 @@ open class Version: Comparable, CustomStringConvertible {
 			case 2:
 				maintenance = Int(token) ?? 0
 			case 3:
-				build = token
+				buildString = token
 			default:
 				break
 			}
 		}
-		self.init(major: major, minor: minor, maintenance: maintenance, build: build)
+		self.init(major: major, minor: minor, maintenance: maintenance, build: buildString)
 	}
 
 
