@@ -62,10 +62,17 @@ struct SimulatorControlParser_Test {
 
 		assertThat(simulators?.devices, presentAnd(instanceOf(Devices.self)))
 
-		let runtime = try #require(simulators?.runtimes.first)
+		let runtime = try #require(simulators?.runtimes.last)
 
 		let devices = simulators?.devices(forRuntime: runtime)
-		assertThat(devices, presentAnd(hasCount(11)))
+		assertThat(devices, presentAnd(hasCount(12)))
+		let device = try #require(devices?.first)
+		assertThat(device.name, equalTo("iPhone 16 Pro"))
+		assertThat(device.identifier, equalTo("E10C50BE-D910-44A9-86F8-76126E232F98"))
+		assertThat(device.isAvailable, equalTo(true))
+		assertThat(device.dataPath, equalTo("/Users/rene/Library/Developer/CoreSimulator/Devices/E10C50BE-D910-44A9-86F8-76126E232F98/data"))
+		assertThat(device.deviceTypeIdentifier, equalTo("com.apple.CoreSimulator.SimDeviceType.iPhone-16-Pro"))
+		assertThat(device.state, equalTo("Shutdown"))
 
 	}
 
