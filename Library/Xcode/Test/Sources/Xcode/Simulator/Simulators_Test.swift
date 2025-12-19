@@ -37,7 +37,7 @@ struct Simulators_Test {
 		assertThat(runtime?.version.build, presentAnd(equalTo("23C52")))
 	}
 
-	@Test func find_runtime_by_versoin() throws {
+	@Test func find_runtime_by_version() throws {
 		let simulators = try parseJson()
 
 		// when
@@ -46,4 +46,30 @@ struct Simulators_Test {
 		// then
 		assertThat(runtime?.name, presentAnd(equalTo("iOS 18.6")))
 	}
+
+	@Test func get_runtime_gets_newest_iOS_runtime() throws {
+		let simulators = try parseJson()
+
+		// when
+		let runtime = simulators?.runtime()
+
+		// then
+		assertThat(runtime?.name, presentAnd(equalTo("iOS 26.2")))
+		assertThat(runtime?.type, presentAnd(equalTo(.iOS)))
+	}
+
+	@Test func find_device() throws {
+		let simulators = try parseJson()
+
+		// when
+		let device = try #require(simulators?.device())
+
+		// then
+		assertThat(device.name, presentAnd(equalTo("iPhone 17 Pro")))
+		let runtime = simulators?.runtime(device: device)
+		assertThat(runtime?.name, presentAnd(equalTo("iOS 26.2")))
+		assertThat(runtime?.type, presentAnd(equalTo(.iOS)))
+
+	}
+
 }

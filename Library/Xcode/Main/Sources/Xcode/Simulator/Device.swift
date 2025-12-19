@@ -7,7 +7,7 @@ import Bake
 import Foundation
 import OBCoder
 
-public struct Device: Encodable {
+public struct Device: Encodable, Equatable {
 
 	public init(
 		identifier: String,
@@ -54,5 +54,9 @@ public struct Device: Encodable {
 
 	public func encode(with coder: Coder) {
 		// only decode is supported
+	}
+
+	public static func == (lhs: Device, rhs: Device) -> Bool {
+		return lhs.identifier == rhs.identifier
 	}
 }
