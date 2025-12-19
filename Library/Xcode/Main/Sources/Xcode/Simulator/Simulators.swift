@@ -6,13 +6,15 @@ import Bake
 
 public struct Simulators {
 
-	public init(deviceTypes: [DeviceType], runtimes: [Runtime]) {
+	public init(deviceTypes: [DeviceType], runtimes: [Runtime], devices: Devices) {
 		self.deviceTypes = deviceTypes
 		self.runtimes = runtimes.sorted { $0.version > $1.version }
+		self.devices = devices
 	}
 
 	let deviceTypes: [DeviceType]
 	let runtimes: [Runtime]
+	let devices: Devices
 
 
 	public func runtime(type: SDKType, version: Version? = nil) -> Runtime? {
@@ -20,6 +22,10 @@ public struct Simulators {
 			return runtimes.first { $0.type == type && $0.version == version }
 		}
 		return runtimes.first { $0.type == type }
+	}
+
+	public func devices(forRuntime runtime: Runtime) -> [Device]? {
+		return devices.get(runtime: runtime)
 	}
 
 }

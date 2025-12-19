@@ -57,5 +57,16 @@ struct SimulatorControlParser_Test {
 	}
 
 
+	@Test func parseJson_devices() throws {
+		let simulators = try parseJson()
+
+		assertThat(simulators?.devices, presentAnd(instanceOf(Devices.self)))
+
+		let runtime = try #require(simulators?.runtimes.first)
+
+		let devices = simulators?.devices(forRuntime: runtime)
+		assertThat(devices, presentAnd(hasCount(11)))
+
+	}
 
 }

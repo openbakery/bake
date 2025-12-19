@@ -3,8 +3,8 @@
 //
 
 import Bake
-import OBCoder
 import Foundation
+import OBCoder
 
 open class SimulatorControlParser {
 
@@ -16,8 +16,9 @@ open class SimulatorControlParser {
 
 		guard let deviceTypes = decoder.decodeArray(forKey: "devicetypes", type: DeviceType.self) else { return nil }
 		guard let runtimes = decoder.decodeArray(forKey: "runtimes", type: Runtime.self) else { return nil }
+		guard let devices = decoder.decode(forKey: "devices", type: Devices.self) else { return nil }
 
-		return Simulators(deviceTypes: deviceTypes, runtimes: runtimes)
+		return Simulators(deviceTypes: deviceTypes, runtimes: runtimes, devices: devices)
 	}
 
 }
