@@ -75,7 +75,7 @@ struct Simulators_Test {
 		let simulators = try parseJson()
 
 		// when
-		let device = try #require(simulators?.device("iPad Pro"))
+		let device = try #require(simulators?.device(name: "iPad Pro"))
 
 		// then
 		assertThat(device.name, presentAnd(equalTo("iPad Pro 13-inch (M5)")))
@@ -89,9 +89,22 @@ struct Simulators_Test {
 		let simulators = try parseJson()
 
 		// when
-		let device = try #require(simulators?.device("iPad Pro 11-inch"))
+		let device = try #require(simulators?.device(name: "iPad Pro 11-inch"))
 
 		// then
 		assertThat(device.name, presentAnd(equalTo("iPad Pro 11-inch (M5)")))
+	}
+
+	@Test func find_device_by_name_and_iOS_versoin() throws {
+		let simulators = try parseJson()
+
+		// when
+		let device = try #require(simulators?.device(name: "iPad Air", version: "18.6"))
+
+		// then
+		assertThat(device.name, presentAnd(equalTo("iPad Air (5th generation)")))
+		let runtime = simulators?.runtime(device: device)
+		assertThat(runtime?.name, presentAnd(equalTo("iOS 18.6")))
+		assertThat(runtime?.type, presentAnd(equalTo(.iOS)))
 	}
 }
