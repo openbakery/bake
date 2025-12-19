@@ -41,13 +41,14 @@ public struct Simulators {
 		return self.device(name: name, version: Version(string: version))
 	}
 
-	public func device(name: String? = nil, version: Version? = nil) -> Device? {
-		guard let runtime = runtime(version: version) else { return nil }
+	public func device(name: String? = nil, version: Version? = nil, type: SDKType = .iOS) -> Device? {
+		guard let runtime = runtime(type: type, version: version) else { return nil }
 		guard let devices = devices(forRuntime: runtime) else { return nil }
 		if let name {
 			for device in devices where device.name.contains(name) {
 				return device
 			}
+			return nil
 		}
 		return devices.first
 

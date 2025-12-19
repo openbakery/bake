@@ -37,6 +37,16 @@ struct Simulators_Test {
 		assertThat(runtime?.version.build, presentAnd(equalTo("23C52")))
 	}
 
+	@Test func find_tvOS_runtime_by_type_returns_newest() throws {
+		let simulators = try parseJson()
+
+		// when
+		let runtime = simulators?.runtime(type: .tvOS)
+
+		// then
+		assertThat(runtime?.name, presentAnd(equalTo("tvOS 26.0")))
+	}
+
 	@Test func find_runtime_by_version() throws {
 		let simulators = try parseJson()
 

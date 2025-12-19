@@ -57,4 +57,36 @@ struct SimulatorControl_Test {
 		assertThat(device?.name, presentAnd(equalTo("iPad Air (5th generation)")))
 	}
 
+	@Test func get_tvOS_device() async throws {
+		try mockList()
+
+		// when
+		let device = try await control.device(type: .tvOS)
+
+		// then
+		assertThat(device, present())
+		assertThat(device?.name, presentAnd(equalTo("Apple TV 4K (3rd generation)")))
+	}
+
+	@Test func get_tvOS_device_by_name_and_version() async throws {
+		try mockList()
+
+		// when
+		let device = try await control.device(name: "1080p", version: "26.0", type: .tvOS)
+
+		// then
+		assertThat(device, present())
+		assertThat(device?.name, presentAnd(equalTo("Apple TV 4K (3rd generation) (at 1080p)")))
+	}
+
+	@Test func device_not_found() async throws {
+		try mockList()
+
+		// when
+		let device = try await control.device(name: "2nd")
+
+		// then
+		assertThat(device, nilValue())
+	}
+
 }

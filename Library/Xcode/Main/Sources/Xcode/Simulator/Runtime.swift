@@ -7,11 +7,11 @@ import OBCoder
 
 public struct Runtime: Encodable {
 
-	public init(identifier: String, name: String, version: Version) {
+	public init(identifier: String, name: String, version: Version, type: SDKType) {
 		self.identifier = identifier
 		self.name = name
 		self.version = version
-		self.type = .iOS
+		self.type = type
 	}
 
 	public init?(decoder: OBCoder.Decoder) {
@@ -19,9 +19,13 @@ public struct Runtime: Encodable {
 		guard let identifier = decoder.string(forKey: "identifier") else { return nil }
 		guard let versionNumber = decoder.string(forKey: "version") else { return nil }
 		guard let build = decoder.string(forKey: "buildversion") else { return nil }
+		guard let platform = decoder.string(forKey: "platform") else { return nil }
+
+		let type = SDKType.value(platform)
+
 		let version = Version(string: versionNumber, build: build)
 
-		self.init(identifier: identifier, name: name, version: version)
+		self.init(identifier: identifier, name: name, version: version, type: type)
 	}
 
 	public func encode(with coder: Coder) {

@@ -57,6 +57,20 @@ struct SimulatorControlParser_Test {
 	}
 
 
+	@Test func parseJson_tvOS_runtime() throws {
+		let simulators = try #require(try parseJson())
+
+		// then
+		assertThat(simulators.runtimes, presentAnd(hasCount(5)))
+		if simulators.runtimes.count < 5 {
+			return
+		}
+		let runtime = simulators.runtimes[3]
+		assertThat(runtime.name, presentAnd(equalTo("tvOS 26.0")))
+		assertThat(runtime.type, presentAnd(equalTo(.tvOS)))
+	}
+
+
 	@Test func parseJson_devices() throws {
 		let simulators = try parseJson()
 

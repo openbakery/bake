@@ -38,13 +38,13 @@ open class SimulatorControl: Target {
 
 	}
 
-	func device(name: String?, version: String?, sdkType: SDKType = .iOS) async throws -> Device? {
+	public func device(name: String? = nil, version: String? = nil, type: SDKType = .iOS) async throws -> Device? {
 		try await loadSimulators()
 		if let simulators {
 			if let version {
-				return simulators.device(name: name, version: Version(string: version))
+				return simulators.device(name: name, version: Version(string: version), type: type)
 			}
-			return simulators.device(name: name)
+			return simulators.device(name: name, type: type)
 		}
 		return nil
 
