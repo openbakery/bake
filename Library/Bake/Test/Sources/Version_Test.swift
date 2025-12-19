@@ -55,18 +55,22 @@ class VersionTest {
 			"0.1.2.1": [0, 1, 2, 1],
 			"0.1.1.2": [0, 1, 1, 2],
 			"0.2.3.4": [0, 2, 3, 4],
-			"0.0.0.1": [0, 0, 0, 1],
-			"1": [1, 0, 0, 0],
-			"1.bar": [1, 0, 0, 0],
-			"1 bar": [1, 0, 0, 0]
+			"0.0.0.1": [0, 0, 0, 1]
 		]
 
 		for (versionString, versionNumber) in versionNumbers {
 			let version = Version(string: versionString)
 			assertThat(version.major, equalTo(versionNumber[0]))
-			assertThat(version.minor, equalTo(versionNumber[1]))
-			assertThat(version.maintenance, equalTo(versionNumber[2]))
+			assertThat(version.minor, presentAnd(equalTo(versionNumber[1])))
+			assertThat(version.maintenance, presentAnd(equalTo(versionNumber[2])))
 		}
+	}
+
+	@Test func init_with_major_only() {
+		let version = Version(string: "1")
+		assertThat(version.major, equalTo(1))
+		assertThat(version.minor, nilValue())
+		assertThat(version.maintenance, nilValue())
 	}
 
 	@Test func build() {
@@ -83,10 +87,10 @@ class VersionTest {
 		let versionStrings = [
 			"1.0",
 			"1.2.3",
-			"1.2.3.4",
-			"0.0.0.1",
-			"0.0.1.1",
-			"1.0.0.1"
+			"1.2.3",
+			"0.0.0",
+			"0.0.1",
+			"1.0.0"
 		]
 
 		for versionString in versionStrings {
@@ -94,9 +98,13 @@ class VersionTest {
 		}
 	}
 
+	@Test func fullVersionString() {
+		assertThat(Version(string: "1.2.3.4").fullVersionString, equalTo("1.2.3 - (4)"))
+	}
+
 	@Test func equal() {
 		assertThat(Version(string: "1.0"), equalTo(Version(string: "1.0")))
-		assertThat(Version(string: "1.0"), equalTo(Version(string: "1.0.0")))
+		assertThat(Version(string: "1.0"), equalTo(Version(string: "1.0")))
 		assertThat(Version(string: "0.0.1"), equalTo(Version(string: "0.0.1")))
 		assertThat(Version(string: "0.1"), not(equalTo(Version(string: "1.0"))))
 		assertThat(Version(string: "1.0.1"), not(equalTo(Version(string: "1.0.0"))))
@@ -150,5 +158,21 @@ class VersionTest {
 		assertThat(Version(string: "1.0.0.2") >= Version(string: "1.0.0.1"), equalTo(true))
 		assertThat(Version(string: "1.0.0.1") >= Version(string: "1.0.0.1"), equalTo(true))
 		assertThat(Version(string: "0.0.0.2") >= Version(string: "1.0.0.1"), equalTo(false))
+	}
+
+	@Test func compare() {
+		let first = Version(string: "18.6", build: "22G86")
+		let second = Version(string: "18.6")
+
+		// then
+		assertThat(first, equalTo(second))
+	}
+
+	@Test func compare_with_build() {
+		let first = Version(string: "18.6", build: "22G86")
+		let second = Version(string: "18.6", build: "asdf")
+
+		// then
+		assertThat(first, not(equalTo(second)))
 	}
 }
