@@ -4,19 +4,12 @@
 
 import Bake
 import OBCoder
+import Foundation
 
 open class SimulatorControlParser {
 
 	public init() {
 	}
-
-	enum Mode {
-		case deviceType, runtime, none
-	}
-
-	var mode = Mode.none
-
-
 
 	open func parseJson(_ contents: String) -> Simulators? {
 		let decoder = JSONDecoder(jsonString: contents)

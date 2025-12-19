@@ -5,12 +5,13 @@
 import Bake
 import OBCoder
 
-struct Runtime: Encodable {
+public struct Runtime: Encodable {
 
 	public init(identifier: String, name: String, version: Version) {
 		self.identifier = identifier
 		self.name = name
 		self.version = version
+		self.type = .iOS
 	}
 
 	public init?(decoder: OBCoder.Decoder) {
@@ -29,8 +30,9 @@ struct Runtime: Encodable {
 
 
 
-	let identifier: String
-	let name: String
-	let version: Version
+	public let identifier: String
+	public let name: String
+	public let version: Version
+	public let type: SDKType
 
 }

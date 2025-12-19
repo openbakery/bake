@@ -20,24 +20,15 @@ struct SimulatorControlParser_Test {
 		HamcrestSwiftTesting.enable()
 	}
 
-	func load(filename: String = "simctl-list.txt") throws -> String? {
-		let url = URL(fileURLWithPath: filename)
-		guard let basename = url.basename else { return nil }
-		guard let type = url.fileExtension else { return nil }
-		guard let fullPath = Bundle.module.url(forResource: basename, withExtension: type) else { return nil }
-		return try String(contentsOf: fullPath, encoding: .utf8)
-	}
-
-
 	func parseJson() throws -> Simulators? {
-		let contents = try #require(try load(filename: "simctl.json"))
+		let contents = try #require(try Bundle.module.load(filename: "simctl.json"))
 		let parser = SimulatorControlParser()
 		return parser.parseJson(contents)
 	}
 
 
 	@Test func load_json() throws {
-		let contents = try load(filename: "simctl.json")
+		let contents = try Bundle.module.load(filename: "simctl.json")
 
 		// then
 		assertThat(contents, presentAnd(hasPrefix("{")))
@@ -58,11 +49,13 @@ struct SimulatorControlParser_Test {
 
 		// then
 		assertThat(simulators?.runtimes, presentAnd(hasCount(5)))
-		assertThat(simulators?.runtimes.first?.name, presentAnd(equalTo("iOS 18.6")))
-		assertThat(simulators?.runtimes.first?.identifier, presentAnd(equalTo("com.apple.CoreSimulator.SimRuntime.iOS-18-6")))
-		assertThat(simulators?.runtimes.first?.version.major, presentAnd(equalTo(18)))
-		assertThat(simulators?.runtimes.first?.version.minor, presentAnd(equalTo(6)))
-		assertThat(simulators?.runtimes.first?.version.build, presentAnd(equalTo("22G86")))
+		assertThat(simulators?.runtimes.last?.name, presentAnd(equalTo("iOS 18.6")))
+		assertThat(simulators?.runtimes.last?.identifier, presentAnd(equalTo("com.apple.CoreSimulator.SimRuntime.iOS-18-6")))
+		assertThat(simulators?.runtimes.last?.version.major, presentAnd(equalTo(18)))
+		assertThat(simulators?.runtimes.last?.version.minor, presentAnd(equalTo(6)))
+		assertThat(simulators?.runtimes.last?.version.build, presentAnd(equalTo("22G86")))
 	}
+
+
 
 }

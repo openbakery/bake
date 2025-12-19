@@ -4,9 +4,9 @@
 
 import OBCoder
 
-struct DeviceType: Encodable {
+public struct DeviceType: Encodable {
 
-	init(name: String, identifier: String) {
+	public init(name: String, identifier: String) {
 		self.name = name
 		self.identifier = identifier
 	}
@@ -25,6 +25,6 @@ struct DeviceType: Encodable {
 		// only decode is supported
 	}
 
-	let name: String
-	let identifier: String
+	public let name: String
+	public let identifier: String
 }
