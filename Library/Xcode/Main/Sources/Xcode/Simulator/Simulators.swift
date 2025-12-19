@@ -37,9 +37,15 @@ public struct Simulators {
 		return devices.get(runtime: runtime)
 	}
 
-	public func device() -> Device? {
+	public func device(_ string: String? = nil) -> Device? {
 		guard let runtime = runtime() else { return nil }
-		return devices(forRuntime: runtime)?.first
+		guard let devices = devices(forRuntime: runtime) else { return nil }
+		if let string {
+			for device in devices where device.name.contains(string) {
+				return device
+			}
+		}
+		return devices.first
 
 	}
 

@@ -69,7 +69,29 @@ struct Simulators_Test {
 		let runtime = simulators?.runtime(device: device)
 		assertThat(runtime?.name, presentAnd(equalTo("iOS 26.2")))
 		assertThat(runtime?.type, presentAnd(equalTo(.iOS)))
-
 	}
 
+	@Test func find_device_by_name() throws {
+		let simulators = try parseJson()
+
+		// when
+		let device = try #require(simulators?.device("iPad Pro"))
+
+		// then
+		assertThat(device.name, presentAnd(equalTo("iPad Pro 13-inch (M5)")))
+		let runtime = simulators?.runtime(device: device)
+		assertThat(runtime?.name, presentAnd(equalTo("iOS 26.2")))
+		assertThat(runtime?.type, presentAnd(equalTo(.iOS)))
+	}
+
+
+	@Test func find_device_by_name_2() throws {
+		let simulators = try parseJson()
+
+		// when
+		let device = try #require(simulators?.device("iPad Pro 11-inch"))
+
+		// then
+		assertThat(device.name, presentAnd(equalTo("iPad Pro 11-inch (M5)")))
+	}
 }
