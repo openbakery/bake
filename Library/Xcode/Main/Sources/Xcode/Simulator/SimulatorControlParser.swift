@@ -11,7 +11,7 @@ open class SimulatorControlParser {
 	public init() {
 	}
 
-	open func parseJson(_ contents: String) -> Simulators? {
+	public func parseListJson(_ contents: String) -> Simulators? {
 		let decoder = JSONDecoder(jsonString: contents)
 
 		guard let deviceTypes = decoder.decodeArray(forKey: "devicetypes", type: DeviceType.self) else { return nil }

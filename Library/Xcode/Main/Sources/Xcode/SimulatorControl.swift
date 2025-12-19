@@ -19,17 +19,36 @@ open class SimulatorControl: Target {
 	public let name = "SimulatorControl"
 	let commandRunner: CommandRunner
 	let outputHandler: OutputHandler
+	var simulators: Simulators?
 
+
+	public func loadSimulators() async throws {
+		if self.simulators == nil {
+			let result = try await commandRunner.runWithResult("/usr/bin/xcrun", "simctl", "list", "--json")
+			let parser = SimulatorControlParser()
+			self.simulators = parser.parseListJson(result.joined(separator: "\n"))
+		}
+	}
 
 	public func list() async throws {
-
-		let result = try await commandRunner.runWithResult("/usr/bin/xcrun", "simctl", "list")
+		try await loadSimulators()
 
 		outputHandler.process(line: "foo")
 		outputHandler.process(line: "bar")
 
 	}
 
+	func device(name: String?, version: String?, sdkType: SDKType = .iOS) async throws -> Device? {
+		try await loadSimulators()
+		if let simulators {
+			if let version {
+				return simulators.device(name: name, version: Version(string: version))
+			}
+			return simulators.device(name: name)
+		}
+		return nil
+
+	}
 
 
 }

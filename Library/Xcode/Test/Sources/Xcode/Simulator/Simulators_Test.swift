@@ -23,7 +23,7 @@ struct Simulators_Test {
 	func parseJson() throws -> Simulators? {
 		let contents = try #require(try Bundle.module.load(filename: "simctl.json"))
 		let parser = SimulatorControlParser()
-		return parser.parseJson(contents)
+		return parser.parseListJson(contents)
 	}
 
 	@Test func find_runtime_by_type_returns_newest() throws {

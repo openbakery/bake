@@ -1,5 +1,6 @@
 import Bake
 import BakeTestHelper
+import Foundation
 import Hamcrest
 import Testing
 
@@ -21,7 +22,7 @@ struct SimulatorControl_Test {
 	@Test
 	func list() async throws {
 
-		commandRunner.expect(command: "/usr/bin/xcrun", arguments: "simctl", "list", result: [])
+		commandRunner.expect(command: "/usr/bin/xcrun", arguments: "simctl", "list", "--json", result: [])
 
 		try await control.list()
 
@@ -29,15 +30,31 @@ struct SimulatorControl_Test {
 		assertThat(commandRunner.expectationFulfilled, equalTo(true))
 	}
 
+	func mockList() throws {
+		let contents = try #require(try Bundle.module.load(filename: "simctl.json"))
+		commandRunner.expect(command: "/usr/bin/xcrun", arguments: "simctl", "list", "--json", result: [contents])
+	}
 
 	@Test
 	func list_has_output() async throws {
-
-		commandRunner.expect(command: "/usr/bin/xcrun", arguments: "simctl", "list", result: [])
+		try mockList()
 
 		try await control.list()
 
 		// then
-		assertThat(outputHandler.lines, hasCount(greaterThan(1)))
+		assertThat(control.simulators, present())
 	}
+
+
+	@Test func get_device_by_name_and_version() async throws {
+		try mockList()
+
+		// when
+		let device = try await control.device(name: "iPad Air", version: "18.6")
+
+		// then
+		assertThat(device, present())
+		assertThat(device?.name, presentAnd(equalTo("iPad Air (5th generation)")))
+	}
+
 }
