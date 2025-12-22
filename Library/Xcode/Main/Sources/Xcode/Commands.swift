@@ -3,7 +3,6 @@
 //
 import ArgumentParser
 
-@MainActor
 public let commands: [ParsableCommand.Type] = [SimulatorControlCommand.self]
 
 
