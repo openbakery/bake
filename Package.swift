@@ -23,7 +23,8 @@ let package = Package(
 			name: "Bake",
 			dependencies: [
 				"OBCoder",
-				"OBExtra"
+				"OBExtra",
+				.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
 			path: "Library/Bake/Main/Sources",
 		),
@@ -47,10 +48,7 @@ let package = Package(
 		.target(
 			name: "BakeXcode",
 			dependencies: [
-				"Bake",
-				"OBCoder",
-				"OBExtra",
-				.product(name: "ArgumentParser", package: "swift-argument-parser")
+				"Bake"
 			],
 			path: "Library/Xcode/Main/Sources",
 		),

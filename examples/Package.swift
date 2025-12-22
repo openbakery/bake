@@ -11,19 +11,14 @@ let package = Package(
 		.executable(name: "bake", targets: ["LocalBake"])
 	],
 	dependencies: [
-		.package(url: "https://github.com/openbakery/bake/", branch: "develop"),
-		// .package(url: "https://github.com/openbakery/OBExtra/", branch: "main"),
-		// .package(url: "https://github.com/openbakery/OBCoder/", branch: "main"),
-		.package(url: "https://github.com/apple/swift-argument-parser", .upToNextMajor(from: "1.0.0"))
+		.package(url: "https://github.com/openbakery/bake/", branch: "develop")
 	],
 	targets: [
 
 		.executableTarget(
 			name: "LocalBake",
 			dependencies: [
-				// .product(name: "Bake", package: "bake"),
-				.product(name: "BakeXcode", package: "bake"),
-				.product(name: "ArgumentParser", package: "swift-argument-parser")
+				.product(name: "BakeXcode", package: "bake")
 			],
 			path: "Sources",
 		)
