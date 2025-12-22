@@ -3,12 +3,9 @@
 //
 import ArgumentParser
 
-public struct Commands {
+@MainActor
+public let commands: [ParsableCommand.Type] = [SimulatorControlCommand.self]
 
-	@MainActor
-	static var commands: [ParsableCommand.Type] = [SimulatorControlCommand.self]
-
-}
 
 struct SimulatorControlCommand: ParsableCommand {
 	static let configuration = CommandConfiguration(abstract: "SimulatorControl commands.")
