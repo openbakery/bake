@@ -76,7 +76,13 @@ let package = Package(
 				"BakeXcode",
 				.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
-			path: "Bake/Main/Sources",
+			path: "Bake/Main/",
+			sources: [
+				"Sources"
+			],
+			resources: [
+				.process("Resources")
+			]
 		),
 		.testTarget(
 			name: "BakeCLITest",
