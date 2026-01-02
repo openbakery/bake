@@ -66,8 +66,8 @@ class Bootstrap_Test {
 
 		// then
 		assertThat(bootstrap.dependencies, presentAnd(hasCount(1)))
-		assertThat(bootstrap.dependencies?.first?.name, presentAnd(equalTo("BakeXcode")))
-		assertThat(bootstrap.dependencies?.first?.package, presentAnd(equalTo("bake")))
+		assertThat(bootstrap.dependencies.first?.name, presentAnd(equalTo("BakeXcode")))
+		assertThat(bootstrap.dependencies.first?.package, presentAnd(equalTo("bake")))
 	}
 
 	@Test func dependencies_from_Bake_swift_is_included() throws {
@@ -94,14 +94,22 @@ class Bootstrap_Test {
 		assertThat(contents, containsString("import BakeXcode"))
 	}
 
-	@Test func has_default_bake_bootstrap_path() throws {
+	@Test func has_default_bake_build_path() throws {
 		let bootstrap = try Bootstrap(config: config)
-
 
 		// then
 		assertThat(bootstrap.buildDirectory, presentAnd(instanceOf(URL.self)))
 		assertThat(bootstrap.buildDirectory.path, presentAnd(hasPrefix(config.path)))
 		assertThat(bootstrap.buildDirectory.path, presentAnd(hasSuffix("build/bake")))
+	}
+
+	@Test func has_default_bake_bootstrap_path() throws {
+		let bootstrap = try Bootstrap(config: config)
+
+		// then
+		assertThat(bootstrap.bootstrapDirectory, presentAnd(instanceOf(URL.self)))
+		assertThat(bootstrap.bootstrapDirectory.path, presentAnd(hasPrefix(config.path)))
+		assertThat(bootstrap.bootstrapDirectory.path, presentAnd(hasSuffix("build/bake/bootstrap")))
 	}
 
 }

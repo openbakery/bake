@@ -28,16 +28,18 @@ struct Bootstrap {
 	}
 
 	let packageString: String
-	var dependencies: [Dependency]?
-	var buildDirectory: URL
+	let dependencies: [Dependency]
 	let mainSwift: [String]
+	let buildDirectory: URL
+	var bootstrapDirectory: URL { buildDirectory.appendingPathComponent(Self.defaultBootstrapDirectory) }
 
 	static let defaultBuildDirectory = "build/bake/"
+	static let defaultBootstrapDirectory = "bootstrap/"
 
 
 	func createPackageSwift() -> String {
-		let dependenciesString = self.dependencies?.compactMap({ $0.description }).joined(separator: ",\n\t\t\t\t")
-		return packageString.replacingOccurrences(of: "{{DEPENDENCIES}}", with: dependenciesString ?? "")
+		let dependenciesString = self.dependencies.map({ $0.description }).joined(separator: ",\n\t\t\t\t")
+		return packageString.replacingOccurrences(of: "{{DEPENDENCIES}}", with: dependenciesString)
 	}
 
 	func createMainSwift() -> String {
