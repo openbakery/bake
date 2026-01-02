@@ -34,7 +34,7 @@ class Bootstrap_Test {
 		// when
 		let dependency = Dependency(name: "BakeXcode", package: "bake")
 		bootstrap.add(dependencies: [dependency])
-		let packageString = bootstrap.build()
+		let packageString = bootstrap.createPackageSwift()
 
 		// then
 		assertThat(packageString, hasPrefix("// swift-tools-version: 6.1"))
@@ -49,7 +49,7 @@ class Bootstrap_Test {
 		let first = Dependency(name: "BakeXcode", package: "bake")
 		let second = Dependency(name: "Foo", package: "bar")
 		bootstrap.add(dependencies: [first, second])
-		let packageString = bootstrap.build()
+		let packageString = bootstrap.createPackageSwift()
 
 		// then
 		assertThat(packageString, hasPrefix("// swift-tools-version: 6.1"))
@@ -78,12 +78,26 @@ class Bootstrap_Test {
 
 		// when
 		try bootstrap.load(config: url)
-		let packageString = bootstrap.build()
+		let packageString = bootstrap.createPackageSwift()
 
 		// then
 		assertThat(packageString, hasPrefix("// swift-tools-version: 6.1"))
 		assertThat(packageString, containsString(".executable(name: \"bake\", targets: [\"LocalBake\"])"))
 		assertThat(packageString, containsString("\n\t\t\t\t.product(name: \"BakeXcode\", package: \"bake\")"))
+	}
+
+
+	@Test func import_is_removed_from_Bake_swift() throws {
+		var bootstrap = try Bootstrap()
+		let url = try #require(try Bundle.module.url(filename: "Bake.txt"))
+
+		// when
+		try bootstrap.load(config: url)
+		let contents = bootstrap.createMainSwift()
+
+		// then
+		assertThat(contents, not(containsString("@import")))
+		assertThat(contents, containsString("import BakeXcode"))
 	}
 
 }

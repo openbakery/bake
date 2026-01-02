@@ -26,9 +26,14 @@ struct Bootstrap {
 		self.dependencies = dependencies
 	}
 
-	func build() -> String {
+	func createPackageSwift() -> String {
 		let dependenciesString = self.dependencies?.compactMap({ $0.description }).joined(separator: ",\n\t\t\t\t")
 		return packageString.replacingOccurrences(of: "{{DEPENDENCIES}}", with: dependenciesString ?? "")
+	}
+
+	var mainSwift = [String]()
+	func createMainSwift() -> String {
+		return mainSwift.joined(separator: "\n")
 	}
 
 	mutating func load(config: URL) throws {
@@ -42,7 +47,10 @@ struct Bootstrap {
 			if line.hasPrefix("@import") {
 				if let dependency = Dependency(line: line) {
 					dependencies.append(dependency)
+					mainSwift.append("import \(dependency.name)")
 				}
+			} else {
+				mainSwift.append(line)
 			}
 		}
 
