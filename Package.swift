@@ -92,7 +92,13 @@ let package = Package(
 				.product(name: "Hamcrest", package: "SwiftHamcrest"),
 				.product(name: "HamcrestSwiftTesting", package: "SwiftHamcrest")
 			],
-			path: "Bake/Test/Sources",
+			path: "Bake/Test",
+			sources: [
+				"Sources"
+			],
+			resources: [
+				.process("Resources")
+			]
 		)
 	]
 )

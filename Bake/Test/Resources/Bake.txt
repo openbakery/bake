@@ -1,3 +1,2 @@
-// Bake configuration
 
 @import("BakeXcode", package: "bake")

@@ -2,6 +2,7 @@
 // Created by René Pirringer on 23.12.2025
 //
 
+import Bake
 import Foundation
 
 public enum LoadingError: Error {
@@ -28,5 +29,23 @@ struct Bootstrap {
 	func build() -> String {
 		let dependenciesString = self.dependencies?.compactMap({ $0.description }).joined(separator: ",\n\t\t\t\t")
 		return packageString.replacingOccurrences(of: "{{DEPENDENCIES}}", with: dependenciesString ?? "")
+	}
+
+	mutating func load(config: URL) throws {
+		let contents = try String(contentsOf: config, encoding: .utf8)
+
+		let parser = LineParser(contents)
+
+		var dependencies = [Dependency]()
+		while let line = parser.nextLine() {
+
+			if line.hasPrefix("@import") {
+				if let dependency = Dependency(line: line) {
+					dependencies.append(dependency)
+				}
+			}
+		}
+
+		self.add(dependencies: dependencies)
 	}
 }

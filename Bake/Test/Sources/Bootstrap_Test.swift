@@ -5,6 +5,7 @@
 import Bake
 import BakeTestHelper
 import BakeXcode
+import Foundation
 import Hamcrest
 import HamcrestSwiftTesting
 import Testing
@@ -57,4 +58,17 @@ class Bootstrap_Test {
 		assertThat(packageString, containsString("\n\t\t\t\t.product(name: \"Foo\", package: \"bar\")"))
 	}
 
+
+	@Test func dependencies_from_Bake_swift() throws {
+		var bootstrap = try Bootstrap()
+		let url = try #require(try Bundle.module.url(filename: "Bake.txt"))
+
+		// when
+		try bootstrap.load(config: url)
+
+		// then
+		assertThat(bootstrap.dependencies, presentAnd(hasCount(1)))
+		assertThat(bootstrap.dependencies?.first?.name, presentAnd(equalTo("BakeXcode")))
+		assertThat(bootstrap.dependencies?.first?.package, presentAnd(equalTo("bake")))
+	}
 }
