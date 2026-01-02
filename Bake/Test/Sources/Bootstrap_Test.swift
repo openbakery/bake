@@ -8,6 +8,7 @@ import BakeXcode
 import Foundation
 import Hamcrest
 import HamcrestSwiftTesting
+import OBExtra
 import Testing
 
 @testable import BakeCLI
@@ -18,14 +19,14 @@ class Bootstrap_Test {
 	init() async throws {
 		HamcrestSwiftTesting.enable()
 		config = try #require(try Bundle.module.url(filename: "Bake.txt"))
+		bootstrap = try Bootstrap(config: config)
 	}
 
 	let config: URL
+	let bootstrap: Bootstrap
 
 
 	@Test func load_package_template() throws {
-		let bootstrap = try Bootstrap(config: config)
-
 		// then
 		assertThat(bootstrap.packageString, hasPrefix("// swift-tools-version: 6.1"))
 		assertThat(bootstrap.packageString, containsString(".executable(name: \"bake\", targets: [\"LocalBake\"])"))
@@ -36,7 +37,8 @@ class Bootstrap_Test {
 		let bootstrap = try Bootstrap(dependencies: [dependency])
 
 		// when
-		let packageString = bootstrap.createPackageSwift()
+		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
+		let packageString = try String(contentsOf: packageFile, encoding: .utf8)
 
 		// then
 		assertThat(packageString, hasPrefix("// swift-tools-version: 6.1"))
@@ -50,7 +52,8 @@ class Bootstrap_Test {
 		let bootstrap = try Bootstrap(dependencies: [first, second])
 
 		// when
-		let packageString = bootstrap.createPackageSwift()
+		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
+		let packageString = try String(contentsOf: packageFile, encoding: .utf8)
 
 		// then
 		assertThat(packageString, hasPrefix("// swift-tools-version: 6.1"))
@@ -61,20 +64,16 @@ class Bootstrap_Test {
 
 
 	@Test func dependencies_from_Bake_swift() throws {
-		// when
-		let bootstrap = try Bootstrap(config: config)
-
-		// then
+		// expect
 		assertThat(bootstrap.dependencies, presentAnd(hasCount(1)))
 		assertThat(bootstrap.dependencies.first?.name, presentAnd(equalTo("BakeXcode")))
 		assertThat(bootstrap.dependencies.first?.package, presentAnd(equalTo("bake")))
 	}
 
 	@Test func dependencies_from_Bake_swift_is_included() throws {
-		let bootstrap = try Bootstrap(config: config)
-
 		// when
-		let packageString = bootstrap.createPackageSwift()
+		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
+		let packageString = try String(contentsOf: packageFile, encoding: .utf8)
 
 		// then
 		assertThat(packageString, hasPrefix("// swift-tools-version: 6.1"))
@@ -84,10 +83,10 @@ class Bootstrap_Test {
 
 
 	@Test func import_is_removed_from_Bake_swift() throws {
-		let bootstrap = try Bootstrap(config: config)
-
 		// when
-		let contents = bootstrap.createMainSwift()
+		try bootstrap.createMainSwift()
+		let file = bootstrap.bootstrapDirectory.appendingPathComponent("Source/main.swift")
+		let contents = try String(contentsOf: file, encoding: .utf8)
 
 		// then
 		assertThat(contents, not(containsString("@import")))
@@ -95,21 +94,26 @@ class Bootstrap_Test {
 	}
 
 	@Test func has_default_bake_build_path() throws {
-		let bootstrap = try Bootstrap(config: config)
-
-		// then
+		// expect
 		assertThat(bootstrap.buildDirectory, presentAnd(instanceOf(URL.self)))
 		assertThat(bootstrap.buildDirectory.path, presentAnd(hasPrefix(config.path)))
 		assertThat(bootstrap.buildDirectory.path, presentAnd(hasSuffix("build/bake")))
 	}
 
 	@Test func has_default_bake_bootstrap_path() throws {
-		let bootstrap = try Bootstrap(config: config)
-
 		// then
 		assertThat(bootstrap.bootstrapDirectory, presentAnd(instanceOf(URL.self)))
 		assertThat(bootstrap.bootstrapDirectory.path, presentAnd(hasPrefix(config.path)))
 		assertThat(bootstrap.bootstrapDirectory.path, presentAnd(hasSuffix("build/bake/bootstrap")))
+	}
+
+	@Test func bootstrap_run_creates_main_swift() throws {
+		// when
+		try bootstrap.run()
+
+		// then
+		let main = bootstrap.bootstrapDirectory.appendingPathComponent("Sources/main.swift")
+		assertThat(main.fileExists(), equalTo(true))
 	}
 
 }

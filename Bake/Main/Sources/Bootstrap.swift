@@ -36,14 +36,24 @@ struct Bootstrap {
 	static let defaultBuildDirectory = "build/bake/"
 	static let defaultBootstrapDirectory = "bootstrap/"
 
-
-	func createPackageSwift() -> String {
-		let dependenciesString = self.dependencies.map({ $0.description }).joined(separator: ",\n\t\t\t\t")
-		return packageString.replacingOccurrences(of: "{{DEPENDENCIES}}", with: dependenciesString)
+	func run() throws {
+		try createPackageSwift()
+		try createMainSwift()
 	}
 
-	func createMainSwift() -> String {
-		return mainSwift.joined(separator: "\n")
+	func createPackageSwift() throws {
+		let packageFile = bootstrapDirectory.appendingPathComponent("Package.swift")
+
+		let dependenciesString = self.dependencies.map({ $0.description }).joined(separator: ",\n\t\t\t\t")
+		let contents = packageString.replacingOccurrences(of: "{{DEPENDENCIES}}", with: dependenciesString)
+
+		try contents.write(to: packageFile, atomically: true, encoding: String.Encoding.utf8)
+	}
+
+	func createMainSwift() throws {
+		let mainFile = bootstrapDirectory.appendingPathComponent("Sources/main.swift")
+		let contents = mainSwift.joined(separator: "\n")
+		try contents.write(to: mainFile, atomically: true, encoding: String.Encoding.utf8)
 	}
 
 	static func load(config: URL) throws -> (dependencies: [Dependency], main: [String]) {
@@ -67,4 +77,5 @@ struct Bootstrap {
 
 		return (dependencies, mainSwift)
 	}
+
 }
