@@ -17,11 +17,14 @@ class Bootstrap_Test {
 
 	init() async throws {
 		HamcrestSwiftTesting.enable()
+		config = try #require(try Bundle.module.url(filename: "Bake.txt"))
 	}
+
+	let config: URL
 
 
 	@Test func load_package_template() throws {
-		let bootstrap = try Bootstrap()
+		let bootstrap = try Bootstrap(config: config)
 
 		// then
 		assertThat(bootstrap.packageString, hasPrefix("// swift-tools-version: 6.1"))
@@ -29,11 +32,10 @@ class Bootstrap_Test {
 	}
 
 	@Test func add_dependencies() throws {
-		var bootstrap = try Bootstrap()
+		let dependency = Dependency(name: "BakeXcode", package: "bake")
+		let bootstrap = try Bootstrap(dependencies: [dependency])
 
 		// when
-		let dependency = Dependency(name: "BakeXcode", package: "bake")
-		bootstrap.add(dependencies: [dependency])
 		let packageString = bootstrap.createPackageSwift()
 
 		// then
@@ -43,12 +45,11 @@ class Bootstrap_Test {
 	}
 
 	@Test func add_two_dependencies() throws {
-		var bootstrap = try Bootstrap()
-
-		// when
 		let first = Dependency(name: "BakeXcode", package: "bake")
 		let second = Dependency(name: "Foo", package: "bar")
-		bootstrap.add(dependencies: [first, second])
+		let bootstrap = try Bootstrap(dependencies: [first, second])
+
+		// when
 		let packageString = bootstrap.createPackageSwift()
 
 		// then
@@ -60,11 +61,8 @@ class Bootstrap_Test {
 
 
 	@Test func dependencies_from_Bake_swift() throws {
-		var bootstrap = try Bootstrap()
-		let url = try #require(try Bundle.module.url(filename: "Bake.txt"))
-
 		// when
-		try bootstrap.load(config: url)
+		let bootstrap = try Bootstrap(config: config)
 
 		// then
 		assertThat(bootstrap.dependencies, presentAnd(hasCount(1)))
@@ -73,11 +71,9 @@ class Bootstrap_Test {
 	}
 
 	@Test func dependencies_from_Bake_swift_is_included() throws {
-		var bootstrap = try Bootstrap()
-		let url = try #require(try Bundle.module.url(filename: "Bake.txt"))
+		let bootstrap = try Bootstrap(config: config)
 
 		// when
-		try bootstrap.load(config: url)
 		let packageString = bootstrap.createPackageSwift()
 
 		// then
@@ -88,16 +84,24 @@ class Bootstrap_Test {
 
 
 	@Test func import_is_removed_from_Bake_swift() throws {
-		var bootstrap = try Bootstrap()
-		let url = try #require(try Bundle.module.url(filename: "Bake.txt"))
+		let bootstrap = try Bootstrap(config: config)
 
 		// when
-		try bootstrap.load(config: url)
 		let contents = bootstrap.createMainSwift()
 
 		// then
 		assertThat(contents, not(containsString("@import")))
 		assertThat(contents, containsString("import BakeXcode"))
+	}
+
+	@Test func has_default_bake_bootstrap_path() throws {
+		let bootstrap = try Bootstrap(config: config)
+
+
+		// then
+		assertThat(bootstrap.buildDirectory, presentAnd(instanceOf(URL.self)))
+		assertThat(bootstrap.buildDirectory.path, presentAnd(hasPrefix(config.path)))
+		assertThat(bootstrap.buildDirectory.path, presentAnd(hasSuffix("build/bake")))
 	}
 
 }
