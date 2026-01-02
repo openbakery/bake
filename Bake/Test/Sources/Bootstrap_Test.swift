@@ -71,4 +71,19 @@ class Bootstrap_Test {
 		assertThat(bootstrap.dependencies?.first?.name, presentAnd(equalTo("BakeXcode")))
 		assertThat(bootstrap.dependencies?.first?.package, presentAnd(equalTo("bake")))
 	}
+
+	@Test func dependencies_from_Bake_swift_is_included() throws {
+		var bootstrap = try Bootstrap()
+		let url = try #require(try Bundle.module.url(filename: "Bake.txt"))
+
+		// when
+		try bootstrap.load(config: url)
+		let packageString = bootstrap.build()
+
+		// then
+		assertThat(packageString, hasPrefix("// swift-tools-version: 6.1"))
+		assertThat(packageString, containsString(".executable(name: \"bake\", targets: [\"LocalBake\"])"))
+		assertThat(packageString, containsString("\n\t\t\t\t.product(name: \"BakeXcode\", package: \"bake\")"))
+	}
+
 }
