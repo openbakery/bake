@@ -54,7 +54,7 @@ struct Log_Test {
 		let log = Log()
 
 		// then
-		assertThat(log.level, equalTo(.warn))
+		assertThat(log.level, equalTo(.info))
 	}
 
 	@Test

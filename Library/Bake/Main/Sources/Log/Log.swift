@@ -5,7 +5,7 @@ import Foundation
 
 public class Log {
 
-	public init(outputHandler: OutputHandler? = PrintOutputHandler(), level: Level = .warn) {
+	public init(outputHandler: OutputHandler? = PrintOutputHandler(), level: Level = .info) {
 		self.outputHandler = outputHandler
 		self.level = level
 	}
@@ -104,5 +104,8 @@ public class Log {
 		self.log(.debug, message)
 	}
 
+	public static func info(_ message: String) {
+		self.log(.info, message)
+	}
 
 }
