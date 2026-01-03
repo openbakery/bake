@@ -10,7 +10,7 @@ open class CommandRunnerFake: CommandRunner {
 		workingDirectory: URL? = nil,
 		environment: [String: String]? = nil,
 		process: Process = ProcessFake(),
-		outputHandler: OutputHandler = PrintOutputHandler()
+		outputHandler: OutputHandler = PrintOutputHandler(),
 	) async throws {
 
 		if hasCommand(command: command, arguments: arguments) != nil {
@@ -19,6 +19,7 @@ open class CommandRunnerFake: CommandRunner {
 		self.command = command
 		self.arguments = arguments
 		self.environment = environment
+		self.runClosure?()
 	}
 
 
@@ -36,6 +37,7 @@ open class CommandRunnerFake: CommandRunner {
 		self.command = command
 		self.arguments = arguments
 		self.environment = environment
+		self.runClosure?()
 		return []
 	}
 
@@ -70,4 +72,5 @@ open class CommandRunnerFake: CommandRunner {
 	public var command: String?
 	public var arguments: [String]?
 	public var environment: [String: String]?
+	public var runClosure: (() -> Void)?
 }

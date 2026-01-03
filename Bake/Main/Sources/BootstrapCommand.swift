@@ -6,7 +6,7 @@ import ArgumentParser
 import Bake
 import Foundation
 
-struct BootstrapCommand: ParsableCommand {
+struct BootstrapCommand: AsyncParsableCommand {
 	static let configuration = CommandConfiguration(
 		commandName: "bootstrap",
 		abstract: "Bake Bootstrap."
@@ -27,27 +27,27 @@ struct BootstrapCommand: ParsableCommand {
 	var kind: Kind = .bootstrap
 
 
-	mutating func run() {
+	mutating func run() async throws {
 		Log.info("Bootstrap")
 
 		switch kind {
 		case .bootstrap:
-			bootstrap()
+			try await bootstrap()
 		case .clean:
 			clean()
 		}
 
 	}
 
-	private func bootstrap() {
+	private func bootstrap() async throws {
 		let url = URL(filePath: configPath)
 		guard url.fileExists() else {
 			Log.info("Config not found: \(url)")
 			return
 		}
 		do {
-			let bootstrap = try Bootstrap(config: url)
-			try bootstrap.run()
+			let bootstrap = try Bootstrap(config: url, commandRunner: CommandRunner())
+			try await bootstrap.run()
 		} catch {
 			Log.info("Error: \(error)")
 		}

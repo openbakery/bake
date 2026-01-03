@@ -4,7 +4,7 @@ import BakeXcode
 import Foundation
 
 @main
-struct BakeCLI: ParsableCommand {
+struct BakeCLI: AsyncParsableCommand {
 	static let configuration = CommandConfiguration(
 		commandName: "bake",
 		abstract: "A utility for bulding and running software projects",

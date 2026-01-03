@@ -13,18 +13,19 @@ import Testing
 
 @testable import BakeCLI
 
-@MainActor
 class Bootstrap_Test {
 
 	init() async throws {
 		HamcrestSwiftTesting.enable()
 		config = try #require(try Bundle.module.url(filename: "Bake.txt"))
-		bootstrap = try Bootstrap(config: config)
+		commandRunner = CommandRunnerFake()
+		bootstrap = try Bootstrap(config: config, commandRunner: commandRunner)
 	}
 
 
 	let config: URL
 	let bootstrap: Bootstrap
+	let commandRunner: CommandRunnerFake
 
 
 	@Test func load_package_template() throws {
@@ -33,16 +34,16 @@ class Bootstrap_Test {
 		assertThat(bootstrap.packageString, containsString(".executable(name: \"bake\", targets: [\"LocalBake\"])"))
 	}
 
-	@Test func add_dependencies() throws {
+	@Test func add_dependencies() async throws {
 		let buildDirectory = URL.temporaryDirectory.appendingPathComponent("Bake")
 		let dependency = Dependency(name: "BakeXcode", package: "bake")
-		let bootstrap = try Bootstrap(dependencies: [dependency], buildDirectory: buildDirectory)
+		let bootstrap = try Bootstrap(dependencies: [dependency], buildDirectory: buildDirectory, commandRunner: commandRunner)
 		defer {
 			bootstrap.clean()
 		}
 
 		// when
-		try bootstrap.run()
+		try await bootstrap.run()
 		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
 		let packageString = try String(contentsOf: packageFile, encoding: .utf8)
 
@@ -52,17 +53,19 @@ class Bootstrap_Test {
 		assertThat(packageString, containsString(".product(name: \"BakeXcode\", package: \"bake\")"))
 	}
 
-	@Test func add_two_dependencies() throws {
+	@Test
+	@MainActor
+	func add_two_dependencies() async throws {
 		let buildDirectory = URL.temporaryDirectory.appendingPathComponent("Bake")
 		let first = Dependency(name: "BakeXcode", package: "bake")
 		let second = Dependency(name: "Foo", package: "bar")
-		let bootstrap = try Bootstrap(dependencies: [first, second], buildDirectory: buildDirectory)
+		let bootstrap = try Bootstrap(dependencies: [first, second], buildDirectory: buildDirectory, commandRunner: commandRunner)
 		defer {
 			bootstrap.clean()
 		}
 
 		// when
-		try bootstrap.run()
+		try bootstrap.prepare()
 		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
 		let packageString = try String(contentsOf: packageFile, encoding: .utf8)
 
@@ -81,9 +84,9 @@ class Bootstrap_Test {
 		assertThat(bootstrap.dependencies.first?.package, presentAnd(equalTo("bake")))
 	}
 
-	@Test func dependencies_from_Bake_swift_is_included() throws {
+	@Test func dependencies_from_Bake_swift_is_included() async throws {
 		// given
-		try bootstrap.run()
+		try await bootstrap.run()
 		defer {
 			bootstrap.clean()
 		}
@@ -131,9 +134,11 @@ class Bootstrap_Test {
 		assertThat(bootstrap.bootstrapDirectory.path, presentAnd(hasSuffix("build/bake/bootstrap")))
 	}
 
-	@Test func bootstrap_run_creates_main_swift() throws {
+	@Test
+	@MainActor
+	func bootstrap_run_creates_main_swift() throws {
 		// when
-		try bootstrap.run()
+		try bootstrap.prepare()
 		defer {
 			bootstrap.clean()
 		}
@@ -143,9 +148,9 @@ class Bootstrap_Test {
 		assertThat(main.fileExists(), equalTo(true))
 	}
 
-	@Test func clean() throws {
+	@Test func clean() async throws {
 		// given
-		try bootstrap.run()
+		try await bootstrap.run()
 		assertThat(bootstrap.buildDirectory.fileExists(), equalTo(true))
 
 		// when
@@ -153,6 +158,23 @@ class Bootstrap_Test {
 
 		// then
 		assertThat(bootstrap.buildDirectory.fileExists(), equalTo(false))
+	}
+
+	@Test func run_compiles_bundle() async throws {
+		// given
+		commandRunner.expect(command: "/usr/bin/swift", arguments: "build", "--package-path", bootstrap.bootstrapDirectory.path)
+		defer {
+			bootstrap.clean()
+		}
+		try await confirmation("executed") { done in
+			commandRunner.runClosure = {
+				done()
+			}
+			try await bootstrap.run()
+		}
+
+		// then
+		assertThat(commandRunner.expectationFulfilled, equalTo(true))
 	}
 
 }

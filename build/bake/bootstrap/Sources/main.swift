@@ -1,0 +1,3 @@
+// Bake configuration
+
+import BakeXcode

@@ -9,19 +9,20 @@ public enum LoadingError: Error {
 	case resourceMissing(String)
 }
 
-struct Bootstrap: Sendable {
+struct Bootstrap {
 
-	init(config: URL) throws {
+	init(config: URL, commandRunner: CommandRunner) throws {
 		let data = try Self.load(config: config)
 
 		let rootDirectory = config.deletingLastPathComponent()
 		try self.init(
 			dependencies: data.dependencies,
 			main: data.main,
-			buildDirectory: rootDirectory.appendingPathComponent(Self.defaultBuildDirectory))
+			buildDirectory: rootDirectory.appendingPathComponent(Self.defaultBuildDirectory),
+			commandRunner: commandRunner)
 	}
 
-	init(dependencies: [Dependency], main: [String] = [], buildDirectory: URL) throws {
+	init(dependencies: [Dependency], main: [String] = [], buildDirectory: URL, commandRunner: CommandRunner) throws {
 		if let packageString = try Bundle.module.load(filename: "Package.template") {
 			self.packageString = packageString
 		} else {
@@ -30,22 +31,29 @@ struct Bootstrap: Sendable {
 		self.dependencies = dependencies
 		self.mainSwift = main
 		self.buildDirectory = buildDirectory
+		self.commandRunner = commandRunner
 	}
 
 	let packageString: String
 	let dependencies: [Dependency]
 	let mainSwift: [String]
 	let buildDirectory: URL
+	let commandRunner: CommandRunner
 	var bootstrapDirectory: URL { buildDirectory.appendingPathComponent(Self.defaultBootstrapDirectory) }
 
 	static let defaultBuildDirectory = "build/bake/"
 	static let defaultBootstrapDirectory = "bootstrap/"
 	static let defaultSources = "Sources/"
 
-	func run() throws {
+	func prepare() throws {
 		try bootstrapDirectory.createDirectories()
 		try createPackageSwift()
 		try createMainSwift()
+	}
+
+	func run() async throws {
+		try prepare()
+		try await build()
 	}
 
 	func clean() {
@@ -67,6 +75,10 @@ struct Bootstrap: Sendable {
 		let mainFile = sourcesDirectory.appendingPathComponent("main.swift")
 		let contents = mainSwift.joined(separator: "\n")
 		try contents.write(to: mainFile, atomically: true, encoding: String.Encoding.utf8)
+	}
+
+	func build() async throws {
+		try await commandRunner.run("/usr/bin/swift", "build", "--package-path", bootstrapDirectory.path)
 	}
 
 	static func load(config: URL) throws -> (dependencies: [Dependency], main: [String]) {
