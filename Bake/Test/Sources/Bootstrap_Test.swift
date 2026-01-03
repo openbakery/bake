@@ -22,6 +22,10 @@ class Bootstrap_Test {
 		bootstrap = try Bootstrap(config: config)
 	}
 
+	deinit {
+		bootstrap.clean()
+	}
+
 	let config: URL
 	let bootstrap: Bootstrap
 
@@ -37,6 +41,7 @@ class Bootstrap_Test {
 		let bootstrap = try Bootstrap(dependencies: [dependency])
 
 		// when
+		try bootstrap.run()
 		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
 		let packageString = try String(contentsOf: packageFile, encoding: .utf8)
 
@@ -50,8 +55,12 @@ class Bootstrap_Test {
 		let first = Dependency(name: "BakeXcode", package: "bake")
 		let second = Dependency(name: "Foo", package: "bar")
 		let bootstrap = try Bootstrap(dependencies: [first, second])
+		defer {
+			bootstrap.clean()
+		}
 
 		// when
+		try bootstrap.run()
 		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
 		let packageString = try String(contentsOf: packageFile, encoding: .utf8)
 
@@ -71,6 +80,9 @@ class Bootstrap_Test {
 	}
 
 	@Test func dependencies_from_Bake_swift_is_included() throws {
+		// given
+		try bootstrap.run()
+
 		// when
 		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
 		let packageString = try String(contentsOf: packageFile, encoding: .utf8)
@@ -85,7 +97,9 @@ class Bootstrap_Test {
 	@Test func import_is_removed_from_Bake_swift() throws {
 		// when
 		try bootstrap.createMainSwift()
-		let file = bootstrap.bootstrapDirectory.appendingPathComponent("Source/main.swift")
+		let file = bootstrap.bootstrapDirectory.appendingPathComponent("Sources/main.swift")
+		assertThat(file.fileExists(), equalTo(true))
+		guard !file.fileExists() else { return }
 		let contents = try String(contentsOf: file, encoding: .utf8)
 
 		// then
@@ -96,14 +110,16 @@ class Bootstrap_Test {
 	@Test func has_default_bake_build_path() throws {
 		// expect
 		assertThat(bootstrap.buildDirectory, presentAnd(instanceOf(URL.self)))
-		assertThat(bootstrap.buildDirectory.path, presentAnd(hasPrefix(config.path)))
+		let rootPath = config.deletingLastPathComponent()
+		assertThat(bootstrap.buildDirectory.path, presentAnd(hasPrefix(rootPath.path)))
 		assertThat(bootstrap.buildDirectory.path, presentAnd(hasSuffix("build/bake")))
 	}
 
 	@Test func has_default_bake_bootstrap_path() throws {
 		// then
 		assertThat(bootstrap.bootstrapDirectory, presentAnd(instanceOf(URL.self)))
-		assertThat(bootstrap.bootstrapDirectory.path, presentAnd(hasPrefix(config.path)))
+		let rootPath = config.deletingLastPathComponent()
+		assertThat(bootstrap.buildDirectory.path, presentAnd(hasPrefix(rootPath.path)))
 		assertThat(bootstrap.bootstrapDirectory.path, presentAnd(hasSuffix("build/bake/bootstrap")))
 	}
 
@@ -114,6 +130,18 @@ class Bootstrap_Test {
 		// then
 		let main = bootstrap.bootstrapDirectory.appendingPathComponent("Sources/main.swift")
 		assertThat(main.fileExists(), equalTo(true))
+	}
+
+	@Test func clean() throws {
+		// given
+		try bootstrap.run()
+		assertThat(bootstrap.buildDirectory.fileExists(), equalTo(true))
+
+		// when
+		bootstrap.clean()
+
+		// then
+		assertThat(bootstrap.buildDirectory.fileExists(), equalTo(false))
 	}
 
 }

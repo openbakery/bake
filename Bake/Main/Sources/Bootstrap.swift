@@ -9,11 +9,16 @@ public enum LoadingError: Error {
 	case resourceMissing(String)
 }
 
-struct Bootstrap {
+struct Bootstrap: Sendable {
 
 	init(config: URL) throws {
 		let data = try Self.load(config: config)
-		try self.init(dependencies: data.dependencies, main: data.main, buildDirectory: config.appendingPathComponent(Self.defaultBuildDirectory))
+
+		let rootDirectory = config.deletingLastPathComponent()
+		try self.init(
+			dependencies: data.dependencies,
+			main: data.main,
+			buildDirectory: rootDirectory.appendingPathComponent(Self.defaultBuildDirectory))
 	}
 
 	init(dependencies: [Dependency], main: [String] = [], buildDirectory: URL = .temporaryDirectory) throws {
@@ -35,10 +40,16 @@ struct Bootstrap {
 
 	static let defaultBuildDirectory = "build/bake/"
 	static let defaultBootstrapDirectory = "bootstrap/"
+	static let defaultSources = "Sources/"
 
 	func run() throws {
+		try bootstrapDirectory.createDirectories()
 		try createPackageSwift()
 		try createMainSwift()
+	}
+
+	func clean() {
+		buildDirectory.deleteIfExists()
 	}
 
 	func createPackageSwift() throws {
@@ -51,7 +62,9 @@ struct Bootstrap {
 	}
 
 	func createMainSwift() throws {
-		let mainFile = bootstrapDirectory.appendingPathComponent("Sources/main.swift")
+		let sourcesDirectory = bootstrapDirectory.appendingPathComponent(Self.defaultSources)
+		try sourcesDirectory.createDirectories()
+		let mainFile = sourcesDirectory.appendingPathComponent("main.swift")
 		let contents = mainSwift.joined(separator: "\n")
 		try contents.write(to: mainFile, atomically: true, encoding: String.Encoding.utf8)
 	}

@@ -12,7 +12,7 @@ extension StringProtocol {
 }
 
 
-public struct Dependency: CustomStringConvertible {
+public struct Dependency: CustomStringConvertible, Sendable {
 
 	public init(name: String, package: String) {
 		self.name = name
