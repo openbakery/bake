@@ -1,0 +1,42 @@
+{
+  "originHash" : "a5c7831c64acad877db3a6601112be4a4644f0e0d29067c0f9478df84709fe3c",
+  "pins" : [
+    {
+      "identity" : "bake",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/openbakery/bake/",
+      "state" : {
+        "branch" : "develop",
+        "revision" : "225b618305225d6599f786434c88c8406111cd37"
+      }
+    },
+    {
+      "identity" : "obcoder",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/openbakery/OBCoder/",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c565520cbf0477b34316dac8e9f6b0bc1837c64b"
+      }
+    },
+    {
+      "identity" : "obextra",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/openbakery/OBExtra/",
+      "state" : {
+        "branch" : "main",
+        "revision" : "ea569773b5ad6645c94ef5d3147b68836fcb1eee"
+      }
+    },
+    {
+      "identity" : "swift-argument-parser",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-argument-parser",
+      "state" : {
+        "revision" : "c5d11a805e765f52ba34ec7284bd4fcd6ba68615",
+        "version" : "1.7.0"
+      }
+    }
+  ],
+  "version" : 3
+}

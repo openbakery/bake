@@ -1,0 +1,30 @@
+//
+// Created by René Pirringer on 3.1.2026
+//
+
+import Bake
+import BakeTestHelper
+import BakeXcode
+import Foundation
+import Hamcrest
+import HamcrestSwiftTesting
+import OBExtra
+import Testing
+
+@testable import BakeCLI
+
+@MainActor
+
+struct BootstrapCommand_Test {
+
+	init() async throws {
+		HamcrestSwiftTesting.enable()
+	}
+
+	@Test func command_config_path() {
+		let command = BootstrapCommand()
+
+		// then
+		// assertThat(command.configPath, presentAnd(equalTo("Bake.swift")))
+	}
+}
