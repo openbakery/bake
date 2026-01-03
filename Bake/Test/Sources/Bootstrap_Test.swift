@@ -22,9 +22,6 @@ class Bootstrap_Test {
 		bootstrap = try Bootstrap(config: config)
 	}
 
-	deinit {
-		bootstrap.clean()
-	}
 
 	let config: URL
 	let bootstrap: Bootstrap
@@ -37,8 +34,12 @@ class Bootstrap_Test {
 	}
 
 	@Test func add_dependencies() throws {
+		let buildDirectory = URL.temporaryDirectory.appendingPathComponent("Bake")
 		let dependency = Dependency(name: "BakeXcode", package: "bake")
-		let bootstrap = try Bootstrap(dependencies: [dependency])
+		let bootstrap = try Bootstrap(dependencies: [dependency], buildDirectory: buildDirectory)
+		defer {
+			bootstrap.clean()
+		}
 
 		// when
 		try bootstrap.run()
@@ -52,9 +53,10 @@ class Bootstrap_Test {
 	}
 
 	@Test func add_two_dependencies() throws {
+		let buildDirectory = URL.temporaryDirectory.appendingPathComponent("Bake")
 		let first = Dependency(name: "BakeXcode", package: "bake")
 		let second = Dependency(name: "Foo", package: "bar")
-		let bootstrap = try Bootstrap(dependencies: [first, second])
+		let bootstrap = try Bootstrap(dependencies: [first, second], buildDirectory: buildDirectory)
 		defer {
 			bootstrap.clean()
 		}
@@ -82,6 +84,9 @@ class Bootstrap_Test {
 	@Test func dependencies_from_Bake_swift_is_included() throws {
 		// given
 		try bootstrap.run()
+		defer {
+			bootstrap.clean()
+		}
 
 		// when
 		let packageFile = bootstrap.bootstrapDirectory.appendingPathComponent("Package.swift")
@@ -97,6 +102,9 @@ class Bootstrap_Test {
 	@Test func import_is_removed_from_Bake_swift() throws {
 		// when
 		try bootstrap.createMainSwift()
+		defer {
+			bootstrap.clean()
+		}
 		let file = bootstrap.bootstrapDirectory.appendingPathComponent("Sources/main.swift")
 		assertThat(file.fileExists(), equalTo(true))
 		guard !file.fileExists() else { return }
@@ -126,6 +134,9 @@ class Bootstrap_Test {
 	@Test func bootstrap_run_creates_main_swift() throws {
 		// when
 		try bootstrap.run()
+		defer {
+			bootstrap.clean()
+		}
 
 		// then
 		let main = bootstrap.bootstrapDirectory.appendingPathComponent("Sources/main.swift")

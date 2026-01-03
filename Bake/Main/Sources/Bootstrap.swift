@@ -21,7 +21,7 @@ struct Bootstrap: Sendable {
 			buildDirectory: rootDirectory.appendingPathComponent(Self.defaultBuildDirectory))
 	}
 
-	init(dependencies: [Dependency], main: [String] = [], buildDirectory: URL = .temporaryDirectory) throws {
+	init(dependencies: [Dependency], main: [String] = [], buildDirectory: URL) throws {
 		if let packageString = try Bundle.module.load(filename: "Package.template") {
 			self.packageString = packageString
 		} else {
