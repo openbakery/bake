@@ -7,7 +7,10 @@ import Bake
 import Foundation
 
 struct BootstrapCommand: ParsableCommand {
-	static let configuration = CommandConfiguration(abstract: "Bake Bootstrap.")
+	static let configuration = CommandConfiguration(
+		commandName: "bootstrap",
+		abstract: "Bake Bootstrap."
+	)
 
 	// @Argument(help: "The location of the Bake.swift configuration file.")
 	// var configPath: String = "Bake"

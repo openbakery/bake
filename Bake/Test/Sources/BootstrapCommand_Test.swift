@@ -21,10 +21,8 @@ struct BootstrapCommand_Test {
 		HamcrestSwiftTesting.enable()
 	}
 
-	@Test func command_config_path() {
-		let command = BootstrapCommand()
-
-		// then
-		// assertThat(command.configPath, presentAnd(equalTo("Bake.swift")))
+	@Test func command_name() {
+		// expect
+		assertThat(BootstrapCommand.configuration.commandName, presentAnd(equalTo("bootstrap")))
 	}
 }
