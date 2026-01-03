@@ -85,6 +85,7 @@ class SwiftTestParser {
 	var currentTest: String?
 	var currentClass: String?
 	var currentLine: String?
+	var currentMessage: String?
 
 	func parse(_ output: String) {
 		let lines = output.components(separatedBy: .newlines)
@@ -96,6 +97,7 @@ class SwiftTestParser {
 		let suiteString = "􁁛  Suite "
 		let testString = "􀢄  Test "
 		let gotString = "􀄵  GOT: "
+
 		for line in lines {
 			if line.hasPrefix(suiteString) {
 				let tokens = line.split(separator: " ")
@@ -112,30 +114,37 @@ class SwiftTestParser {
 					if tokens[3] == "recorded" {
 						if tokens.count > 8 {
 							let parts = tokens[7].split(separator: ":")
-
 							if parts.count > 2 {
 								currentClass = String(parts[0])
 								currentLine = String(parts[1])
+								currentMessage = tokens[8...].joined(separator: " ")
 							}
 						}
+					} else if tokens[3] == "failed" {
+						await addFailure(message: currentMessage ?? "unknown")
 					}
 				}
 			}
 
 			if line.hasPrefix(gotString) {
 				let message = line.dropFirst(gotString.count)
-				if let currentClass, let currentLine {
-					let failure = Failure(
-						testName: currentClass,
-						filePath: await getFullPath(currentClass),
-						lineNumber: Int(currentLine) ?? 0,
-						message: String(message))
-
-					self.failures.append(failure)
-				}
+				await addFailure(message: String(message))
 			}
 
+
 			if let failure = parseCompileFailure(line: line) {
+				self.failures.append(failure)
+			}
+		}
+
+		func addFailure(message: String) async {
+			if let currentClass, let currentLine {
+				let failure = Failure(
+					testName: currentClass,
+					filePath: await getFullPath(currentClass),
+					lineNumber: Int(currentLine) ?? 0,
+					message: message)
+
 				self.failures.append(failure)
 			}
 		}
