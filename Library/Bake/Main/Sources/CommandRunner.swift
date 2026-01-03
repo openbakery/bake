@@ -22,7 +22,8 @@ open class CommandRunner {
 		_ arguments: String...,
 		workingDirectory: URL? = nil,
 		environment: [String: String]? = nil,
-		process: Process = Process()
+		process: Process = Process(),
+		outputHandler: OutputHandler = PrintOutputHandler()
 	) async throws {
 		try await run(command, arguments: arguments, workingDirectory: workingDirectory, environment: environment, process: process)
 	}

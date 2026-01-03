@@ -78,7 +78,7 @@ struct Bootstrap {
 	}
 
 	func build() async throws {
-		try await commandRunner.run("/usr/bin/swift", "build", "--package-path", bootstrapDirectory.path)
+		try await commandRunner.run("/usr/bin/swift", "build", "--package-path", bootstrapDirectory.path, outputHandler: LogOutputHandler())
 	}
 
 	static func load(config: URL) throws -> (dependencies: [Dependency], main: [String]) {
