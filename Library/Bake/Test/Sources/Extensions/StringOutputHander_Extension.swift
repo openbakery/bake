@@ -7,6 +7,9 @@ import Testing
 
 extension StringOutputHandler {
 	func waitForLines() async -> [String] {
+		if self.lines.count > 0 {
+			return self.lines
+		}
 		await confirmation("has lines") { confirm in
 			if self.lines.count > 0 {
 				confirm()
