@@ -94,8 +94,8 @@ struct Bootstrap {
 		var mainSwift = [String]()
 		while let line = parser.nextLine() {
 
-			if line.hasPrefix("@import") {
-				if let dependency = Dependency(line: line) {
+			if line.hasPrefix(Dependency.importString) {
+				if let dependency = Dependency(import: line) {
 					dependencies.append(dependency)
 					mainSwift.append("import \(dependency.name)")
 				}
