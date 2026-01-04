@@ -54,6 +54,10 @@ struct Bootstrap {
 	func run() async throws {
 		try prepare()
 		try await build()
+		let source = bootstrapDirectory.appendingPathComponent(".build/arm64-apple-macosx/debug/bake")
+		if source.fileExists() {
+			try FileManager.default.moveItem(at: source, to: bootstrapDirectory.appendingPathComponent("bake"))
+		}
 	}
 
 	func clean() {

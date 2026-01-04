@@ -2,9 +2,9 @@
 // Created by René Pirringer on 23.12.2025
 //
 
+import ArgumentParser
 import Bake
 import BakeTestHelper
-import BakeXcode
 import Foundation
 import Hamcrest
 import HamcrestSwiftTesting
@@ -13,6 +13,7 @@ import Testing
 
 @testable import BakeCLI
 
+@Suite(.serialized)
 class Bootstrap_Test {
 
 	init() async throws {
@@ -160,21 +161,40 @@ class Bootstrap_Test {
 		assertThat(bootstrap.buildDirectory.fileExists(), equalTo(false))
 	}
 
-	@Test func run_compiles_bundle() async throws {
+
+	@Test
+	func run_compiles_bundle() async throws {
 		// given
 		commandRunner.expect(command: "/usr/bin/swift", arguments: "build", "--package-path", bootstrap.bootstrapDirectory.path)
 		defer {
 			bootstrap.clean()
 		}
-		try await confirmation("executed") { done in
-			commandRunner.runClosure = {
-				done()
-			}
-			try await bootstrap.run()
-		}
+
+		try await bootstrap.run()
 
 		// then
 		assertThat(commandRunner.expectationFulfilled, equalTo(true))
+	}
+
+
+	@Test
+	func copy_bake_to_build_bake() async throws {
+		// given
+		defer {
+			bootstrap.clean()
+		}
+		let sourceDirectory = bootstrap.bootstrapDirectory.appendingPathComponent(".build/arm64-apple-macosx/debug/")
+		try sourceDirectory.createDirectories()
+		let source = sourceDirectory.appendingPathComponent("bake")
+		try "dummy".write(to: source, atomically: true, encoding: String.Encoding.utf8)
+
+		try await bootstrap.run()
+
+		// then
+		assertThat(commandRunner.expectationFulfilled, equalTo(true))
+
+		let bake = bootstrap.bootstrapDirectory.appendingPathComponent("bake")
+		assertThat(bake.fileExists(), equalTo(true), message: "File exists \(bake)")
 	}
 
 }

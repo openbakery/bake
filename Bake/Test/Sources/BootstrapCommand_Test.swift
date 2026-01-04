@@ -4,7 +4,6 @@
 
 import Bake
 import BakeTestHelper
-import BakeXcode
 import Foundation
 import Hamcrest
 import HamcrestSwiftTesting

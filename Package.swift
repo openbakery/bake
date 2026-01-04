@@ -10,7 +10,7 @@ let package = Package(
 	products: [
 		.library(name: "Bake", type: .dynamic, targets: ["Bake"]),
 		.library(name: "BakeXcode", type: .dynamic, targets: ["BakeXcode"]),
-		.executable(name: "bake", targets: ["BakeCLI"])
+		.executable(name: "BakeCLI", targets: ["BakeCLI"])
 	],
 	dependencies: [
 		.package(url: "https://github.com/openbakery/OBExtra/", branch: "main"),

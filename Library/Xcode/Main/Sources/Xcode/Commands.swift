@@ -3,13 +3,13 @@
 //
 import ArgumentParser
 
-public let commands: [ParsableCommand.Type] = [SimulatorControlCommand.self]
+public let commands: [AsyncParsableCommand.Type] = [SimulatorControlCommand.self]
 
 
-struct SimulatorControlCommand: ParsableCommand {
+struct SimulatorControlCommand: AsyncParsableCommand {
 	static let configuration = CommandConfiguration(abstract: "SimulatorControl commands.")
 
-	mutating func run() {
+	mutating func run() async throws {
 		print("SimulatorControl...")
 	}
 }
