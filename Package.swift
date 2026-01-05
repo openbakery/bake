@@ -8,9 +8,8 @@ let package = Package(
 		.macOS(.v13)
 	],
 	products: [
-		.library(name: "Bake", type: .dynamic, targets: ["Bake"]),
-		.library(name: "BakeXcode", type: .dynamic, targets: ["BakeXcode"]),
-		.library(name: "HelloWorld", type: .dynamic, targets: ["HelloWorld"]),
+		.library(name: "Bake", targets: ["Bake"]),
+		.library(name: "BakeXcode", targets: ["BakeXcode"]),
 		.executable(name: "BakeCLI", targets: ["BakeCLI"])
 	],
 	dependencies: [
@@ -69,13 +68,6 @@ let package = Package(
 			resources: [
 				.process("Resources")
 			]
-		),
-		.target(
-			name: "HelloWorld",
-			dependencies: [
-				"Bake"
-			],
-			path: "Plugins/HelloWorld/Main/Sources",
 		),
 		.executableTarget(
 			name: "BakeCLI",
