@@ -68,9 +68,28 @@ struct Bootstrap {
 	func run() async throws {
 		try prepare()
 		try await build()
-		let source = bootstrapDirectory.appendingPathComponent(".build/arm64-apple-macosx/debug/bake")
+		try copyBinaries()
+	}
+
+	func copyBinaries() throws {
+		let sourceDirectory = bootstrapDirectory.appendingPathComponent(".build/arm64-apple-macosx/debug/")
+		if !sourceDirectory.fileExists() {
+			Log.debug("directory does not exist: \(sourceDirectory)")
+			return
+		}
+		let source = sourceDirectory.appendingPathComponent("bake")
+		let fileManager = FileManager.default
 		if source.fileExists() {
-			try FileManager.default.moveItem(at: source, to: bootstrapDirectory.appendingPathComponent("bake"))
+			try fileManager.moveItem(at: source, to: bootstrapDirectory.appendingPathComponent("bake"))
+		}
+
+		let contents = try fileManager.contentsOfDirectory(at: sourceDirectory, includingPropertiesForKeys: nil)
+		let dylibFiles = contents.filter { $0.pathExtension == "dylib" }
+
+		for source in dylibFiles {
+			let destinationFile = bootstrapDirectory.appendingPathComponent(source.lastPathComponent)
+			try fileManager.moveItem(at: source, to: destinationFile)
+			Log.debug("Copied: \(source.lastPathComponent)")
 		}
 	}
 
@@ -149,4 +168,3 @@ struct Bootstrap {
 	}
 
 }
-

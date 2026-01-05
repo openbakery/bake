@@ -214,6 +214,26 @@ class Bootstrap_Test {
 		assertThat(bake.fileExists(), equalTo(true), message: "File exists \(bake)")
 	}
 
+	@Test
+	func copy_dylib_to_build_bake() async throws {
+		// given
+		defer {
+			bootstrap.clean()
+		}
+		let sourceDirectory = bootstrap.bootstrapDirectory.appendingPathComponent(".build/arm64-apple-macosx/debug/")
+		try sourceDirectory.createDirectories()
+		let source = sourceDirectory.appendingPathComponent("libXcodeBake.dylib")
+		try "dummy".write(to: source, atomically: true, encoding: String.Encoding.utf8)
+
+		try await bootstrap.run()
+
+		// then
+		assertThat(commandRunner.expectationFulfilled, equalTo(true))
+
+		let bake = bootstrap.bootstrapDirectory.appendingPathComponent("libXcodeBake.dylib")
+		assertThat(bake.fileExists(), equalTo(true), message: "File exists \(bake)")
+	}
+
 	func mainContents() throws -> String {
 		// when
 		try bootstrap.prepare()
@@ -237,19 +257,19 @@ class Bootstrap_Test {
 		assertThat(contents, containsString("import Foundation\n"))
 
 		let commandContents = """
-			func subcommands() -> [String] {
-				return ["BootstrapCommand.self"]
-			}
+				private func subcommands() -> [any AsyncParsableCommand.Type] {
+					return []
+				}
 
-			@main struct BakeCLI: AsyncParsableCommand {
-			static let configuration = CommandConfiguration(
-				commandName: "bake",
-				abstract: "A utility for bulding and running software projects",
-				version: "2026.0.0",
-				subcommands: self.subcommands()
-			}
+				@main struct BakeCLI: AsyncParsableCommand {
+					static let configuration = CommandConfiguration(
+						commandName: "bake",
+						abstract: "A utility for bulding and running software projects",
+						version: "2026.0.0",
+						subcommands: subcommands()
+					)
+				}
 			"""
 		assertThat(contents, containsString(commandContents))
-		// assertThat(contents, containsString("subcommands: [BootstrapCommand.self, HelloWorldCommand.self]"))
 	}
 }
