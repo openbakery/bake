@@ -50,7 +50,7 @@ let package = Package(
 			dependencies: [
 				"Bake"
 			],
-			path: "Library/Xcode/Main/Sources",
+			path: "Plugins/Xcode/Main/Sources",
 		),
 		.testTarget(
 			name: "BakeXcodeTest",
@@ -61,7 +61,7 @@ let package = Package(
 				.product(name: "Hamcrest", package: "SwiftHamcrest"),
 				.product(name: "HamcrestSwiftTesting", package: "SwiftHamcrest")
 			],
-			path: "Library/Xcode/Test",
+			path: "Plugins/Xcode/Test",
 			sources: [
 				"Sources"
 			],
