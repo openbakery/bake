@@ -4,6 +4,7 @@
 
 import Bake
 import Foundation
+import OBExtra
 
 public enum LoadingError: Error {
 	case resourceMissing(String)
@@ -12,9 +13,21 @@ public enum LoadingError: Error {
 struct Bootstrap {
 
 	init(config: URL, commandRunner: CommandRunner) throws {
-		let data = try Self.load(config: config)
+		let configFile: URL
+		if config.isDirectory {
+			configFile = config.appendingPathComponent("Bake.swift")
+		} else {
+			configFile = config
+		}
+		Log.debug("loading: \(configFile)")
 
-		let rootDirectory = config.deletingLastPathComponent()
+		guard configFile.fileExists() else {
+			Log.debug("Config does not exist: \(configFile)")
+			throw BakeError.illegalStateError("Config does not exist: \(configFile)")
+		}
+		let data = try Self.load(config: configFile)
+
+		let rootDirectory = configFile.deletingLastPathComponent()
 		try self.init(
 			dependencies: data.dependencies,
 			main: data.main,
@@ -46,6 +59,7 @@ struct Bootstrap {
 	static let defaultSources = "Sources/"
 
 	func prepare() throws {
+		Log.debug("prepare")
 		try bootstrapDirectory.createDirectories()
 		try createPackageSwift()
 		try createMainSwift()
@@ -65,6 +79,7 @@ struct Bootstrap {
 	}
 
 	func createPackageSwift() throws {
+		Log.debug("create Package.swift file")
 		let packageFile = bootstrapDirectory.appendingPathComponent("Package.swift")
 
 		let dependenciesString = self.dependencies.map({ $0.description }).joined(separator: ",\n\t\t\t\t")
@@ -74,6 +89,7 @@ struct Bootstrap {
 	}
 
 	func createMainSwift() throws {
+		Log.debug("create main.swift file")
 		let sourcesDirectory = bootstrapDirectory.appendingPathComponent(Self.defaultSources)
 		try sourcesDirectory.createDirectories()
 		let mainFile = sourcesDirectory.appendingPathComponent("main.swift")
@@ -82,6 +98,7 @@ struct Bootstrap {
 	}
 
 	func build() async throws {
+		Log.debug("build")
 		try await commandRunner.run("/usr/bin/swift", "build", "--package-path", bootstrapDirectory.path, outputHandler: LogOutputHandler())
 	}
 
@@ -113,17 +130,18 @@ struct Bootstrap {
 		}
 
 		let commandContents = """
-			func subcommands() -> [String] {
-				return ["BootstrapCommand.self"]
-			}
+				private func subcommands() -> [any AsyncParsableCommand.Type] {
+					return []
+				}
 
-			@main struct BakeCLI: AsyncParsableCommand {
-			static let configuration = CommandConfiguration(
-				commandName: "bake",
-				abstract: "A utility for bulding and running software projects",
-				version: "2026.0.0",
-				subcommands: self.subcommands()
-			}
+				@main struct BakeCLI: AsyncParsableCommand {
+					static let configuration = CommandConfiguration(
+						commandName: "bake",
+						abstract: "A utility for bulding and running software projects",
+						version: "2026.0.0",
+						subcommands: subcommands()
+					)
+				}
 			"""
 		mainSwift.append(commandContents)
 

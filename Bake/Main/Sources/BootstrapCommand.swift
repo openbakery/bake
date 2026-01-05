@@ -26,8 +26,16 @@ struct BootstrapCommand: AsyncParsableCommand {
 	@Option(help: "The kind of average to provide.")
 	var kind: Kind = .bootstrap
 
+	@OptionGroup var options: Options
+
 
 	mutating func run() async throws {
+		let debug = options.debug
+		Task { @MainActor in
+			if debug {
+				Log.level = .debug
+			}
+		}
 		Log.info("Bootstrap")
 
 		switch kind {
@@ -46,6 +54,7 @@ struct BootstrapCommand: AsyncParsableCommand {
 			return
 		}
 		do {
+			Log.debug("Using configuration: \(url)")
 			let bootstrap = try Bootstrap(config: url, commandRunner: CommandRunner())
 			try await bootstrap.run()
 		} catch {

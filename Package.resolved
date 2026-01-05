@@ -1,5 +1,5 @@
 {
-  "originHash" : "37305645817e13141da6deb74f351e9eb20c20b8e8eae31476bc5ab0be0c5250",
+  "originHash" : "e0aea4cda11abf00a11604209639634f3548869cf6c87cf1629f92e8e0ae0a6e",
   "pins" : [
     {
       "identity" : "obcoder",
@@ -16,7 +16,7 @@
       "location" : "https://github.com/openbakery/OBExtra/",
       "state" : {
         "branch" : "main",
-        "revision" : "ea569773b5ad6645c94ef5d3147b68836fcb1eee"
+        "revision" : "1e05f88e12ab97074893be9cd2875c5e24641340"
       }
     },
     {
