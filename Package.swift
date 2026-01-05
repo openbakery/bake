@@ -10,6 +10,7 @@ let package = Package(
 	products: [
 		.library(name: "Bake", type: .dynamic, targets: ["Bake"]),
 		.library(name: "BakeXcode", type: .dynamic, targets: ["BakeXcode"]),
+		.library(name: "HelloWorld", type: .dynamic, targets: ["HelloWorld"]),
 		.executable(name: "BakeCLI", targets: ["BakeCLI"])
 	],
 	dependencies: [
