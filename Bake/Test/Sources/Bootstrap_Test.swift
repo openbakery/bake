@@ -80,9 +80,9 @@ class Bootstrap_Test {
 
 	@Test func dependencies_from_Bake_swift() throws {
 		// expect
-		assertThat(bootstrap.dependencies, presentAnd(hasCount(1)))
-		assertThat(bootstrap.dependencies.first?.name, presentAnd(equalTo("BakeXcode")))
-		assertThat(bootstrap.dependencies.first?.package, presentAnd(equalTo("bake")))
+		assertThat(bootstrap.dependencies, presentAnd(hasCount(2)))
+		assertThat(bootstrap.dependencies.first?.name, presentAnd(equalTo("OBExtra")))
+		assertThat(bootstrap.dependencies.first?.package, presentAnd(equalTo("openbakery")))
 	}
 
 	@Test func dependencies_from_Bake_swift_is_included() async throws {
@@ -116,6 +116,23 @@ class Bootstrap_Test {
 
 		// then
 		assertThat(contents, not(containsString("@import")))
+		assertThat(contents, containsString("import OBExtra"))
+		assertThat(contents, containsString("import BakeXcode"))
+	}
+
+	@Test func plugin_is_removed_from_Bake_swift() throws {
+		// when
+		try bootstrap.createMainSwift()
+		defer {
+			bootstrap.clean()
+		}
+		let file = bootstrap.bootstrapDirectory.appendingPathComponent("Sources/main.swift")
+		assertThat(file.fileExists(), equalTo(true))
+		guard !file.fileExists() else { return }
+		let contents = try String(contentsOf: file, encoding: .utf8)
+
+		// then
+		assertThat(contents, not(containsString("@plugin")))
 		assertThat(contents, containsString("import BakeXcode"))
 	}
 

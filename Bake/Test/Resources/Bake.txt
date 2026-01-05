@@ -1,2 +1,3 @@
 
-@import("BakeXcode", package: "bake")
+@import("OBExtra", package: "openbakery")
+@plugin("BakeXcode", package: "bake")

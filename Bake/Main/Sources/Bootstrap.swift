@@ -99,6 +99,11 @@ struct Bootstrap {
 					dependencies.append(dependency)
 					mainSwift.append("import \(dependency.name)")
 				}
+			} else if line.hasPrefix(Dependency.pluginString) {
+				if let dependency = Dependency(plugin: line) {
+					dependencies.append(dependency)
+					mainSwift.append("import \(dependency.name)")
+				}
 			} else {
 				mainSwift.append(line)
 			}

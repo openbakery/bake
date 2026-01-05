@@ -42,9 +42,7 @@ public struct Dependency: CustomStringConvertible, Sendable {
 		guard let packageIndex = tokens[1].range(of: "package:") else { return nil }
 		let package = tokens[1][packageIndex.upperBound...]
 
-
 		return (name: tokens[0].trimQuotes(), package: package.trimQuotes())
-
 	}
 
 	let name: String
