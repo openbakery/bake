@@ -69,6 +69,13 @@ let package = Package(
 				.process("Resources")
 			]
 		),
+		.target(
+			name: "HelloWorld",
+			dependencies: [
+				"Bake"
+			],
+			path: "Plugins/HelloWorld/Main/Sources",
+		),
 		.executableTarget(
 			name: "BakeCLI",
 			dependencies: [

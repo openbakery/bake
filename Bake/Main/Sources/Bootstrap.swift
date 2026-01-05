@@ -92,6 +92,9 @@ struct Bootstrap {
 
 		var dependencies = [Dependency]()
 		var mainSwift = [String]()
+		mainSwift.append("import ArgumentParser")
+		mainSwift.append("import Foundation")
+
 		while let line = parser.nextLine() {
 
 			if line.hasPrefix(Dependency.importString) {
@@ -109,7 +112,23 @@ struct Bootstrap {
 			}
 		}
 
+		let commandContents = """
+			func subcommands() -> [String] {
+				return ["BootstrapCommand.self"]
+			}
+
+			@main struct BakeCLI: AsyncParsableCommand {
+			static let configuration = CommandConfiguration(
+				commandName: "bake",
+				abstract: "A utility for bulding and running software projects",
+				version: "2026.0.0",
+				subcommands: self.subcommands()
+			}
+			"""
+		mainSwift.append(commandContents)
+
 		return (dependencies, mainSwift)
 	}
 
 }
+

@@ -99,7 +99,7 @@ class Bootstrap_Test {
 		// then
 		assertThat(packageString, hasPrefix("// swift-tools-version: 6.1"))
 		assertThat(packageString, containsString(".executable(name: \"bake\", targets: [\"LocalBake\"])"))
-		assertThat(packageString, containsString("\n\t\t\t\t.product(name: \"BakeXcode\", package: \"bake\")"))
+		assertThat(packageString, containsString("\n\t\t\t\t.product(name: \"HelloWorld\", package: \"bake\")"))
 	}
 
 
@@ -214,4 +214,42 @@ class Bootstrap_Test {
 		assertThat(bake.fileExists(), equalTo(true), message: "File exists \(bake)")
 	}
 
+	func mainContents() throws -> String {
+		// when
+		try bootstrap.prepare()
+		defer {
+			bootstrap.clean()
+		}
+
+		// then
+		let main = bootstrap.bootstrapDirectory.appendingPathComponent("Sources/main.swift")
+		return try String(contentsOf: main, encoding: .utf8)
+	}
+
+	@Test
+	@MainActor
+	func main_contains_commands() throws {
+		let contents = try mainContents()
+
+		assertThat(contents, present())
+		assertThat(contents, containsString("import ArgumentParser\n"))
+		assertThat(contents, containsString("import Foundation\n"))
+		assertThat(contents, containsString("import Foundation\n"))
+
+		let commandContents = """
+			func subcommands() -> [String] {
+				return ["BootstrapCommand.self"]
+			}
+
+			@main struct BakeCLI: AsyncParsableCommand {
+			static let configuration = CommandConfiguration(
+				commandName: "bake",
+				abstract: "A utility for bulding and running software projects",
+				version: "2026.0.0",
+				subcommands: self.subcommands()
+			}
+			"""
+		assertThat(contents, containsString(commandContents))
+		// assertThat(contents, containsString("subcommands: [BootstrapCommand.self, HelloWorldCommand.self]"))
+	}
 }
