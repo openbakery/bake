@@ -148,9 +148,14 @@ struct Bootstrap {
 			}
 		}
 
+		var subcommands = [String]()
+		for dependency in dependencies where dependency.plugin {
+			subcommands.append("\(dependency.name).commands")
+		}
+
 		let commandContents = """
 				private func subcommands() -> [any AsyncParsableCommand.Type] {
-					return []
+					return \(subcommands.joined(separator: " + "))
 				}
 
 				@main struct BakeCLI: AsyncParsableCommand {

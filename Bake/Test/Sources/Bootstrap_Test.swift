@@ -254,11 +254,10 @@ class Bootstrap_Test {
 		assertThat(contents, present())
 		assertThat(contents, containsString("import ArgumentParser\n"))
 		assertThat(contents, containsString("import Foundation\n"))
-		assertThat(contents, containsString("import Foundation\n"))
 
 		let commandContents = """
 				private func subcommands() -> [any AsyncParsableCommand.Type] {
-					return []
+					return HelloWorld.commands
 				}
 
 				@main struct BakeCLI: AsyncParsableCommand {
@@ -271,5 +270,31 @@ class Bootstrap_Test {
 				}
 			"""
 		assertThat(contents, containsString(commandContents))
+	}
+
+
+	@Test func contains_multiple_commands() async throws {
+		// given
+		let config = try #require(try Bundle.module.url(filename: "Bake2.txt"))
+		let bootstrap = try Bootstrap(config: config, commandRunner: commandRunner)
+		try bootstrap.prepare()
+		defer {
+			bootstrap.clean()
+		}
+
+		// when
+		let main = bootstrap.bootstrapDirectory.appendingPathComponent("Sources/main.swift")
+		let contents = try String(contentsOf: main, encoding: .utf8)
+
+		assertThat(contents, present())
+		assertThat(contents, containsString("import ArgumentParser\n"))
+		assertThat(contents, containsString("import Foundation\n"))
+		let commandContents = """
+				private func subcommands() -> [any AsyncParsableCommand.Type] {
+					return HelloWorld.commands + BakeXcode.commands
+				}
+			"""
+		assertThat(contents, containsString(commandContents))
+
 	}
 }
