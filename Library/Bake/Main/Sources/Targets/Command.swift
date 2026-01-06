@@ -31,6 +31,7 @@ public class Command: Target, CustomStringConvertible {
 	public let arguments: [String]
 	public let workingDirectory: URL?
 	private var token: Any?
+	private var token1: Any?
 
 
 	public enum CommandError: Error {
@@ -68,6 +69,10 @@ public class Command: Target, CustomStringConvertible {
 					outputHandler.process(line: String(line))
 				}
 			}
+		}
+
+		token1 = NotificationCenter.default.addObserver(forName: .NSFileHandleReadToEndOfFileCompletion, object: nil, queue: OperationQueue.main) { note in
+			print("DONE")
 		}
 
 		standardOutput.fileHandleForReading.waitForDataInBackgroundAndNotify()
