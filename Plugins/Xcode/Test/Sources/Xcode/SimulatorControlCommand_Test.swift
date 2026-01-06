@@ -21,4 +21,8 @@ struct SimulatorControlCommand_Test {
 		assertThat(SimulatorControlCommand.configuration.subcommands, hasItem(instanceOf(SimulatorControlCommandList.Type.self)))
 	}
 
+	@Test func list_command_configuration() {
+		assertThat(SimulatorControlCommandList.configuration.commandName, presentAnd(equalTo("list")))
+	}
+
 }

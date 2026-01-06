@@ -16,6 +16,10 @@ struct SimulatorControlCommand: AsyncParsableCommand {
 
 
 struct SimulatorControlCommandList: AsyncParsableCommand {
+	static let configuration = CommandConfiguration(
+		commandName: "list",
+		abstract: "Lists the available simulators."
+	)
 
 	mutating func run() async throws {
 		try await SimulatorControl().list()
