@@ -33,8 +33,13 @@ open class SimulatorControl: Target {
 	public func list() async throws {
 		try await loadSimulators()
 
-		outputHandler.process(line: "foo")
-		outputHandler.process(line: "bar")
+
+		self.simulators?.runtimes.forEach { runtime in
+			outputHandler.process(line: "\(runtime)")
+			self.simulators?.devices(forRuntime: runtime)?.forEach { device in
+				outputHandler.process(line: "  \(device)")
+			}
+		}
 
 	}
 

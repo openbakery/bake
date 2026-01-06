@@ -5,7 +5,7 @@
 import Bake
 import OBCoder
 
-public struct Runtime: Encodable {
+public struct Runtime: Encodable, CustomStringConvertible {
 
 	public init(identifier: String, name: String, version: Version, type: SDKType) {
 		self.identifier = identifier
@@ -32,6 +32,9 @@ public struct Runtime: Encodable {
 		// only decode is supported
 	}
 
+	public var description: String {
+		return "Runtime(name: \(name), version: \(version))"
+	}
 
 
 	public let identifier: String

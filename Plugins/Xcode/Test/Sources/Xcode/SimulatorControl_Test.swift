@@ -43,6 +43,10 @@ struct SimulatorControl_Test {
 
 		// then
 		assertThat(control.simulators, present())
+		assertThat(outputHandler.lines.first, presentAnd(equalTo("Runtime(name: iOS 26.2, version: 26.2)")))
+		assertThat(outputHandler.lines.count, greaterThan(5))
+		guard outputHandler.lines.count > 5 else { return }
+		assertThat(outputHandler.lines[1], presentAnd(equalTo("  Device(name: iPhone 17 Pro, identifier: 5883B74D-9B45-4B81-B4BA-FBA6427143CA)")))
 	}
 
 

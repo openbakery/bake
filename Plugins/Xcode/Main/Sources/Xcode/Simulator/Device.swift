@@ -7,7 +7,7 @@ import Bake
 import Foundation
 import OBCoder
 
-public struct Device: Encodable, Equatable {
+public struct Device: Encodable, Equatable, CustomStringConvertible {
 
 	public init(
 		identifier: String,
@@ -43,6 +43,10 @@ public struct Device: Encodable, Equatable {
 		)
 
 
+	}
+
+	public var description: String {
+		return "Device(name: \(name), identifier: \(identifier))"
 	}
 
 	let identifier: String
