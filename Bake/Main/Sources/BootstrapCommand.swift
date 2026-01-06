@@ -28,14 +28,8 @@ struct BootstrapCommand: AsyncParsableCommand {
 
 	@OptionGroup var options: Options
 
-
 	mutating func run() async throws {
-		let debug = options.debug
-		Task { @MainActor in
-			if debug {
-				Log.level = .debug
-			}
-		}
+		self.apply(options: options)
 		Log.info("Bootstrap")
 
 		switch kind {
