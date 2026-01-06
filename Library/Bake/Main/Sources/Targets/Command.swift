@@ -55,7 +55,6 @@ public class Command: Target, CustomStringConvertible {
 			process.environment = result
 		}
 
-		try process.run()
 
 		Log.debug("\(name) \(arguments.joined(separator: " "))")
 
@@ -71,6 +70,7 @@ public class Command: Target, CustomStringConvertible {
 			}
 		}
 
+		try process.run()
 
 		standardOutput.fileHandleForReading.waitForDataInBackgroundAndNotify()
 		standardError.fileHandleForReading.waitForDataInBackgroundAndNotify()
