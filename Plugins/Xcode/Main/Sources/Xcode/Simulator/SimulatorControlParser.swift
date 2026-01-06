@@ -12,7 +12,7 @@ open class SimulatorControlParser {
 	}
 
 	public func parseListJson(_ contents: String) -> Simulators? {
-		Log.debug("parse json")
+		Log.debug("parse json: \(contents)")
 		let decoder = JSONDecoder(jsonString: contents)
 
 		guard let deviceTypes = decoder.decodeArray(forKey: "devicetypes", type: DeviceType.self) else { return nil }
