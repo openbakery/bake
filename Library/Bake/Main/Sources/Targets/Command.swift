@@ -67,13 +67,11 @@ public class Command: Target, CustomStringConvertible {
 			if let string = String(data: data, encoding: .utf8) {
 				for line in string.split(separator: "\n") {
 					outputHandler.process(line: String(line))
+					print("line: \(line)")
 				}
 			}
 		}
 
-		token1 = NotificationCenter.default.addObserver(forName: .NSFileHandleReadToEndOfFileCompletion, object: nil, queue: OperationQueue.main) { note in
-			print("DONE")
-		}
 
 		standardOutput.fileHandleForReading.waitForDataInBackgroundAndNotify()
 		standardError.fileHandleForReading.waitForDataInBackgroundAndNotify()
