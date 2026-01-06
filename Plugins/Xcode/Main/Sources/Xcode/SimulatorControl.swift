@@ -7,7 +7,7 @@ import Foundation
 
 open class SimulatorControl: Target {
 
-	public init(commandRunner: CommandRunner, outputHandler: OutputHandler = PrintOutputHandler()) {
+	public init(commandRunner: CommandRunner = CommandRunner(), outputHandler: OutputHandler = PrintOutputHandler()) {
 		self.commandRunner = commandRunner
 		self.outputHandler = outputHandler
 	}
