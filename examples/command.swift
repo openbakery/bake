@@ -1,6 +1,6 @@
 #!/usr/bin/swift sh
 import Bake
-import BakeXcode  // openbakery/Bake == main
+import BakeXcode  // openbakery/Bake == develop
 import Foundation
 
 Log.level = .debug
@@ -10,7 +10,7 @@ Log.debug("debug")
 let commandRunner = await CommandRunner()
 let outputHandler = StringOutputHandler()
 do {
-	await try commandRunner.run("/bin/ls", arguments: ["-la"], outputHandler: outputHandler)
+	try await commandRunner.runWithResult("/usr/bin/xcrun", "simctl", "list", "--json", outputHandler: outputHandler)
 } catch {
 	// ignore
 }

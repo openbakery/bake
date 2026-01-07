@@ -13,6 +13,13 @@ open class ProcessFake: Process, @unchecked Sendable {
 	override open func run() throws {
 		wasExecuted = true
 	}
+	
+	override open func launch() {
+		wasExecuted = true
+	}
+	
+	override open func terminate() {
+	}
 
 	override open var launchPath: String? {
 		get {
@@ -61,6 +68,9 @@ open class ProcessFake: Process, @unchecked Sendable {
 			return nil
 		}
 		set {
+			if let pipe = newValue as? Pipe {
+				pipe.fileHandleForWriting.write(Data("\n".utf8))
+			}
 		}
 	}
 
@@ -91,4 +101,6 @@ open class ProcessFake: Process, @unchecked Sendable {
 
 	override open func waitUntilExit() {
 	}
+	
+	override open var isRunning: Bool { false }
 }

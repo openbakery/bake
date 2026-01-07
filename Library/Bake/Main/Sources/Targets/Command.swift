@@ -25,13 +25,16 @@ public class Command: Target, CustomStringConvertible {
 	public required init(from decoder: Decoder) throws {
 		fatalError("not implemented")
 	}
+	
+	deinit {
+		if let token { NotificationCenter.default.removeObserver(token) }
+	}
 
 	public let name: String
 	public let command: String
 	public let arguments: [String]
 	public let workingDirectory: URL?
 	private var token: Any?
-	private var token1: Any?
 
 
 	public enum CommandError: Error {
@@ -62,28 +65,26 @@ public class Command: Target, CustomStringConvertible {
 			guard let handle = note.object as? FileHandle else { return }
 			guard handle === standardOutput.fileHandleForReading || handle == standardError.fileHandleForReading else { return }
 			defer { handle.waitForDataInBackgroundAndNotify() }
-			let data = handle.availableData
-			if let string = String(data: data, encoding: .utf8) {
-				for line in string.split(separator: "\n") {
-					outputHandler.process(line: String(line))
-				}
-			}
+			
+			outputHandler.process(data: handle.availableData)
 		}
 
-		try process.run()
 
 		standardOutput.fileHandleForReading.waitForDataInBackgroundAndNotify()
 		standardError.fileHandleForReading.waitForDataInBackgroundAndNotify()
-
+		
+		try process.run()
 		process.waitUntilExit()
 
+		// read the rest of the stream
+		outputHandler.process(data: standardOutput.fileHandleForReading.availableData)
+		
 
 		if process.terminationStatus != 0 {
 			throw CommandError.failedExecution(terminationStatus: process.terminationStatus)
 		}
+		
 	}
-
-
 
 	private var executableURL: URL {
 		if isBashCommand {
@@ -120,7 +121,16 @@ public class Command: Target, CustomStringConvertible {
 }
 
 extension OutputHandler {
-
-	func process(handler: FileHandle) {
+	
+	func process(data: Data) {
+		if !data.isEmpty {
+			if let string =  String(data: data, encoding: .utf8) {
+				for line in string.split(separator: "\n") {
+					self.process(line: String(line))
+				}
+			}
+		}
 	}
+
 }
+

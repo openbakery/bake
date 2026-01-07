@@ -93,4 +93,5 @@ struct SimulatorControl_Test {
 		assertThat(device, nilValue())
 	}
 
+
 }
