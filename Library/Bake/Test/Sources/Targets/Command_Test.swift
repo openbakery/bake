@@ -77,7 +77,7 @@ class Command_Test {
 		let command = createCommand(command: "foobar")
 
 		// when
-		try command.execute(process: process)
+		try await command.execute(process: process)
 
 		// then
 		assertThat(process.executableURL?.path, presentAnd(hasSuffix("foobar")))
@@ -98,7 +98,7 @@ class Command_Test {
 			let command = createCommand(command: bashCommand)
 
 			// when
-			try command.execute(process: process)
+			try await command.execute(process: process)
 
 			// then
 			assertThat(process.executableURL?.path, presentAnd(equalTo("/bin/bash")), message: "expected '\(bashCommand)' to be a bash command")
@@ -109,7 +109,7 @@ class Command_Test {
 		let command = createCommand(command: "foobar", arguments: "first", "second")
 
 		// when
-		try command.execute(process: process)
+		try await command.execute(process: process)
 
 		// then
 		assertThat(process.arguments, presentAnd(hasCount(2)))
@@ -121,7 +121,7 @@ class Command_Test {
 		let command = createCommand(command: "echo", arguments: "Hello World")
 
 		// when
-		try command.execute(process: process)
+		try await command.execute(process: process)
 
 		// then
 		let arguments = try #require(process.arguments)
@@ -139,7 +139,7 @@ class Command_Test {
 		let command = createCommand(command: "/bin/echo", arguments: "Hello World")
 
 		// when
-		try command.execute(process: Process(), outputHandler: outputHandler)
+		try await command.execute(process: Process(), outputHandler: outputHandler)
 
 		// then
 		let lines = await outputHandler.waitForLines()
@@ -154,7 +154,7 @@ class Command_Test {
 		let command = createCommand(command: "foobar")
 
 		// when
-		try command.execute(process: process)
+		try await command.execute(process: process)
 
 		// then
 		assertThat(process.wasExecuted, equalTo(true))
@@ -174,7 +174,7 @@ class Command_Test {
 		let command = Command(name: "Foo", command: "bar", arguments: "first")
 
 		// when
-		try command.execute(process: process, environment: ["DEVELOPMENT_DIR": "/Application/Xcode.app/Contents/Developer"])
+		try await command.execute(process: process, environment: ["DEVELOPMENT_DIR": "/Application/Xcode.app/Contents/Developer"])
 
 		// then
 		assertThat(process.environment, presentAnd(hasCount(greaterThan(1))))
@@ -186,7 +186,7 @@ class Command_Test {
 		let outputHandler = StringOutputHandler()
 
 		// when
-		try command.execute(process: Process(), environment: ["DEVELOPMENT_DIR": "/Application/Xcode.app/Contents/Developer"], outputHandler: outputHandler)
+		try await command.execute(process: Process(), environment: ["DEVELOPMENT_DIR": "/Application/Xcode.app/Contents/Developer"], outputHandler: outputHandler)
 
 		// then
 		assertThat(outputHandler.lines, hasCount(greaterThan(10)))

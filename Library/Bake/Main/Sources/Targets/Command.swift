@@ -41,11 +41,33 @@ public class Command: Target, CustomStringConvertible {
 		case failedExecution(terminationStatus: Int32)
 	}
 
+	actor DataBuffer {
+		private var buffer: Data
+		private let outputHandler: OutputHandler
+		
+		init(outputHandler: OutputHandler) {
+			self.outputHandler = outputHandler
+			self.buffer = Data()
+		}
+
+			func append(_ data: Data) {
+					buffer.append(data)
+					if let string = String(data: buffer, encoding: .utf8), string.last?.isNewline == true {
+							buffer.removeAll()
+							for line in string.split(separator: "\n") {
+								outputHandler.process(line: String(line))
+							}
+					}
+			}
+	}
+
 
 	@MainActor
-	func execute(process: Process, environment: [String: String]? = nil, outputHandler: OutputHandler = PrintOutputHandler()) throws {
+	func execute(process: Process, environment: [String: String]? = nil, outputHandler: OutputHandler = PrintOutputHandler()) async throws {
 		let standardOutput = Pipe()
 		let standardError = Pipe()
+		
+		let standardOutputBuffer = DataBuffer(outputHandler: outputHandler)
 
 		process.executableURL = self.executableURL
 		process.arguments = processArguments
@@ -65,8 +87,10 @@ public class Command: Target, CustomStringConvertible {
 			guard let handle = note.object as? FileHandle else { return }
 			guard handle === standardOutput.fileHandleForReading || handle == standardError.fileHandleForReading else { return }
 			defer { handle.waitForDataInBackgroundAndNotify() }
-			
-			outputHandler.process(data: handle.availableData)
+		
+			Task {
+				await standardOutputBuffer.append(handle.availableData)
+			}
 		}
 
 
@@ -77,8 +101,8 @@ public class Command: Target, CustomStringConvertible {
 		process.waitUntilExit()
 
 		// read the rest of the stream
-		outputHandler.process(data: standardOutput.fileHandleForReading.availableData)
-		
+		await standardOutputBuffer.append(standardOutput.fileHandleForReading.availableData)
+
 
 		if process.terminationStatus != 0 {
 			throw CommandError.failedExecution(terminationStatus: process.terminationStatus)

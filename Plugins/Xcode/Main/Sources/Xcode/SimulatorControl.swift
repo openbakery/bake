@@ -25,8 +25,6 @@ open class SimulatorControl: Target {
 	public func loadSimulators() async throws {
 		if self.simulators == nil {
 			let result = try await commandRunner.runWithResult("/usr/bin/xcrun", "simctl", "list", "--json")
-			try await Task.sleep(for: .milliseconds(100))
-
 			let parser = SimulatorControlParser()
 			self.simulators = parser.parseListJson(result.joined(separator: "\n"))
 		}
