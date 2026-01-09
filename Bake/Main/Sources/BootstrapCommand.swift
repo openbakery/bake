@@ -18,6 +18,8 @@ struct BootstrapCommand: AsyncParsableCommand {
 	@Argument(help: "The location of the Bake.swift configuration file.")
 	var configPath: String = ""
 
+	@Flag(help: "Hide the output")
+	var quiet = false
 
 	enum Kind: String, ExpressibleByArgument, CaseIterable {
 		case bootstrap, clean
@@ -30,6 +32,14 @@ struct BootstrapCommand: AsyncParsableCommand {
 
 	mutating func run() async throws {
 		self.apply(options: options)
+
+		let quiet = self.quiet
+		Task { @MainActor in
+			if quiet {
+				Log.level = .off
+			}
+		}
+
 		Log.info("Bootstrap")
 
 		switch kind {
@@ -41,7 +51,10 @@ struct BootstrapCommand: AsyncParsableCommand {
 
 	}
 
+
 	private func bootstrap() async throws {
+
+
 		let url = URL(filePath: configPath)
 		guard url.fileExists() else {
 			Log.info("Config not found: \(url)")
