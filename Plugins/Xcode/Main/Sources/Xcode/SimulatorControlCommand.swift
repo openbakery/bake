@@ -67,9 +67,12 @@ struct SimulatorControlCommandDeviceId: AsyncParsableCommand {
 	var deviceName: String
 
 	lazy var control = SimulatorControl()
+	lazy var outputHandler: OutputHandler = PrintOutputHandler()
 
 	mutating func run() async throws {
 		self.apply(options: options)
-		_ = try await control.device(name: deviceName)
+		if let device = try await control.device(name: deviceName) {
+			outputHandler.process(line: device.identifier)
+		}
 	}
 }

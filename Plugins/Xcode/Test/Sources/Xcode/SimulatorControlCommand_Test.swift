@@ -13,6 +13,14 @@ import Testing
 
 struct SimulatorControlCommand_Test {
 
+	init() async throws {
+		HamcrestSwiftTesting.enable()
+		control = SimulatorControlSpy()
+	}
+
+	let control: SimulatorControlSpy
+
+
 	@Test func commandConfiguration() {
 		assertThat(SimulatorControlCommand.configuration.commandName, presentAnd(equalTo("simulatorControl")))
 		assertThat(SimulatorControlCommand.configuration.aliases, presentAnd(hasItem("simctl")))
@@ -23,7 +31,6 @@ struct SimulatorControlCommand_Test {
 	}
 
 	@Test func list_command_calls_list() async throws {
-		let control = SimulatorControlSpy()
 		var command = try #require(try SimulatorControlCommandList.parseAsRoot([]) as? SimulatorControlCommandList)
 		command.control = control
 
@@ -43,8 +50,6 @@ struct SimulatorControlCommand_Test {
 	}
 
 	@Test func deviceId_calls_device() async throws {
-		let control = SimulatorControlSpy()
-		// var command = try #require(try SimulatorControlCommandDeviceId.parseAsRoot(["iPhone"]) as? SimulatorControlCommandDeviceId)
 		var command = try SimulatorControlCommandDeviceId.create(["iPhone"])
 		command.control = control
 
@@ -53,5 +58,35 @@ struct SimulatorControlCommand_Test {
 
 		// then
 		assertThat(control.deviceName, equalTo("iPhone"))
+	}
+
+	@Test func has_print_outputHandler() async throws {
+		var command = try SimulatorControlCommandDeviceId.create(["iPhone"])
+
+		// then
+		assertThat(command.outputHandler, instanceOf(PrintOutputHandler.self))
+	}
+
+	@Test func deviceId_calls_device_and_prints_the_device_id() async throws {
+		var command = try SimulatorControlCommandDeviceId.create(["iPhone"])
+		control.deviceResult = Device(
+			identifier: "1234",
+			name: "iPhone",
+			dataPath: "",
+			deviceTypeIdentifier: "",
+			isAvailable: true,
+			state: ""
+		)
+
+		command.control = control
+		let outputHandler = StringOutputHandler()
+		command.outputHandler = outputHandler
+
+		// when
+		try await command.run()
+
+		// then
+		assertThat(outputHandler.lines, hasCount(1))
+		assertThat(outputHandler.lines.first, presentAnd(equalTo("1234")))
 	}
 }

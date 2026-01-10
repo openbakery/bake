@@ -5,7 +5,7 @@
 
 public actor LogOutputHandler: OutputHandler {
 
-	public init(level: Log.Level = .debug) {
+	public init(level: Log.Level = .info) {
 		self.level = level
 	}
 

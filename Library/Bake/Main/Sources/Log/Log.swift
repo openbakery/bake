@@ -51,7 +51,7 @@ public class Log {
 
 
 	@MainActor
-	func set(outputHandler: OutputHandler) {
+	public func set(outputHandler: OutputHandler) {
 		self.outputHandler = outputHandler
 	}
 
