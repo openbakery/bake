@@ -49,6 +49,7 @@ open class SimulatorControl: Target {
 	open func device(name: String? = nil, version: String? = nil, type: SDKType = .iOS) async throws -> Device? {
 		try await loadSimulators()
 		if let simulators {
+			Log.debug("Find device by name: \(name ?? ""), version: \(version ?? "")  type \(type)")
 			if let version {
 				return simulators.device(name: name, version: Version(string: version), type: type)
 			}

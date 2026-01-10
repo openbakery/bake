@@ -12,9 +12,6 @@ struct BootstrapCommand: AsyncParsableCommand {
 		abstract: "Bake Bootstrap."
 	)
 
-	// @Argument(help: "The location of the Bake.swift configuration file.")
-	// var configPath: String = "Bake"
-
 	@Argument(help: "The location of the Bake.swift configuration file.")
 	var configPath: String = ""
 
