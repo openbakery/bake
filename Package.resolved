@@ -1,5 +1,5 @@
 {
-  "originHash" : "e0aea4cda11abf00a11604209639634f3548869cf6c87cf1629f92e8e0ae0a6e",
+  "originHash" : "e05b47e4d4a62fd133a22e070fdc55df7689e8876af3a431f3af6c3c29038ef6",
   "pins" : [
     {
       "identity" : "obcoder",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser",
       "state" : {
-        "revision" : "c5d11a805e765f52ba34ec7284bd4fcd6ba68615",
-        "version" : "1.7.0"
+        "revision" : "309a47b2b1d9b5e991f36961c983ecec72275be3",
+        "version" : "1.6.1"
       }
     },
     {
