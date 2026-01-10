@@ -34,9 +34,7 @@ struct SimulatorControlCommand: AsyncParsableCommand {
 		subcommands: [SimulatorControlCommandList.self, SimulatorControlCommandDeviceId.self],
 		aliases: ["simctl"]
 	)
-
 }
-
 
 
 struct SimulatorControlCommandList: AsyncParsableCommand {
@@ -57,8 +55,8 @@ struct SimulatorControlCommandList: AsyncParsableCommand {
 
 struct SimulatorControlCommandDeviceId: AsyncParsableCommand {
 	static let configuration = CommandConfiguration(
-		commandName: "list",
-		abstract: "Lists the available simulators."
+		commandName: "deviceId",
+		abstract: "Prints the device id of the specified simulator."
 	)
 
 	@OptionGroup var options: Options

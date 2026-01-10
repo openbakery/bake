@@ -49,6 +49,10 @@ struct SimulatorControlCommand_Test {
 		assertThat(SimulatorControlCommand.configuration.subcommands, hasItem(instanceOf(SimulatorControlCommandDeviceId.Type.self)))
 	}
 
+	@Test func deivceId_command_configuration() {
+		assertThat(SimulatorControlCommandDeviceId.configuration.commandName, presentAnd(equalTo("deviceId")))
+	}
+
 	@Test func deviceId_calls_device() async throws {
 		var command = try SimulatorControlCommandDeviceId.create(["iPhone"])
 		command.control = control
