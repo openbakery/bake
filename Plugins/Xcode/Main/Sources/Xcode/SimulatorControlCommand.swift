@@ -62,7 +62,7 @@ struct SimulatorControlCommandDeviceId: AsyncParsableCommand {
 	@OptionGroup var options: Options
 
 	@Argument(help: "Device name")
-	var deviceName: String
+	var deviceName: String?
 
 	lazy var control = SimulatorControl()
 	lazy var outputHandler: OutputHandler = PrintOutputHandler()

@@ -64,12 +64,24 @@ struct SimulatorControlCommand_Test {
 		assertThat(control.deviceName, equalTo("iPhone"))
 	}
 
+	@Test func deviceId_calls_device_when_name_is_nil() async throws {
+		var command = try SimulatorControlCommandDeviceId.create()
+		command.control = control
+
+		// when
+		try await command.run()
+
+		// then
+		assertThat(control.deviceCalled, equalTo(true))
+	}
+
 	@Test func has_print_outputHandler() async throws {
 		var command = try SimulatorControlCommandDeviceId.create(["iPhone"])
 
 		// then
 		assertThat(command.outputHandler, instanceOf(PrintOutputHandler.self))
 	}
+
 
 	@Test func deviceId_calls_device_and_prints_the_device_id() async throws {
 		var command = try SimulatorControlCommandDeviceId.create(["iPhone"])
