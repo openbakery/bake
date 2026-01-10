@@ -30,7 +30,7 @@ open class SimulatorControl: Target {
 		}
 	}
 
-	public func list() async throws {
+	open func list() async throws {
 		try await loadSimulators()
 
 		Log.debug("print simulators")
@@ -46,7 +46,7 @@ open class SimulatorControl: Target {
 
 	}
 
-	public func device(name: String? = nil, version: String? = nil, type: SDKType = .iOS) async throws -> Device? {
+	open func device(name: String? = nil, version: String? = nil, type: SDKType = .iOS) async throws -> Device? {
 		try await loadSimulators()
 		if let simulators {
 			if let version {

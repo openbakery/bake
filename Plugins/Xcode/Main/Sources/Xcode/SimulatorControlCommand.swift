@@ -31,11 +31,12 @@ struct SimulatorControlCommand: AsyncParsableCommand {
 	static let configuration = CommandConfiguration(
 		commandName: "simulatorControl",
 		abstract: "SimulatorControl commands.",
-		subcommands: [SimulatorControlCommandList.self],
+		subcommands: [SimulatorControlCommandList.self, SimulatorControlCommandDeviceId.self],
 		aliases: ["simctl"]
 	)
 
 }
+
 
 
 struct SimulatorControlCommandList: AsyncParsableCommand {
@@ -46,8 +47,29 @@ struct SimulatorControlCommandList: AsyncParsableCommand {
 
 	@OptionGroup var options: Options
 
+	lazy var control: SimulatorControl = SimulatorControl()
+
 	mutating func run() async throws {
 		self.apply(options: options)
-		try await SimulatorControl().list()
+		try await control.list()
+	}
+}
+
+struct SimulatorControlCommandDeviceId: AsyncParsableCommand {
+	static let configuration = CommandConfiguration(
+		commandName: "list",
+		abstract: "Lists the available simulators."
+	)
+
+	@OptionGroup var options: Options
+
+	@Argument(help: "Device name")
+	var deviceName: String
+
+	lazy var control = SimulatorControl()
+
+	mutating func run() async throws {
+		self.apply(options: options)
+		_ = try await control.device(name: deviceName)
 	}
 }
