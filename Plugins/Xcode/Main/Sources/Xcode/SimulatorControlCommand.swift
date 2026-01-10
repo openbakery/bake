@@ -70,6 +70,7 @@ struct SimulatorControlCommandDeviceId: AsyncParsableCommand {
 	mutating func run() async throws {
 		self.apply(options: options)
 		if let device = try await control.device(name: deviceName) {
+			Log.debug("found device id: \(device.identifier)")
 			outputHandler.process(line: device.identifier)
 		}
 	}
