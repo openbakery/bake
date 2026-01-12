@@ -11,6 +11,7 @@ version = "2025.03"
 project {
 
 	val build = Build()
+	buildType(build)
 
 }
 
