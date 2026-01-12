@@ -76,7 +76,7 @@ let package = Package(
 				"BakeXcode",
 				.product(name: "ArgumentParser", package: "swift-argument-parser")
 			],
-			path: "Bake/Main/",
+			path: "Client/Main/",
 			sources: [
 				"Sources"
 			],
@@ -92,7 +92,7 @@ let package = Package(
 				.product(name: "Hamcrest", package: "SwiftHamcrest"),
 				.product(name: "HamcrestSwiftTesting", package: "SwiftHamcrest")
 			],
-			path: "Bake/Test",
+			path: "Client/Test",
 			sources: [
 				"Sources"
 			],
