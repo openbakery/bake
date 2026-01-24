@@ -2,7 +2,7 @@
 // Created by René Pirringer on 15.12.2025
 //
 
-public enum SDKType {
+public enum SDKType: Sendable {
 	case iOS, macOS, tvOS, watchOS, visionOS
 
 	var value: String {
