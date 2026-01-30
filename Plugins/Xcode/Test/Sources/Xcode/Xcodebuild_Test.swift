@@ -270,10 +270,7 @@ final class Xcodebuild_Test {
 		assertThat(xcodebuild.update(destination: SDKType.watchOS.genericDestination).destination.value, hasSuffix("watchOS"))
 		assertThat(xcodebuild.update(codesigning: Codesigning.none).codesigning, presentAnd(equalTo(.none)))
 		assertThat(xcodebuild.update(onlyTest: ["foo"]).onlyTest, equalTo(["foo"]))
-
-		// defaultParameters: DefaultParameters? = nil,
-		// testParameters: TestParameters? = nil
-
-
+		assertThat(xcodebuild.update(defaultParameters: Xcodebuild.DefaultParameters(skipMacroValidation: false)).defaultParameters.skipMacroValidation, equalTo(false))
+		assertThat(xcodebuild.update(testParameters: Xcodebuild.TestParameters(enableCodeCoverage: false)).testParameters.enableCodeCoverage, equalTo(false))
 	}
 }

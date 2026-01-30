@@ -106,7 +106,7 @@ public struct Xcodebuild {
 			codesigning: codesigning ?? self.codesigning,
 			architecture: self.architecture,
 			onlyTest: onlyTest ?? self.onlyTest,
-			defaultParameters: self.defaultParameters,
+			defaultParameters: defaultParameters ?? self.defaultParameters,
 			testParameters: self.testParameters,
 			commandRunner: self.commandRunner)
 	}
