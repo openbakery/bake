@@ -81,6 +81,7 @@ struct TestResult: OBCoder.Encodable {
 class SwiftTestParser {
 	private var failures: [Failure] = []
 
+	var testSuccessCount = 0
 	var currentSuite: String?
 	var currentTest: String?
 	var currentClass: String?
@@ -103,8 +104,10 @@ class SwiftTestParser {
 	func parse(lines: [String]) async {
 
 		let suiteString = "􁁛  Suite "
-		let testString = "􀢄  Test "
+		let testFailureString = "􀢄  Test "
 		let gotString = "􀄵  GOT: "
+
+		let testSuccessString = "􁁛  Test "
 
 		for line in lines {
 			if line.hasPrefix(suiteString) {
@@ -115,7 +118,13 @@ class SwiftTestParser {
 				}
 			}
 
-			if line.hasPrefix(testString) {
+			if line.hasPrefix(testSuccessString) {
+				if line.contains("passed after") {
+					testSuccessCount += 1
+				}
+			}
+
+			if line.hasPrefix(testFailureString) {
 				let tokens = line.split(separator: " ")
 				if tokens.count > 6 {
 					currentTest = String(tokens[2])
@@ -232,7 +241,7 @@ class SwiftTestParser {
 
 	func printSummary() {
 		if failures.isEmpty {
-			print("✅ All tests passed!")
+			print("✅ \(testSuccessCount-1) tests passed!")
 			return
 		}
 
