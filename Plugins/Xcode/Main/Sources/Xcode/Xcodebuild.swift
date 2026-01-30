@@ -37,9 +37,9 @@ public struct Xcodebuild {
 
 
 	public enum Command: String {
-		case build = "build"
+		case build
 		// case buildForTest = "build-for-testing"
-		case test = "test"
+		case test
 	}
 
 
