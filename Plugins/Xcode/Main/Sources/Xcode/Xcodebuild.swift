@@ -11,6 +11,7 @@ public struct Xcodebuild {
 		configuration: String,
 		sdkType: SDKType,
 		destination: Destination? = nil,
+		codesigning: Codesigning = .automatic,
 		architecture: Architecture = .arm64,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
@@ -21,6 +22,7 @@ public struct Xcodebuild {
 		self.scheme = scheme
 		self.sdkType = sdkType
 		self.destination = destination ?? sdkType.genericDestination
+		self.codesigning = codesigning
 		self.architecture = architecture
 		self.defaultParameters = defaultParameters
 		self.testParameters = testParameters
@@ -32,6 +34,7 @@ public struct Xcodebuild {
 	let configuration: String
 	let sdkType: SDKType
 	let destination: Destination
+	let codesigning: Codesigning
 	let commandRunner: CommandRunner
 	let defaultParameters: DefaultParameters
 	let testParameters: TestParameters
@@ -69,18 +72,18 @@ public struct Xcodebuild {
 		parameters += defaultParameters.parameters
 		parameters += testParameters.parameters
 
+		parameters += codesigning.parameters
+
 		// if let codesignIdentity {
-		// 	if codesignIdentity == "" {
-		// 		parameters.append(contentsOf: [
-		// 			"CODE_SIGN_IDENTITY=",
-		// 			"CODE_SIGNING_REQUIRED=NO",
-		// 			"CODE_SIGNING_ALLOWED=NO"
-		// 		])
-		// 	} else {
-		// 		parameters.append(contentsOf: [
-		// 			"CODE_SIGN_IDENTITY=\(codesignIdentity)"
-		// 		])
-		// 	}
+		// 	// 	if codesignIdentity == "" {
+		// 	// 		parameters.append(contentsOf: [
+		// 	// 			"CODE_SIGN_IDENTITY=",
+		// 	// 			"CODE_SIGNING_REQUIRED=NO",
+		// 	// 			"CODE_SIGNING_ALLOWED=NO"
+		// 	// 		])
+		// 	// 	} else {
+		// 	parameters.append("CODE_SIGN_IDENTITY=\(codesignIdentity)")
+		// 	// 	}
 		// } else {
 		// 	parameters.append(contentsOf: ["-allowProvisioningUpdates"])
 		//

@@ -35,7 +35,8 @@ final class Xcodebuild_Test {
 		scheme: String = "scheme",
 		configuration: String = "Debug",
 		sdkType: SDKType = .iOS,
-		destination: Destination? = nil
+		destination: Destination? = nil,
+		codesigning: Codesigning = .automatic
 	) -> Xcodebuild {
 		return Xcodebuild(
 			path: path,
@@ -43,6 +44,7 @@ final class Xcodebuild_Test {
 			configuration: configuration,
 			sdkType: sdkType,
 			destination: destination,
+			codesigning: codesigning,
 			commandRunner: commandRunner)
 	}
 
@@ -108,6 +110,7 @@ final class Xcodebuild_Test {
 		assertThat(arguments, hasItem("SYMROOT=\(path.symbolDirectory.path)"))
 		assertThat(arguments, hasItem("SHARED_PRECOMPS_DIR=\(path.sharedPrecompiledHeadersDirectory.path)"))
 		assertThat(arguments, hasParameter("-destination", "generic/platform=iOS"))
+		assertThat(arguments, hasItem("-allowProvisioningUpdates"))
 	}
 
 	@Test(arguments: TestValue.randomValue)
@@ -151,4 +154,37 @@ final class Xcodebuild_Test {
 		assertThat(arguments, hasParameter("-destination", destination.value))
 	}
 
+	@Test
+	func execute_command_has_codesign_identity() async throws {
+		// given
+		let xcodebuild = create(scheme: "", configuration: "", codesigning: .identity("1234"))
+
+		// when
+		try await xcodebuild.execute(command: .build)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		let arguments = try #require(commandRunner.arguments)
+
+		assertThat(arguments.first, presentAnd(equalTo("build")))
+		assertThat(arguments, hasItem("CODE_SIGN_IDENTITY=1234"))
+	}
+
+	@Test
+	func execute_command_has_empty_codesign_identity() async throws {
+		// given
+		let xcodebuild = create(scheme: "", configuration: "", codesigning: .none)
+
+		// when
+		try await xcodebuild.execute(command: .build)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		let arguments = try #require(commandRunner.arguments)
+
+		assertThat(arguments.first, presentAnd(equalTo("build")))
+		assertThat(arguments, hasItem("CODE_SIGN_IDENTITY="))
+		assertThat(arguments, hasItem("CODE_SIGNING_REQUIRED=NO"))
+		assertThat(arguments, hasItem("CODE_SIGNING_ALLOWED=NO"))
+	}
 }
