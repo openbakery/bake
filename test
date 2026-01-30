@@ -92,6 +92,14 @@ class SwiftTestParser {
 
 	}
 
+	func setFailureClass(_ token: Substring) {
+		let parts = token.split(separator: ":")
+		if parts.count > 2 {
+			currentClass = String(parts[0])
+			currentLine = String(parts[1])
+		}
+	}
+
 	func parse(lines: [String]) async {
 
 		let suiteString = "􁁛  Suite "
@@ -111,14 +119,16 @@ class SwiftTestParser {
 				let tokens = line.split(separator: " ")
 				if tokens.count > 6 {
 					currentTest = String(tokens[2])
+					if line.hasSuffix("Issue recorded") {
+						let filename = tokens[tokens.count - 3]
+						setFailureClass(filename)
+						currentMessage = "Issue recored"
+					}
+
 					if tokens[3] == "recorded" {
 						if tokens.count > 8 {
-							let parts = tokens[7].split(separator: ":")
-							if parts.count > 2 {
-								currentClass = String(parts[0])
-								currentLine = String(parts[1])
-								currentMessage = tokens[8...].joined(separator: " ")
-							}
+							setFailureClass(tokens[7])
+							currentMessage = tokens[8...].joined(separator: " ")
 						}
 					} else if tokens[3] == "failed" {
 						await addFailure(message: currentMessage ?? "unknown")
@@ -130,6 +140,7 @@ class SwiftTestParser {
 				let message = line.dropFirst(gotString.count)
 				await addFailure(message: String(message))
 			}
+
 
 
 			if let failure = parseCompileFailure(line: line) {
