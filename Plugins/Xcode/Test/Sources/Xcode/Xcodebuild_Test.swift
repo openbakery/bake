@@ -31,12 +31,18 @@ final class Xcodebuild_Test {
 		path.clean()
 	}
 
-	func create(scheme: String = "scheme", configuration: String = "Debug", sdkType: SDKType = .iOS) -> Xcodebuild {
+	func create(
+		scheme: String = "scheme",
+		configuration: String = "Debug",
+		sdkType: SDKType = .iOS,
+		destination: Destination? = nil
+	) -> Xcodebuild {
 		return Xcodebuild(
 			path: path,
 			scheme: scheme,
 			configuration: configuration,
 			sdkType: sdkType,
+			destination: destination,
 			commandRunner: commandRunner)
 	}
 
@@ -85,9 +91,9 @@ final class Xcodebuild_Test {
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
-		var arguments = try #require(commandRunner.arguments)
+		let arguments = try #require(commandRunner.arguments)
 
-		assertThat(arguments.removeFirst(), presentAnd(equalTo("build")))
+		assertThat(arguments.first, presentAnd(equalTo("build")))
 		assertThat(arguments, hasParameter("-scheme", value.stringValue))
 		assertThat(arguments, hasParameter("-configuration", "Debug"))
 		assertThat(arguments, hasParameter("-arch", "arm64"))
@@ -101,7 +107,7 @@ final class Xcodebuild_Test {
 		assertThat(arguments, hasItem("OBJROOT=\(path.objectDirectory.path)"))
 		assertThat(arguments, hasItem("SYMROOT=\(path.symbolDirectory.path)"))
 		assertThat(arguments, hasItem("SHARED_PRECOMPS_DIR=\(path.sharedPrecompiledHeadersDirectory.path)"))
-
+		assertThat(arguments, hasParameter("-destination", "generic/platform=iOS"))
 	}
 
 	@Test(arguments: TestValue.randomValue)
@@ -114,9 +120,9 @@ final class Xcodebuild_Test {
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
-		var arguments = try #require(commandRunner.arguments)
+		let arguments = try #require(commandRunner.arguments)
 
-		assertThat(arguments.removeFirst(), presentAnd(equalTo("test")))
+		assertThat(arguments.first, presentAnd(equalTo("test")))
 		assertThat(arguments, hasParameter("-scheme", value.stringValue))
 		assertThat(arguments, hasParameter("-configuration", "Debug"))
 		assertThat(arguments, hasParameter("-arch", "arm64"))
@@ -124,7 +130,25 @@ final class Xcodebuild_Test {
 		assertThat(arguments, hasItem("-disable-concurrent-destination-testing"))
 		assertThat(arguments, hasParameter("-parallel-testing-enabled", "NO"))
 		assertThat(arguments, hasParameter("-enableCodeCoverage", "NO"))
+		assertThat(arguments, hasParameter("-destination", "generic/platform=iOS"))
 	}
 
+	@Test(arguments: [
+		Destination(type: .iOS, identifier: "234-234"),
+		Destination(type: .iOS, identifier: "234-234", architecture: .arm64)
+	])
+	func execute_command_with_different_destinations(destination: Destination) async throws {
+		// given
+		let xcodebuild = create(scheme: "", configuration: "", destination: destination)
+
+		// when
+		try await xcodebuild.execute(command: .build)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		let arguments = try #require(commandRunner.arguments)
+
+		assertThat(arguments, hasParameter("-destination", destination.value))
+	}
 
 }

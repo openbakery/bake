@@ -15,6 +15,10 @@ public enum SDKType: Sendable {
 		}
 	}
 
+	var genericDestination: Destination {
+		return .iOSGeneric
+	}
+
 
 	static func value(_ string: String) -> SDKType {
 		switch string.lowercased() {

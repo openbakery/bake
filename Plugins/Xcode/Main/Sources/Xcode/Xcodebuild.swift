@@ -10,6 +10,7 @@ public struct Xcodebuild {
 		scheme: String,
 		configuration: String,
 		sdkType: SDKType,
+		destination: Destination? = nil,
 		architecture: Architecture = .arm64,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
@@ -19,6 +20,7 @@ public struct Xcodebuild {
 		self.configuration = configuration
 		self.scheme = scheme
 		self.sdkType = sdkType
+		self.destination = destination ?? sdkType.genericDestination
 		self.architecture = architecture
 		self.defaultParameters = defaultParameters
 		self.testParameters = testParameters
@@ -29,6 +31,7 @@ public struct Xcodebuild {
 	let scheme: String
 	let configuration: String
 	let sdkType: SDKType
+	let destination: Destination
 	let commandRunner: CommandRunner
 	let defaultParameters: DefaultParameters
 	let testParameters: TestParameters
@@ -49,14 +52,14 @@ public struct Xcodebuild {
 		try await commandRunner.run(xcodebuildCommand, arguments: arguments, environment: [:])
 	}
 
-	func arguments(command: Command /*, destination: Destination, codesignIdentity: String? = nil, onlyTesting: String? = nil */) -> [String] {
+	func arguments(command: Command, /* codesignIdentity: String? = nil, onlyTesting: String? = nil */ ) -> [String] {
 		var parameters = [
 			command.rawValue,
 			"-scheme", self.scheme,
 			"-configuration", "Debug",
 			"-UseNewBuildSystem=YES",
 			"-arch", architecture.value,
-			// "-destination", destination.value,
+			"-destination", destination.value,
 			"DSTROOT=\(path.destinationDirectory.path)",
 			"OBJROOT=\(path.objectDirectory.path)",
 			"SYMROOT=\(path.symbolDirectory.path)",
