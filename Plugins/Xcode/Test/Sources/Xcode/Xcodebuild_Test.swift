@@ -257,4 +257,23 @@ final class Xcodebuild_Test {
 		assertThat(arguments, not(hasItem("-only-testing:app/foo/bar")))
 		assertThat(arguments, not(hasParameter("-enableCodeCoverage", "NO")))
 	}
+
+	@Test func update() {
+		// given
+		let xcodebuild = create(scheme: "app", configuration: "Debug")
+			.update(scheme: "test")
+		assertThat(xcodebuild.scheme, equalTo("test"))
+		assertThat(xcodebuild.configuration, equalTo("Debug"))
+
+		assertThat(xcodebuild.update(configuration: "Release").configuration, equalTo("Release"))
+		assertThat(xcodebuild.update(sdkType: .macOS).sdkType, equalTo(.macOS))
+		assertThat(xcodebuild.update(destination: SDKType.watchOS.genericDestination).destination.value, hasSuffix("watchOS"))
+		assertThat(xcodebuild.update(codesigning: Codesigning.none).codesigning, presentAnd(equalTo(.none)))
+		assertThat(xcodebuild.update(onlyTest: ["foo"]).onlyTest, equalTo(["foo"]))
+
+		// defaultParameters: DefaultParameters? = nil,
+		// testParameters: TestParameters? = nil
+
+
+	}
 }

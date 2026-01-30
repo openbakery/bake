@@ -2,7 +2,7 @@
 // Created by René Pirringer on 30.1.2026
 //
 
-public enum Codesigning {
+public enum Codesigning: Equatable {
 	case none
 	case identity(String)
 	case automatic

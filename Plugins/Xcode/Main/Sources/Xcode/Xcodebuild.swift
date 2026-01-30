@@ -86,4 +86,29 @@ public struct Xcodebuild {
 		return parameters
 	}
 
+	public func update(
+		scheme: String? = nil,
+		configuration: String? = nil,
+		sdkType: SDKType? = nil,
+		destination: Destination? = nil,
+		codesigning: Codesigning? = nil,
+		architecture: Architecture? = nil,
+		onlyTest: [String]? = nil,
+		defaultParameters: DefaultParameters? = nil,
+		testParameters: TestParameters? = nil
+	) -> Xcodebuild {
+		Xcodebuild(
+			path: path,
+			scheme: scheme ?? self.scheme,
+			configuration: configuration ?? self.configuration,
+			sdkType: sdkType ?? self.sdkType,
+			destination: destination ?? self.destination,
+			codesigning: codesigning ?? self.codesigning,
+			architecture: self.architecture,
+			onlyTest: onlyTest ?? self.onlyTest,
+			defaultParameters: self.defaultParameters,
+			testParameters: self.testParameters,
+			commandRunner: self.commandRunner)
+	}
+
 }
