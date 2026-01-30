@@ -46,12 +46,16 @@ open class CommandRunnerFake: CommandRunner {
 		self.commands.append(command)
 	}
 
-	var commands = [Command]()
+	public var commands = [Command]()
 
-	struct Command {
+	public struct Command: CustomStringConvertible {
 		let command: String
 		let arguments: [String]
 		let result: [String]
+
+		public var description: String {
+			return "Command: \(command) \(arguments.joined(separator: " "))"
+		}
 	}
 
 	func hasCommand(command: String, arguments: [String]) -> Command? {

@@ -14,52 +14,83 @@ import Testing
 @testable import BakeXcode
 
 @Suite(.serialized)
-final class Xcodebuild_Test: Sendable {
+final class Xcodebuild_Test {
 
 	init() async throws {
 		HamcrestSwiftTesting.enable()
 
 		let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
 		path = try XcodePath(base: dir)
+		commandRunner = CommandRunnerFake()
 	}
 
 	let path: XcodePath
+	let commandRunner: CommandRunnerFake
 
 	deinit {
 		path.clean()
 	}
 
-	func create(scheme: String = "scheme", sdkType: SDKType = .iOS) -> Xcodebuild {
-		return Xcodebuild(path: path, scheme: scheme, sdkType: sdkType)
+	func create(scheme: String = "scheme", configuration: String = "Debug", sdkType: SDKType = .iOS) -> Xcodebuild {
+		return Xcodebuild(
+			path: path,
+			scheme: scheme,
+			configuration: configuration,
+			sdkType: sdkType,
+			commandRunner: commandRunner)
 	}
 
 	@Test func instance_has_path() {
 		// when
 		let xcodebuild = create()
-		// expect
 
+		// then
 		assertThat(xcodebuild.path, presentAnd(instanceOf(XcodePath.self)))
 	}
 
 	@Test(arguments: TestValue.randomValues)
 	func has_scheme(value: TestValue) {
-
 		// when
 		let xcodebuild = create(scheme: value.stringValue)
-		// expect
 
+		// then
 		assertThat(xcodebuild.scheme, presentAnd(equalTo(value.stringValue)))
+	}
+
+	@Test(arguments: TestValue.randomValues)
+	func has_configuration(value: TestValue) {
+		// when
+		let xcodebuild = create(configuration: value.stringValue)
+
+		// then
+		assertThat(xcodebuild.configuration, presentAnd(equalTo(value.stringValue)))
 	}
 
 	@Test(arguments: [SDKType.iOS, SDKType.tvOS, SDKType.macOS])
 	func has_sdk_type(sdkType: SDKType) {
-
 		// when
 		let xcodebuild = create(sdkType: sdkType)
-		// expect
 
+		// then
 		assertThat(xcodebuild.sdkType, presentAnd(equalTo(sdkType)))
 	}
 
+	@Test(arguments: TestValue.randomValue)
+	func execute_command_build(value: TestValue) async throws {
+		// given
+		let xcodebuild = create(scheme: value.stringValue, configuration: value.stringValue1)
+
+		// when
+		try await xcodebuild.execute(command: .build)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		var arguments = try #require(commandRunner.arguments)
+
+		assertThat(arguments.removeFirst(), presentAnd(equalTo("build")))
+		assertThat(arguments, hasParameter("-scheme", value.stringValue))
+		assertThat(arguments, hasParameter("-configuration", "Debug"))
+		assertThat(arguments, hasItem("-UseNewBuildSystem=YES"))
+	}
 
 }
