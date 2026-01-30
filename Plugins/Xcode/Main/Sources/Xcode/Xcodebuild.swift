@@ -47,12 +47,8 @@ public struct Xcodebuild {
 
 	public enum Command: String {
 		case build
-		// case buildForTest = "build-for-testing"
+		case buildForTest = "build-for-testing"
 		case test
-
-		var isTesting: Bool {
-			return self == .test
-		}
 	}
 
 
@@ -79,7 +75,7 @@ public struct Xcodebuild {
 		parameters += defaultParameters.parameters
 		parameters += codesigning.parameters
 
-		if command.isTesting {
+		if command == .test {
 			parameters += testParameters.parameters
 
 			if let onlyTest {
