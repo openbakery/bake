@@ -13,6 +13,7 @@ public struct Xcodebuild {
 		destination: Destination? = nil,
 		codesigning: Codesigning = .automatic,
 		architecture: Architecture = .arm64,
+		onlyTest: [String]? = nil,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
 		commandRunner: CommandRunner
@@ -24,6 +25,7 @@ public struct Xcodebuild {
 		self.destination = destination ?? sdkType.genericDestination
 		self.codesigning = codesigning
 		self.architecture = architecture
+		self.onlyTest = onlyTest
 		self.defaultParameters = defaultParameters
 		self.testParameters = testParameters
 		self.commandRunner = commandRunner
@@ -35,6 +37,7 @@ public struct Xcodebuild {
 	let sdkType: SDKType
 	let destination: Destination
 	let codesigning: Codesigning
+	let onlyTest: [String]?
 	let commandRunner: CommandRunner
 	let defaultParameters: DefaultParameters
 	let testParameters: TestParameters
@@ -51,11 +54,11 @@ public struct Xcodebuild {
 
 	public func execute(command: Command) async throws {
 		let xcodebuildCommand = "/usr/bin/xcodebuild"
-		var arguments = self.arguments(command: command)  //, destination: destination, codesignIdentity: codesignIdentity, onlyTesting: onlyTesting)
+		var arguments = self.arguments(command: command)
 		try await commandRunner.run(xcodebuildCommand, arguments: arguments, environment: [:])
 	}
 
-	func arguments(command: Command, /* codesignIdentity: String? = nil, onlyTesting: String? = nil */ ) -> [String] {
+	func arguments(command: Command) -> [String] {
 		var parameters = [
 			command.rawValue,
 			"-scheme", self.scheme,
@@ -74,25 +77,9 @@ public struct Xcodebuild {
 
 		parameters += codesigning.parameters
 
-		// if let codesignIdentity {
-		// 	// 	if codesignIdentity == "" {
-		// 	// 		parameters.append(contentsOf: [
-		// 	// 			"CODE_SIGN_IDENTITY=",
-		// 	// 			"CODE_SIGNING_REQUIRED=NO",
-		// 	// 			"CODE_SIGNING_ALLOWED=NO"
-		// 	// 		])
-		// 	// 	} else {
-		// 	parameters.append("CODE_SIGN_IDENTITY=\(codesignIdentity)")
-		// 	// 	}
-		// } else {
-		// 	parameters.append(contentsOf: ["-allowProvisioningUpdates"])
-		//
-		// }
-		//
-		// if let onlyTesting {
-		// 	parameters.append(contentsOf: ["-only-testing:\(scheme)/\(onlyTesting)"])
-		//
-		// }
+		if let onlyTest {
+			parameters += onlyTest.map { "-only-testing:\(self.scheme)/\($0)" }
+		}
 
 		return parameters
 	}

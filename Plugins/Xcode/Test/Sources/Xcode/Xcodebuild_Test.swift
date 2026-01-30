@@ -36,7 +36,8 @@ final class Xcodebuild_Test {
 		configuration: String = "Debug",
 		sdkType: SDKType = .iOS,
 		destination: Destination? = nil,
-		codesigning: Codesigning = .automatic
+		codesigning: Codesigning = .automatic,
+		onlyTest: [String]? = nil
 	) -> Xcodebuild {
 		return Xcodebuild(
 			path: path,
@@ -45,6 +46,7 @@ final class Xcodebuild_Test {
 			sdkType: sdkType,
 			destination: destination,
 			codesigning: codesigning,
+			onlyTest: onlyTest,
 			commandRunner: commandRunner)
 	}
 
@@ -186,5 +188,39 @@ final class Xcodebuild_Test {
 		assertThat(arguments, hasItem("CODE_SIGN_IDENTITY="))
 		assertThat(arguments, hasItem("CODE_SIGNING_REQUIRED=NO"))
 		assertThat(arguments, hasItem("CODE_SIGNING_ALLOWED=NO"))
+	}
+
+	@Test
+	func execute_command_test_with_onlyTest() async throws {
+		// given
+		let xcodebuild = create(scheme: "app", onlyTest: ["foo/bar"])
+
+		// when
+		try await xcodebuild.execute(command: .test)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		let arguments = try #require(commandRunner.arguments)
+
+		assertThat(arguments.first, presentAnd(equalTo("test")))
+		assertThat(arguments, hasItem("-only-testing:app/foo/bar"))
+	}
+
+	@Test
+	func execute_command_test_with_multiple_onlyTest() async throws {
+		// given
+		let xcodebuild = create(scheme: "app", onlyTest: ["foo/1", "foo/2", "foo/3"])
+
+		// when
+		try await xcodebuild.execute(command: .test)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		let arguments = try #require(commandRunner.arguments)
+
+		assertThat(arguments.first, presentAnd(equalTo("test")))
+		assertThat(arguments, hasItem("-only-testing:app/foo/1"))
+		assertThat(arguments, hasItem("-only-testing:app/foo/2"))
+		assertThat(arguments, hasItem("-only-testing:app/foo/3"))
 	}
 }
