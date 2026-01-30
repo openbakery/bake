@@ -10,12 +10,18 @@ public struct Xcodebuild {
 		scheme: String,
 		configuration: String,
 		sdkType: SDKType,
+		architecture: Architecture = .arm64,
+		defaultParameters: DefaultParameters = DefaultParameters(),
+		testParameters: TestParameters = TestParameters(),
 		commandRunner: CommandRunner
 	) {
 		self.path = path
 		self.configuration = configuration
 		self.scheme = scheme
 		self.sdkType = sdkType
+		self.architecture = architecture
+		self.defaultParameters = defaultParameters
+		self.testParameters = testParameters
 		self.commandRunner = commandRunner
 	}
 
@@ -24,12 +30,16 @@ public struct Xcodebuild {
 	let configuration: String
 	let sdkType: SDKType
 	let commandRunner: CommandRunner
+	let defaultParameters: DefaultParameters
+	let testParameters: TestParameters
+
+	let architecture: Architecture
 
 
 	public enum Command: String {
 		case build = "build"
 		// case buildForTest = "build-for-testing"
-		// case test = "test"
+		case test = "test"
 	}
 
 
@@ -44,23 +54,18 @@ public struct Xcodebuild {
 			command.rawValue,
 			"-scheme", self.scheme,
 			"-configuration", "Debug",
-			"-UseNewBuildSystem=YES"
-			// "-derivedDataPath", xcodePath.buildDirectory.path,
-			// "-disable-concurrent-destination-testing",
-			// "-parallel-testing-enabled", "NO",
-			// "-enableAddressSanitizer", "NO",
-			// "-enableThreadSanitizer", "NO",
-			// "-enableUndefinedBehaviorSanitizer", "NO",
-			// "-enableCodeCoverage", "NO",
+			"-UseNewBuildSystem=YES",
+			"-arch", architecture.value
 			// "-destination", destination.value,
-			// "COMPILER_INDEX_STORE_ENABLE=NO",
-			// "-skipMacroValidation",
 			// "ARCH=arm64",
 			// "DSTROOT=\(xcodePath.destinationDirectory.path)",
 			// "OBJROOT=\(xcodePath.objectDirectory.path)",
 			// "SYMROOT=\(xcodePath.symbolDirectory.path)",
 			// "SHARED_PRECOMPS_DIR=\(xcodePath.sharedPrecompiledHeadersDirectory.path)"
 		]
+
+		parameters += defaultParameters.parameters
+		parameters += testParameters.parameters
 
 		// if let codesignIdentity {
 		// 	if codesignIdentity == "" {

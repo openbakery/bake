@@ -90,7 +90,36 @@ final class Xcodebuild_Test {
 		assertThat(arguments.removeFirst(), presentAnd(equalTo("build")))
 		assertThat(arguments, hasParameter("-scheme", value.stringValue))
 		assertThat(arguments, hasParameter("-configuration", "Debug"))
+		assertThat(arguments, hasParameter("-arch", "arm64"))
 		assertThat(arguments, hasItem("-UseNewBuildSystem=YES"))
+		assertThat(arguments, hasItem("-skipMacroValidation"))
+		assertThat(arguments, hasParameter("-enableAddressSanitizer", "NO"))
+		assertThat(arguments, hasParameter("-enableThreadSanitizer", "NO"))
+		assertThat(arguments, hasParameter("-enableUndefinedBehaviorSanitizer", "NO"))
+		assertThat(arguments, hasItem("COMPILER_INDEX_STORE_ENABLE=NO"))
 	}
+
+	@Test(arguments: TestValue.randomValue)
+	func execute_command_test(value: TestValue) async throws {
+		// given
+		let xcodebuild = create(scheme: value.stringValue, configuration: value.stringValue1)
+
+		// when
+		try await xcodebuild.execute(command: .test)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		var arguments = try #require(commandRunner.arguments)
+
+		assertThat(arguments.removeFirst(), presentAnd(equalTo("test")))
+		assertThat(arguments, hasParameter("-scheme", value.stringValue))
+		assertThat(arguments, hasParameter("-configuration", "Debug"))
+		assertThat(arguments, hasParameter("-arch", "arm64"))
+		assertThat(arguments, hasItem("-UseNewBuildSystem=YES"))
+		assertThat(arguments, hasItem("-disable-concurrent-destination-testing"))
+		assertThat(arguments, hasParameter("-parallel-testing-enabled", "NO"))
+		assertThat(arguments, hasParameter("-enableCodeCoverage", "NO"))
+	}
+
 
 }
