@@ -5,7 +5,7 @@
 
 extension Xcodebuild {
 
-	public struct DefaultParameters {
+	public struct DefaultParameters: Sendable {
 
 		public init(
 			skipMacroValidation: Bool = true,
@@ -20,6 +20,8 @@ extension Xcodebuild {
 			self.enableUndefinedBehaviorSanitizer = enableUndefinedBehaviorSanitizer
 			self.compilerIndexStoreEnabled = compilerIndexStoreEnabled
 		}
+
+		public static let `default` = DefaultParameters()
 
 		let skipMacroValidation: Bool
 		let enableAddressSanitizer: Bool
@@ -65,7 +67,7 @@ extension Xcodebuild {
 	}
 
 
-	public struct TestParameters {
+	public struct TestParameters: Sendable {
 
 		public init(
 			disableConcurrentDestinationTesting: Bool = true,
@@ -76,6 +78,8 @@ extension Xcodebuild {
 			self.parallelTestingEnabled = parallelTestingEnabled
 			self.enableCodeCoverage = enableCodeCoverage
 		}
+
+		public static let `default` = TestParameters()
 
 		let disableConcurrentDestinationTesting: Bool
 		let parallelTestingEnabled: Bool
