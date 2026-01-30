@@ -7,12 +7,18 @@ extension Xcodebuild {
 
 	public struct DefaultParameters {
 
-		public init() {
-			self.skipMacroValidation = true
-			self.enableAddressSanitizer = false
-			self.enableThreadSanitizer = false
-			enableUndefinedBehaviorSanitizer = false
-			compilerIndexStoreEnabled = false
+		public init(
+			skipMacroValidation: Bool = true,
+			enableAddressSanitizer: Bool = false,
+			enableThreadSanitizer: Bool = false,
+			enableUndefinedBehaviorSanitizer: Bool = false,
+			compilerIndexStoreEnabled: Bool = false
+		) {
+			self.skipMacroValidation = skipMacroValidation
+			self.enableAddressSanitizer = enableAddressSanitizer
+			self.enableThreadSanitizer = enableThreadSanitizer
+			self.enableUndefinedBehaviorSanitizer = enableUndefinedBehaviorSanitizer
+			self.compilerIndexStoreEnabled = compilerIndexStoreEnabled
 		}
 
 		let skipMacroValidation: Bool
@@ -41,15 +47,34 @@ extension Xcodebuild {
 			return result
 		}
 
+		public func update(
+			skipMacroValidation: Bool? = nil,
+			enableAddressSanitizer: Bool? = nil,
+			enableThreadSanitizer: Bool? = nil,
+			enableUndefinedBehaviorSanitizer: Bool? = nil,
+			compilerIndexStoreEnabled: Bool? = nil
+		) -> DefaultParameters {
+			return DefaultParameters(
+				skipMacroValidation: skipMacroValidation ?? self.skipMacroValidation,
+				enableAddressSanitizer: enableAddressSanitizer ?? self.enableAddressSanitizer,
+				enableThreadSanitizer: enableThreadSanitizer ?? self.enableThreadSanitizer,
+				enableUndefinedBehaviorSanitizer: enableUndefinedBehaviorSanitizer ?? self.enableUndefinedBehaviorSanitizer,
+				compilerIndexStoreEnabled: compilerIndexStoreEnabled ?? self.compilerIndexStoreEnabled
+			)
+		}
 	}
 
 
 	public struct TestParameters {
 
-		public init() {
-			disableConcurrentDestinationTesting = true
-			parallelTestingEnabled = false
-			enableCodeCoverage = false
+		public init(
+			disableConcurrentDestinationTesting: Bool = true,
+			parallelTestingEnabled: Bool = false,
+			enableCodeCoverage: Bool = false,
+		) {
+			self.disableConcurrentDestinationTesting = disableConcurrentDestinationTesting
+			self.parallelTestingEnabled = parallelTestingEnabled
+			self.enableCodeCoverage = enableCodeCoverage
 		}
 
 		let disableConcurrentDestinationTesting: Bool
@@ -68,7 +93,18 @@ extension Xcodebuild {
 			result.append(enableCodeCoverage.parameterString)
 
 			return result
+		}
 
+		public func update(
+			disableConcurrentDestinationTesting: Bool? = nil,
+			parallelTestingEnabled: Bool? = nil,
+			enableCodeCoverage: Bool? = nil,
+		) -> TestParameters {
+			return TestParameters(
+				disableConcurrentDestinationTesting: disableConcurrentDestinationTesting ?? self.disableConcurrentDestinationTesting,
+				parallelTestingEnabled: parallelTestingEnabled ?? self.parallelTestingEnabled,
+				enableCodeCoverage: enableCodeCoverage ?? self.enableCodeCoverage
+			)
 		}
 	}
 
