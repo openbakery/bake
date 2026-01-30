@@ -97,6 +97,11 @@ final class Xcodebuild_Test {
 		assertThat(arguments, hasParameter("-enableThreadSanitizer", "NO"))
 		assertThat(arguments, hasParameter("-enableUndefinedBehaviorSanitizer", "NO"))
 		assertThat(arguments, hasItem("COMPILER_INDEX_STORE_ENABLE=NO"))
+		assertThat(arguments, hasItem("DSTROOT=\(path.destinationDirectory.path)"))
+		assertThat(arguments, hasItem("OBJROOT=\(path.objectDirectory.path)"))
+		assertThat(arguments, hasItem("SYMROOT=\(path.symbolDirectory.path)"))
+		assertThat(arguments, hasItem("SHARED_PRECOMPS_DIR=\(path.sharedPrecompiledHeadersDirectory.path)"))
+
 	}
 
 	@Test(arguments: TestValue.randomValue)

@@ -55,13 +55,12 @@ public struct Xcodebuild {
 			"-scheme", self.scheme,
 			"-configuration", "Debug",
 			"-UseNewBuildSystem=YES",
-			"-arch", architecture.value
+			"-arch", architecture.value,
 			// "-destination", destination.value,
-			// "ARCH=arm64",
-			// "DSTROOT=\(xcodePath.destinationDirectory.path)",
-			// "OBJROOT=\(xcodePath.objectDirectory.path)",
-			// "SYMROOT=\(xcodePath.symbolDirectory.path)",
-			// "SHARED_PRECOMPS_DIR=\(xcodePath.sharedPrecompiledHeadersDirectory.path)"
+			"DSTROOT=\(path.destinationDirectory.path)",
+			"OBJROOT=\(path.objectDirectory.path)",
+			"SYMROOT=\(path.symbolDirectory.path)",
+			"SHARED_PRECOMPS_DIR=\(path.sharedPrecompiledHeadersDirectory.path)"
 		]
 
 		parameters += defaultParameters.parameters
