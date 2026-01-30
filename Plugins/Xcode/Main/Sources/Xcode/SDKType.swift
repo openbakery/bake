@@ -15,9 +15,7 @@ public enum SDKType: Sendable {
 		}
 	}
 
-	var genericDestination: Destination {
-		return .iOSGeneric
-	}
+	var genericDestination: Destination { Destination(type: self) }
 
 
 	static func value(_ string: String) -> SDKType {

@@ -15,7 +15,7 @@ struct Destination_Test {
 	}
 
 	@Test func generic_destination() {
-		assertThat(Destination.iOSGeneric.platform, presentAnd(equalTo("iOS")))
+		assertThat(Destination.iOSGeneric.type.value, presentAnd(equalTo("iOS")))
 		assertThat(Destination.iOSGeneric.value, equalTo("generic/platform=iOS"))
 		assertThat(Destination(type: .iOS).value, equalTo("generic/platform=iOS"))
 		assertThat(Destination(type: .iOS, identifier: "234-234").value, equalTo("platform=iOS,id=234-234"))
