@@ -49,6 +49,10 @@ public struct Xcodebuild {
 		case build
 		// case buildForTest = "build-for-testing"
 		case test
+
+		var isTesting: Bool {
+			return self == .test
+		}
 	}
 
 
@@ -73,12 +77,14 @@ public struct Xcodebuild {
 		]
 
 		parameters += defaultParameters.parameters
-		parameters += testParameters.parameters
-
 		parameters += codesigning.parameters
 
-		if let onlyTest {
-			parameters += onlyTest.map { "-only-testing:\(self.scheme)/\($0)" }
+		if command.isTesting {
+			parameters += testParameters.parameters
+
+			if let onlyTest {
+				parameters += onlyTest.map { "-only-testing:\(self.scheme)/\($0)" }
+			}
 		}
 
 		return parameters

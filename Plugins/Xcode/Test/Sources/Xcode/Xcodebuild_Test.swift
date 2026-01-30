@@ -223,4 +223,21 @@ final class Xcodebuild_Test {
 		assertThat(arguments, hasItem("-only-testing:app/foo/2"))
 		assertThat(arguments, hasItem("-only-testing:app/foo/3"))
 	}
+
+	@Test
+	func execute_command_build_ignores_test_parameter() async throws {
+		// given
+		let xcodebuild = create(scheme: "app", onlyTest: ["foo/bar"])
+
+		// when
+		try await xcodebuild.execute(command: .build)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		let arguments = try #require(commandRunner.arguments)
+
+		assertThat(arguments.first, presentAnd(equalTo("build")))
+		assertThat(arguments, not(hasItem("-only-testing:app/foo/bar")))
+		assertThat(arguments, not(hasParameter("-enableCodeCoverage", "NO")))
+	}
 }
