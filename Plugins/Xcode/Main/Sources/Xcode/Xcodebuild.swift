@@ -11,6 +11,7 @@ public struct Xcodebuild {
 		scheme: String,
 		configuration: String = "Debug",
 		sdkType: SDKType,
+		destination: Destination? = nil,
 		codesigning: Codesigning = .automatic,
 		architecture: Architecture = .arm64,
 		onlyTest: [String]? = nil,
@@ -22,7 +23,7 @@ public struct Xcodebuild {
 		self.configuration = configuration
 		self.scheme = scheme
 		self.sdkType = sdkType
-		self.destination = Self.defaultDestination(sdkType: sdkType)
+		self.destination = destination ?? Self.defaultDestination(sdkType: sdkType)
 		self.codesigning = codesigning
 		self.architecture = architecture
 		self.onlyTest = onlyTest
@@ -47,6 +48,7 @@ public struct Xcodebuild {
 			xcode: xcode,
 			scheme: scheme,
 			configuration: configuration,
+			sdkType: destination.type,
 			destination: destination,
 			codesigning: codesigning,
 			architecture: architecture,
@@ -86,6 +88,7 @@ public struct Xcodebuild {
 
 
 	public func execute(command: Command) async throws {
+		// try path.prepare()
 		let xcodebuildCommand = "/usr/bin/xcodebuild"
 		let arguments = self.arguments(command: command)
 		try await commandRunner.run(xcodebuildCommand, arguments: arguments)
