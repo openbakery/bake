@@ -7,8 +7,8 @@ open class CommandRunner {
 		self.environment = environment
 	}
 
-	let workingDirectory: URL?
-	let environment: [String: String]?
+	public let workingDirectory: URL?
+	public let environment: [String: String]?
 
 	open func run(
 		_ command: String,

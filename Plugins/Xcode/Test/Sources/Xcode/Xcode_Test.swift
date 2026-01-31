@@ -100,5 +100,20 @@ final class Xcode_Test: Sendable {
 		assertThat(xcode?.environment, presentAnd(hasEntry("DEVELOPER_DIR", "/Applications/Xcode-26.app")))
 	}
 
+	@Test
+	func creates_commandRunner_with_proper_environment() async throws {
+		let commandRunner = CommandRunnerFake()
+
+		commandRunner.expect(command: "/usr/bin/mdfind", arguments: "kMDItemCFBundleIdentifier=com.apple.dt.Xcode", result: ["/Applications/Xcode-26.app"])
+		commandRunner.expect(command: "/Applications/Xcode-26.app/Contents/Developer/usr/bin/xcodebuild", arguments: "-version", result: ["Xcode 26.0", "Build version 17A324"])
+
+		let xcode = try await Xcode(version: Version(major: 26), commandRunner: commandRunner)
+
+
+		// then
+		assertThat(xcode, present())
+		assertThat(xcode?.commandRunner.environment, presentAnd(hasEntry("DEVELOPER_DIR", "/Applications/Xcode-26.app")))
+	}
+
 
 }

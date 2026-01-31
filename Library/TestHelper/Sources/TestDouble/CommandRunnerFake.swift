@@ -70,6 +70,5 @@ open class CommandRunnerFake: CommandRunner {
 
 	public var command: String?
 	public var arguments: [String]?
-	public var environment: [String: String]?
 	public var runClosure: (() -> Void)?
 }

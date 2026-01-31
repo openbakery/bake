@@ -65,4 +65,8 @@ public struct Xcode: CustomStringConvertible {
 		["DEVELOPER_DIR": xcodePath]
 	}
 
+	public var commandRunner: CommandRunner {
+		CommandRunner(environment: self.environment)
+	}
+
 }
