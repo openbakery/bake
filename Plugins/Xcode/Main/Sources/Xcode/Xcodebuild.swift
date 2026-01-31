@@ -6,7 +6,6 @@ import Bake
 public struct Xcodebuild {
 
 	public init(
-		path: XcodeBuildPaths,
 		xcode: XcodeEnvironment,
 		scheme: String,
 		configuration: String = "Debug",
@@ -17,6 +16,7 @@ public struct Xcodebuild {
 		onlyTest: [String]? = nil,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
+		path: XcodeBuildPaths = XcodeBuildPaths(),
 	) {
 		self.path = path
 		self.xcode = xcode
@@ -32,7 +32,6 @@ public struct Xcodebuild {
 	}
 
 	public init(
-		path: XcodeBuildPaths,
 		xcode: XcodeEnvironment,
 		scheme: String,
 		configuration: String = "Debug",
@@ -42,9 +41,9 @@ public struct Xcodebuild {
 		onlyTest: [String]? = nil,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
+		path: XcodeBuildPaths = XcodeBuildPaths(),
 	) {
 		self.init(
-			path: path,
 			xcode: xcode,
 			scheme: scheme,
 			configuration: configuration,
@@ -54,7 +53,8 @@ public struct Xcodebuild {
 			architecture: architecture,
 			onlyTest: onlyTest,
 			defaultParameters: defaultParameters,
-			testParameters: testParameters)
+			testParameters: testParameters,
+			path: path)
 	}
 
 
@@ -141,7 +141,6 @@ public struct Xcodebuild {
 	) -> Xcodebuild {
 		if let destination {
 			return Xcodebuild(
-				path: path,
 				xcode: xcode,
 				scheme: scheme ?? self.scheme,
 				configuration: configuration ?? self.configuration,
@@ -150,10 +149,10 @@ public struct Xcodebuild {
 				architecture: self.architecture,
 				onlyTest: onlyTest ?? self.onlyTest,
 				defaultParameters: defaultParameters ?? self.defaultParameters,
-				testParameters: self.testParameters)
+				testParameters: self.testParameters,
+				path: path)
 		}
 		return Xcodebuild(
-			path: path,
 			xcode: xcode,
 			scheme: scheme ?? self.scheme,
 			configuration: configuration ?? self.configuration,
@@ -162,7 +161,8 @@ public struct Xcodebuild {
 			architecture: self.architecture,
 			onlyTest: onlyTest ?? self.onlyTest,
 			defaultParameters: defaultParameters ?? self.defaultParameters,
-			testParameters: self.testParameters)
+			testParameters: self.testParameters,
+			path: path)
 	}
 
 }

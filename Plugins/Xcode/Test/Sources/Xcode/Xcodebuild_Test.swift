@@ -39,13 +39,13 @@ final class Xcodebuild_Test {
 		onlyTest: [String]? = nil
 	) -> Xcodebuild {
 		return Xcodebuild(
-			path: path,
 			xcode: XcodeSpy(commandRunner: commandRunner),
 			scheme: scheme,
 			configuration: configuration,
 			sdkType: sdkType,
 			codesigning: codesigning,
-			onlyTest: onlyTest)
+			onlyTest: onlyTest,
+			path: path)
 	}
 
 	@Test func instance_has_path() {
@@ -77,10 +77,10 @@ final class Xcodebuild_Test {
 	func default_configuration_is_debug() {
 		// when
 		let xcodebuild = Xcodebuild(
-			path: path,
 			xcode: XcodeSpy(commandRunner: commandRunner),
 			scheme: "scheme",
-			sdkType: .iOS)
+			sdkType: .iOS,
+			path: path)
 
 		// then
 		assertThat(xcodebuild.configuration, presentAnd(equalTo("Debug")))
@@ -89,10 +89,10 @@ final class Xcodebuild_Test {
 	func destination_defines_sdk_type() {
 		// when
 		let xcodebuild = Xcodebuild(
-			path: path,
 			xcode: XcodeSpy(commandRunner: commandRunner),
 			scheme: "scheme",
-			destination: Destination.iOSGeneric)
+			destination: Destination.iOSGeneric,
+			path: path)
 
 		// then
 		assertThat(xcodebuild.configuration, presentAnd(equalTo("Debug")))
@@ -166,7 +166,7 @@ final class Xcodebuild_Test {
 	])
 	func execute_command_with_different_destinations(destination: Destination) async throws {
 		// given
-		let xcodebuild = Xcodebuild(path: path, xcode: XcodeSpy(commandRunner: commandRunner), scheme: "", configuration: "", destination: destination)
+		let xcodebuild = Xcodebuild(xcode: XcodeSpy(commandRunner: commandRunner), scheme: "", configuration: "", destination: destination, path: path)
 
 		// when
 		try await xcodebuild.execute(command: .build)
@@ -322,10 +322,10 @@ final class Xcodebuild_Test {
 			path.clean()
 		}
 		let xcodebuild = Xcodebuild(
-			path: path,
 			xcode: XcodeSpy(commandRunner: commandRunner),
 			scheme: "",
-			sdkType: .iOS)
+			sdkType: .iOS,
+			path: path)
 
 		// when
 		try await xcodebuild.execute(command: .build)
