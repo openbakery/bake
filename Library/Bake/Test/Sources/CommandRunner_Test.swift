@@ -90,4 +90,24 @@ class CommandRunner_Test {
 		#expect(process.executableURL?.path == "/bin/bash")
 		#expect(process.currentDirectoryURL == workingDirectory)
 	}
+
+	@Test func update_creates_a_commandRunner_with_a_updated_working_directory() {
+		let workingDirectory = URL(fileURLWithPath: "/tmp")
+		let commandRunner = CommandRunner(environment: ["F": "B"])
+		let updatedCommandRunner = commandRunner.update(workingDirectory: workingDirectory)
+
+		// then
+		#expect(updatedCommandRunner.workingDirectory == workingDirectory)
+		#expect(updatedCommandRunner.environment == ["F": "B"])
+	}
+
+	@Test func update_creates_a_commandRunner_with_a_updated_environment() {
+		let workingDirectory = URL(fileURLWithPath: "/tmp")
+		let commandRunner = CommandRunner(workingDirectory: workingDirectory)
+		let updatedCommandRunner = commandRunner.update(environment: ["F": "B"])
+
+		// then
+		#expect(updatedCommandRunner.workingDirectory == workingDirectory)
+		#expect(updatedCommandRunner.environment == ["F": "B"])
+	}
 }

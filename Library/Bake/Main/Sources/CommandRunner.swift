@@ -47,4 +47,10 @@ open class CommandRunner {
 		return outputHandler.lines
 	}
 
+	open func update(workingDirectory: URL? = nil, environment: [String: String]? = nil) -> CommandRunner {
+		return CommandRunner(
+			workingDirectory: workingDirectory ?? self.workingDirectory,
+			environment: environment ?? self.environment)
+	}
+
 }
