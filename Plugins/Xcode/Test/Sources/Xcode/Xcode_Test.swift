@@ -19,13 +19,6 @@ final class Xcode_Test: Sendable {
 		HamcrestSwiftTesting.enable()
 	}
 
-	@Test
-	func has_commandRunner() {
-		let xcode = Xcode()
-
-		// then
-		assertThat(xcode.commandRunner, presentAnd(instanceOf(CommandRunner.self)))
-	}
 
 
 	@Test
