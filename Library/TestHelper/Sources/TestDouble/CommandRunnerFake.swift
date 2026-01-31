@@ -7,8 +7,6 @@ open class CommandRunnerFake: CommandRunner {
 	override open func run(
 		_ command: String,
 		arguments: [String],
-		workingDirectory: URL? = nil,
-		environment: [String: String]? = nil,
 		process: Process = ProcessFake(),
 		outputHandler: OutputHandler = PrintOutputHandler(),
 	) async throws {
@@ -18,7 +16,6 @@ open class CommandRunnerFake: CommandRunner {
 		}
 		self.command = command
 		self.arguments = arguments
-		self.environment = environment
 		self.runClosure?()
 	}
 
@@ -26,7 +23,6 @@ open class CommandRunnerFake: CommandRunner {
 	override open func runWithResult(
 		_ command: String,
 		arguments: [String],
-		environment: [String: String]? = nil,
 		process: Process = Process()
 	) async throws -> [String] {
 
@@ -36,7 +32,6 @@ open class CommandRunnerFake: CommandRunner {
 
 		self.command = command
 		self.arguments = arguments
-		self.environment = environment
 		self.runClosure?()
 		return []
 	}

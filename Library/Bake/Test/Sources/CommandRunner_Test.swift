@@ -24,8 +24,7 @@ class CommandRunner_Test {
 
 	@Test func run_command() async throws {
 		// when
-		let workingDirectory = URL(fileURLWithPath: "/tmp")
-		try await commandRunner.run("echo", "Hello World", workingDirectory: workingDirectory, process: process)
+		try await commandRunner.run("echo", "Hello World", process: process)
 
 		// then
 		#expect(process.wasExecuted)
@@ -34,7 +33,6 @@ class CommandRunner_Test {
 		#expect(process.arguments?.first == "-c")
 		#expect(process.arguments?[1] == "echo")
 		#expect(process.arguments?.last == "Hello World")
-		#expect(process.currentDirectoryURL == workingDirectory)
 	}
 
 	@Test func run_command_with_arguments_array() async throws {
@@ -54,10 +52,10 @@ class CommandRunner_Test {
 	@Test func run_command_with_enviroment() async throws {
 		// when
 		let process = ProcessFake()
-		let commandRunner = CommandRunner()
+		let commandRunner = CommandRunner(environment: ["FOO": "bar"])
 
 
-		try await commandRunner.run("echo", arguments: ["Hello World"], environment: ["FOO": "bar"], process: process)
+		try await commandRunner.run("echo", arguments: ["Hello World"], process: process)
 
 		// then
 		assertThat(process.environment, presentAnd(hasEntry("FOO", "bar")))
@@ -79,5 +77,17 @@ class CommandRunner_Test {
 		let result = try await commandRunner.runWithResult("/bin/echo", "Hello World")
 
 		assertThat(result.first, presentAnd(equalTo("Hello World")))
+	}
+
+	@Test func command_runner_has_global_working_directory() async throws {
+		// when
+		let workingDirectory = URL(fileURLWithPath: "/tmp")
+		let commandRunner = CommandRunner(workingDirectory: workingDirectory)
+		try await commandRunner.run("echo", "Hello World", process: process)
+
+		// then
+		#expect(process.wasExecuted)
+		#expect(process.executableURL?.path == "/bin/bash")
+		#expect(process.currentDirectoryURL == workingDirectory)
 	}
 }

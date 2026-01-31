@@ -2,14 +2,17 @@ import Foundation
 
 open class CommandRunner {
 
-	public init() {
+	public init(workingDirectory: URL? = nil, environment: [String: String]? = nil) {
+		self.workingDirectory = workingDirectory
+		self.environment = environment
 	}
+
+	let workingDirectory: URL?
+	let environment: [String: String]?
 
 	open func run(
 		_ command: String,
 		arguments: [String],
-		workingDirectory: URL? = nil,
-		environment: [String: String]? = nil,
 		process: Process = Process(),
 		outputHandler: OutputHandler = PrintOutputHandler()
 	) async throws {
@@ -20,31 +23,27 @@ open class CommandRunner {
 	open func run(
 		_ command: String,
 		_ arguments: String...,
-		workingDirectory: URL? = nil,
-		environment: [String: String]? = nil,
 		process: Process = Process(),
 		outputHandler: OutputHandler = PrintOutputHandler()
 	) async throws {
-		try await run(command, arguments: arguments, workingDirectory: workingDirectory, environment: environment, process: process)
+		try await run(command, arguments: arguments, process: process)
 	}
 
 	open func runWithResult(
 		_ command: String,
 		_ arguments: String...,
-		environment: [String: String]? = nil,
 		process: Process = Process()
 	) async throws -> [String] {
-		return try await runWithResult(command, arguments: arguments, environment: environment, process: process)
+		return try await runWithResult(command, arguments: arguments, process: process)
 	}
 
 	open func runWithResult(
 		_ command: String,
 		arguments: [String],
-		environment: [String: String]? = nil,
 		process: Process = Process()
 	) async throws -> [String] {
 		let outputHandler = StringOutputHandler()
-		try await run(command, arguments: arguments, environment: environment, process: process, outputHandler: outputHandler)
+		try await run(command, arguments: arguments, process: process, outputHandler: outputHandler)
 		return outputHandler.lines
 	}
 
