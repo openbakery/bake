@@ -88,7 +88,7 @@ public struct Xcodebuild {
 
 
 	public func execute(command: Command) async throws {
-		// try path.prepare()
+		try path.prepare()
 		let xcodebuildCommand = "/usr/bin/xcodebuild"
 		let arguments = self.arguments(command: command)
 		try await commandRunner.run(xcodebuildCommand, arguments: arguments)

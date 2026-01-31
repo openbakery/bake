@@ -7,9 +7,8 @@ import OBExtra
 
 public struct XcodeBuildPaths: Sendable {
 
-	public init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) throws {
+	public init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) {
 		self.baseDirectory = base
-		try prepare()
 	}
 
 	let baseDirectory: URL

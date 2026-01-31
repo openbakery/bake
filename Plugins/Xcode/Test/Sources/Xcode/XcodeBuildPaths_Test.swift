@@ -17,7 +17,8 @@ final class XcodeBuildPaths_Test: Sendable {
 
 	init() async throws {
 		HamcrestSwiftTesting.enable()
-		path = try XcodeBuildPaths()
+		path = XcodeBuildPaths()
+		try path.prepare()
 	}
 
 	let path: XcodeBuildPaths

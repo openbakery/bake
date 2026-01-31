@@ -313,4 +313,26 @@ final class Xcodebuild_Test {
 		assertThat(arguments, hasParameter("-configuration", "Debug"))
 		assertThat(arguments, hasParameter("-arch", "arm64"))
 	}
+
+	@Test
+	func execute_prepares_the_xcodeBuildPaths() async throws {
+		let base = FileManager.default.temporaryDirectory.appendingPathComponent("bake_test")
+		let path = XcodeBuildPaths(base: base)
+		defer {
+			path.clean()
+		}
+		let xcodebuild = Xcodebuild(
+			path: path,
+			xcode: XcodeSpy(commandRunner: commandRunner),
+			scheme: "",
+			sdkType: .iOS)
+
+		// when
+		try await xcodebuild.execute(command: .build)
+
+		// expect
+		let expectedUrl = base.appendingPathComponent("build")
+		assertThat(path.buildDirectory, presentAnd(equalTo(expectedUrl)))
+		assertThat(path.buildDirectory.fileExists(), equalTo(true))
+	}
 }
