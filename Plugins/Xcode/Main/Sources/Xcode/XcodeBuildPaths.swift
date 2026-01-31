@@ -5,7 +5,7 @@
 import Foundation
 import OBExtra
 
-public struct XcodePath: Sendable {
+public struct XcodeBuildPaths: Sendable {
 
 	public init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) throws {
 		self.baseDirectory = base

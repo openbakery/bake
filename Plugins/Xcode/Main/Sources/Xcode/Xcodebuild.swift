@@ -6,7 +6,7 @@ import Bake
 public struct Xcodebuild {
 
 	public init(
-		path: XcodePath,
+		path: XcodeBuildPaths,
 		scheme: String,
 		configuration: String,
 		sdkType: SDKType,
@@ -31,7 +31,7 @@ public struct Xcodebuild {
 		self.commandRunner = commandRunner
 	}
 
-	let path: XcodePath
+	let path: XcodeBuildPaths
 	let scheme: String
 	let configuration: String
 	let sdkType: SDKType

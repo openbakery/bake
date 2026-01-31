@@ -20,11 +20,11 @@ final class Xcodebuild_Test {
 		HamcrestSwiftTesting.enable()
 
 		let dir = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
-		path = try XcodePath(base: dir)
+		path = try XcodeBuildPaths(base: dir)
 		commandRunner = CommandRunnerFake()
 	}
 
-	let path: XcodePath
+	let path: XcodeBuildPaths
 	let commandRunner: CommandRunnerFake
 
 	deinit {
@@ -55,7 +55,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = create()
 
 		// then
-		assertThat(xcodebuild.path, presentAnd(instanceOf(XcodePath.self)))
+		assertThat(xcodebuild.path, presentAnd(instanceOf(XcodeBuildPaths.self)))
 	}
 
 	@Test(arguments: TestValue.randomValues)

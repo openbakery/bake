@@ -13,14 +13,14 @@ import Testing
 @testable import BakeXcode
 
 @Suite(.serialized)
-final class XcodePaths_Test: Sendable {
+final class XcodeBuildPaths_Test: Sendable {
 
 	init() async throws {
 		HamcrestSwiftTesting.enable()
-		path = try XcodePath()
+		path = try XcodeBuildPaths()
 	}
 
-	let path: XcodePath
+	let path: XcodeBuildPaths
 
 	deinit {
 		path.clean()
