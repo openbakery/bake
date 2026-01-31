@@ -9,7 +9,7 @@ public struct Xcodebuild {
 		path: XcodeBuildPaths,
 		xcode: XcodeEnvironment,
 		scheme: String,
-		configuration: String,
+		configuration: String = "Debug",
 		sdkType: SDKType,
 		destination: Destination? = nil,
 		codesigning: Codesigning = .automatic,
@@ -30,6 +30,33 @@ public struct Xcodebuild {
 		self.defaultParameters = defaultParameters
 		self.testParameters = testParameters
 	}
+
+	public init(
+		path: XcodeBuildPaths,
+		xcode: XcodeEnvironment,
+		scheme: String,
+		configuration: String = "Debug",
+		destination: Destination,
+		codesigning: Codesigning = .automatic,
+		architecture: Architecture = .arm64,
+		onlyTest: [String]? = nil,
+		defaultParameters: DefaultParameters = DefaultParameters(),
+		testParameters: TestParameters = TestParameters(),
+	) {
+		self.init(
+			path: path,
+			xcode: xcode,
+			scheme: scheme,
+			configuration: configuration,
+			sdkType: destination.type,
+			destination: destination,
+			codesigning: codesigning,
+			architecture: architecture,
+			onlyTest: onlyTest,
+			defaultParameters: defaultParameters,
+			testParameters: testParameters)
+	}
+
 
 	static func defaultDestination(sdkType: SDKType) -> Destination? {
 		if sdkType == .macOS {

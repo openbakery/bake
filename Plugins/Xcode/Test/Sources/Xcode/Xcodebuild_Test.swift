@@ -76,6 +76,31 @@ final class Xcodebuild_Test {
 		assertThat(xcodebuild.configuration, presentAnd(equalTo(value.stringValue)))
 	}
 
+	func default_configuration_is_debug() {
+		// when
+		let xcodebuild = Xcodebuild(
+			path: path,
+			xcode: XcodeSpy(commandRunner: commandRunner),
+			scheme: "scheme",
+			sdkType: .iOS)
+
+		// then
+		assertThat(xcodebuild.configuration, presentAnd(equalTo("Debug")))
+	}
+
+	func destination_defines_sdk_type() {
+		// when
+		let xcodebuild = Xcodebuild(
+			path: path,
+			xcode: XcodeSpy(commandRunner: commandRunner),
+			scheme: "scheme",
+			destination: Destination.iOSGeneric)
+
+		// then
+		assertThat(xcodebuild.configuration, presentAnd(equalTo("Debug")))
+	}
+
+
 	@Test(arguments: [SDKType.iOS, SDKType.tvOS, SDKType.macOS])
 	func has_sdk_type(sdkType: SDKType) {
 		// when
