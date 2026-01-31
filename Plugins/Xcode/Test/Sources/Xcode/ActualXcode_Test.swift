@@ -13,7 +13,7 @@ import Testing
 @testable import BakeXcode
 
 @Suite(.serialized)
-final class Xcode_Test: Sendable {
+final class ActualXcode_Test: Sendable {
 
 	init() async throws {
 		HamcrestSwiftTesting.enable()
@@ -27,7 +27,7 @@ final class Xcode_Test: Sendable {
 
 		commandRunner.expect(command: "/usr/bin/mdfind", arguments: "kMDItemCFBundleIdentifier=com.apple.dt.Xcode", result: [])
 
-		_ = try await Xcode(version: Version(major: 26), commandRunner: commandRunner)
+		_ = try await ActualXcode(version: Version(major: 26), commandRunner: commandRunner)
 
 		// then
 		assertThat(commandRunner.expectationFulfilled, equalTo(true))
@@ -41,7 +41,7 @@ final class Xcode_Test: Sendable {
 		commandRunner.expect(command: "/usr/bin/mdfind", arguments: "kMDItemCFBundleIdentifier=com.apple.dt.Xcode", result: ["/Applications/Xcode-26.app"])
 		commandRunner.expect(command: "/Applications/Xcode-26.app/Contents/Developer/usr/bin/xcodebuild", arguments: "-version", result: ["Xcode 26.0", "Build version 17A324"])
 
-		let xcode = try await Xcode(version: Version(major: 26), commandRunner: commandRunner)
+		let xcode = try await ActualXcode(version: Version(major: 26), commandRunner: commandRunner)
 
 
 		// then
@@ -59,7 +59,7 @@ final class Xcode_Test: Sendable {
 		commandRunner.expect(command: "/Applications/Xcode-16.4.app/Contents/Developer/usr/bin/xcodebuild", arguments: "-version", result: ["Xcode 16.4", "Build version 16F6"])
 
 
-		let xcode = try await Xcode(version: Version(major: 16), commandRunner: commandRunner)
+		let xcode = try await ActualXcode(version: Version(major: 16), commandRunner: commandRunner)
 
 
 		// then
@@ -77,7 +77,7 @@ final class Xcode_Test: Sendable {
 		commandRunner.expect(command: "/Applications/Xcode-16.4.app/Contents/Developer/usr/bin/xcodebuild", arguments: "-version", result: ["Xcode 16.4", "Build version 16F6"])
 
 
-		let xcode = try await Xcode(version: Version(major: 15), commandRunner: commandRunner)
+		let xcode = try await ActualXcode(version: Version(major: 15), commandRunner: commandRunner)
 
 
 		// then
@@ -92,7 +92,7 @@ final class Xcode_Test: Sendable {
 		commandRunner.expect(command: "/usr/bin/mdfind", arguments: "kMDItemCFBundleIdentifier=com.apple.dt.Xcode", result: ["/Applications/Xcode-26.app"])
 		commandRunner.expect(command: "/Applications/Xcode-26.app/Contents/Developer/usr/bin/xcodebuild", arguments: "-version", result: ["Xcode 26.0", "Build version 17A324"])
 
-		let xcode = try await Xcode(version: Version(major: 26), commandRunner: commandRunner)
+		let xcode = try await ActualXcode(version: Version(major: 26), commandRunner: commandRunner)
 
 
 		// then
@@ -107,8 +107,7 @@ final class Xcode_Test: Sendable {
 		commandRunner.expect(command: "/usr/bin/mdfind", arguments: "kMDItemCFBundleIdentifier=com.apple.dt.Xcode", result: ["/Applications/Xcode-26.app"])
 		commandRunner.expect(command: "/Applications/Xcode-26.app/Contents/Developer/usr/bin/xcodebuild", arguments: "-version", result: ["Xcode 26.0", "Build version 17A324"])
 
-		let xcode = try await Xcode(version: Version(major: 26), commandRunner: commandRunner)
-
+		let xcode = try await ActualXcode(version: Version(major: 26), commandRunner: commandRunner)
 
 		// then
 		assertThat(xcode, present())
