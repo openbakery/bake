@@ -35,7 +35,6 @@ final class Xcodebuild_Test {
 		scheme: String = "scheme",
 		configuration: String = "Debug",
 		sdkType: SDKType = .iOS,
-		destination: Destination? = nil,
 		codesigning: Codesigning = .automatic,
 		onlyTest: [String]? = nil
 	) -> Xcodebuild {
@@ -45,7 +44,6 @@ final class Xcodebuild_Test {
 			scheme: scheme,
 			configuration: configuration,
 			sdkType: sdkType,
-			destination: destination,
 			codesigning: codesigning,
 			onlyTest: onlyTest)
 	}
@@ -168,7 +166,7 @@ final class Xcodebuild_Test {
 	])
 	func execute_command_with_different_destinations(destination: Destination) async throws {
 		// given
-		let xcodebuild = create(scheme: "", configuration: "", destination: destination)
+		let xcodebuild = Xcodebuild(path: path, xcode: XcodeSpy(commandRunner: commandRunner), scheme: "", configuration: "", destination: destination)
 
 		// when
 		try await xcodebuild.execute(command: .build)

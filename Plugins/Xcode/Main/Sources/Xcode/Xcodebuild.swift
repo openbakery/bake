@@ -11,7 +11,6 @@ public struct Xcodebuild {
 		scheme: String,
 		configuration: String = "Debug",
 		sdkType: SDKType,
-		destination: Destination? = nil,
 		codesigning: Codesigning = .automatic,
 		architecture: Architecture = .arm64,
 		onlyTest: [String]? = nil,
@@ -23,7 +22,7 @@ public struct Xcodebuild {
 		self.configuration = configuration
 		self.scheme = scheme
 		self.sdkType = sdkType
-		self.destination = destination ?? Self.defaultDestination(sdkType: sdkType)
+		self.destination = Self.defaultDestination(sdkType: sdkType)
 		self.codesigning = codesigning
 		self.architecture = architecture
 		self.onlyTest = onlyTest
@@ -48,7 +47,6 @@ public struct Xcodebuild {
 			xcode: xcode,
 			scheme: scheme,
 			configuration: configuration,
-			sdkType: destination.type,
 			destination: destination,
 			codesigning: codesigning,
 			architecture: architecture,
@@ -138,13 +136,25 @@ public struct Xcodebuild {
 		defaultParameters: DefaultParameters? = nil,
 		testParameters: TestParameters? = nil
 	) -> Xcodebuild {
-		Xcodebuild(
+		if let destination {
+			return Xcodebuild(
+				path: path,
+				xcode: xcode,
+				scheme: scheme ?? self.scheme,
+				configuration: configuration ?? self.configuration,
+				destination: destination,
+				codesigning: codesigning ?? self.codesigning,
+				architecture: self.architecture,
+				onlyTest: onlyTest ?? self.onlyTest,
+				defaultParameters: defaultParameters ?? self.defaultParameters,
+				testParameters: self.testParameters)
+		}
+		return Xcodebuild(
 			path: path,
 			xcode: xcode,
 			scheme: scheme ?? self.scheme,
 			configuration: configuration ?? self.configuration,
 			sdkType: sdkType ?? self.sdkType,
-			destination: destination ?? self.destination,
 			codesigning: codesigning ?? self.codesigning,
 			architecture: self.architecture,
 			onlyTest: onlyTest ?? self.onlyTest,
