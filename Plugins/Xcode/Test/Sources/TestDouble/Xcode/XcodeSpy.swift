@@ -8,8 +8,8 @@ import BakeXcode
 
 public struct XcodeSpy: Xcode {
 
-	public init() {
-		commandRunnerFake = CommandRunnerFake()
+	public init(commandRunner: CommandRunnerFake = CommandRunnerFake()) {
+		commandRunnerFake = commandRunner
 	}
 
 	public var environment: [String: String] { [:] }

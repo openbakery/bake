@@ -7,6 +7,7 @@ public struct Xcodebuild {
 
 	public init(
 		path: XcodeBuildPaths,
+		xcode: Xcode,
 		scheme: String,
 		configuration: String,
 		sdkType: SDKType,
@@ -16,9 +17,9 @@ public struct Xcodebuild {
 		onlyTest: [String]? = nil,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
-		commandRunner: CommandRunner
 	) {
 		self.path = path
+		self.xcode = xcode
 		self.configuration = configuration
 		self.scheme = scheme
 		self.sdkType = sdkType
@@ -28,19 +29,19 @@ public struct Xcodebuild {
 		self.onlyTest = onlyTest
 		self.defaultParameters = defaultParameters
 		self.testParameters = testParameters
-		self.commandRunner = commandRunner
 	}
 
 	let path: XcodeBuildPaths
+	let xcode: Xcode
 	let scheme: String
 	let configuration: String
 	let sdkType: SDKType
 	let destination: Destination
 	let codesigning: Codesigning
 	let onlyTest: [String]?
-	let commandRunner: CommandRunner
 	let defaultParameters: DefaultParameters
 	let testParameters: TestParameters
+	var commandRunner: CommandRunner { xcode.commandRunner }
 
 	let architecture: Architecture
 
@@ -99,6 +100,7 @@ public struct Xcodebuild {
 	) -> Xcodebuild {
 		Xcodebuild(
 			path: path,
+			xcode: xcode,
 			scheme: scheme ?? self.scheme,
 			configuration: configuration ?? self.configuration,
 			sdkType: sdkType ?? self.sdkType,
@@ -107,8 +109,7 @@ public struct Xcodebuild {
 			architecture: self.architecture,
 			onlyTest: onlyTest ?? self.onlyTest,
 			defaultParameters: defaultParameters ?? self.defaultParameters,
-			testParameters: self.testParameters,
-			commandRunner: self.commandRunner)
+			testParameters: self.testParameters)
 	}
 
 }

@@ -41,13 +41,13 @@ final class Xcodebuild_Test {
 	) -> Xcodebuild {
 		return Xcodebuild(
 			path: path,
+			xcode: XcodeSpy(commandRunner: commandRunner),
 			scheme: scheme,
 			configuration: configuration,
 			sdkType: sdkType,
 			destination: destination,
 			codesigning: codesigning,
-			onlyTest: onlyTest,
-			commandRunner: commandRunner)
+			onlyTest: onlyTest)
 	}
 
 	@Test func instance_has_path() {
