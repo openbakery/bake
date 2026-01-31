@@ -100,7 +100,7 @@ final class Xcodebuild_Test {
 		assertThat(arguments.first, presentAnd(equalTo("build")))
 		assertThat(arguments, hasParameter("-scheme", value.stringValue))
 		assertThat(arguments, hasParameter("-configuration", "Debug"))
-		assertThat(arguments, hasParameter("-arch", "arm64"))
+		assertThat(arguments, not(hasParameter("-arch", "arm64")))
 		assertThat(arguments, hasItem("-UseNewBuildSystem=YES"))
 		assertThat(arguments, hasItem("-skipMacroValidation"))
 		assertThat(arguments, hasParameter("-enableAddressSanitizer", "NO"))
@@ -130,7 +130,6 @@ final class Xcodebuild_Test {
 		assertThat(arguments.first, presentAnd(equalTo("test")))
 		assertThat(arguments, hasParameter("-scheme", value.stringValue))
 		assertThat(arguments, hasParameter("-configuration", "Debug"))
-		assertThat(arguments, hasParameter("-arch", "arm64"))
 		assertThat(arguments, hasItem("-UseNewBuildSystem=YES"))
 		assertThat(arguments, hasItem("-disable-concurrent-destination-testing"))
 		assertThat(arguments, hasParameter("-parallel-testing-enabled", "NO"))
@@ -267,10 +266,28 @@ final class Xcodebuild_Test {
 
 		assertThat(xcodebuild.update(configuration: "Release").configuration, equalTo("Release"))
 		assertThat(xcodebuild.update(sdkType: .macOS).sdkType, equalTo(.macOS))
-		assertThat(xcodebuild.update(destination: SDKType.watchOS.genericDestination).destination.value, hasSuffix("watchOS"))
+		assertThat(xcodebuild.update(destination: SDKType.watchOS.genericDestination).destination?.value, presentAnd(hasSuffix("watchOS")))
 		assertThat(xcodebuild.update(codesigning: Codesigning.none).codesigning, presentAnd(equalTo(.none)))
 		assertThat(xcodebuild.update(onlyTest: ["foo"]).onlyTest, equalTo(["foo"]))
 		assertThat(xcodebuild.update(defaultParameters: .default.update(skipMacroValidation: false)).defaultParameters.skipMacroValidation, equalTo(false))
 		assertThat(xcodebuild.update(testParameters: .default.update(enableCodeCoverage: false)).testParameters.enableCodeCoverage, equalTo(false))
+	}
+
+	@Test
+	func arch_is_added_when_destination_is_missing() async throws {
+		// given
+		let xcodebuild = create(sdkType: .macOS)
+
+		// when
+		try await xcodebuild.execute(command: .build)
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		let arguments = try #require(commandRunner.arguments)
+
+		assertThat(xcodebuild.destination, nilValue())
+		assertThat(arguments.first, presentAnd(equalTo("build")))
+		assertThat(arguments, hasParameter("-configuration", "Debug"))
+		assertThat(arguments, hasParameter("-arch", "arm64"))
 	}
 }

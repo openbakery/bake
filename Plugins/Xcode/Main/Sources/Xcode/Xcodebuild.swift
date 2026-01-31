@@ -23,7 +23,7 @@ public struct Xcodebuild {
 		self.configuration = configuration
 		self.scheme = scheme
 		self.sdkType = sdkType
-		self.destination = destination ?? sdkType.genericDestination
+		self.destination = destination ?? Self.defaultDestination(sdkType: sdkType)
 		self.codesigning = codesigning
 		self.architecture = architecture
 		self.onlyTest = onlyTest
@@ -31,12 +31,19 @@ public struct Xcodebuild {
 		self.testParameters = testParameters
 	}
 
+	static func defaultDestination(sdkType: SDKType) -> Destination? {
+		if sdkType == .macOS {
+			return nil
+		}
+		return sdkType.genericDestination
+	}
+
 	let path: XcodeBuildPaths
 	let xcode: XcodeEnvironment
 	let scheme: String
 	let configuration: String
 	let sdkType: SDKType
-	let destination: Destination
+	let destination: Destination?
 	let codesigning: Codesigning
 	let onlyTest: [String]?
 	let defaultParameters: DefaultParameters
@@ -55,7 +62,7 @@ public struct Xcodebuild {
 
 	public func execute(command: Command) async throws {
 		let xcodebuildCommand = "/usr/bin/xcodebuild"
-		var arguments = self.arguments(command: command)
+		let arguments = self.arguments(command: command)
 		try await commandRunner.run(xcodebuildCommand, arguments: arguments)
 	}
 
@@ -65,13 +72,19 @@ public struct Xcodebuild {
 			"-scheme", self.scheme,
 			"-configuration", "Debug",
 			"-UseNewBuildSystem=YES",
-			"-arch", architecture.value,
-			"-destination", destination.value,
 			"DSTROOT=\(path.destinationDirectory.path)",
 			"OBJROOT=\(path.objectDirectory.path)",
 			"SYMROOT=\(path.symbolDirectory.path)",
 			"SHARED_PRECOMPS_DIR=\(path.sharedPrecompiledHeadersDirectory.path)"
 		]
+
+		if let destination {
+			parameters.append("-destination")
+			parameters.append(destination.value)
+		} else {
+			parameters.append("-arch")
+			parameters.append(architecture.value)
+		}
 
 		parameters += defaultParameters.parameters
 		parameters += codesigning.parameters
