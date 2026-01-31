@@ -6,7 +6,7 @@ import Bake
 import BakeTestHelper
 import BakeXcode
 
-public struct XcodeSpy: Xcode {
+public struct XcodeSpy: XcodeEnvironment {
 
 	public init(commandRunner: CommandRunnerFake = CommandRunnerFake()) {
 		commandRunnerFake = commandRunner

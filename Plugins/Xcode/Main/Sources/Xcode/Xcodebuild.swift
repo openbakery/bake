@@ -7,7 +7,7 @@ public struct Xcodebuild {
 
 	public init(
 		path: XcodeBuildPaths,
-		xcode: Xcode,
+		xcode: XcodeEnvironment,
 		scheme: String,
 		configuration: String,
 		sdkType: SDKType,
@@ -32,7 +32,7 @@ public struct Xcodebuild {
 	}
 
 	let path: XcodeBuildPaths
-	let xcode: Xcode
+	let xcode: XcodeEnvironment
 	let scheme: String
 	let configuration: String
 	let sdkType: SDKType
