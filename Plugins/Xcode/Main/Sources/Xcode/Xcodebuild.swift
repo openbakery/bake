@@ -9,10 +9,8 @@ public struct Xcodebuild {
 		xcode: XcodeEnvironment,
 		scheme: String,
 		configuration: String = "Debug",
-		sdkType: SDKType,
-		destination: Destination? = nil,
+		destination: Destination,
 		codesigning: Codesigning = .automatic,
-		architecture: Architecture = .arm64,
 		onlyTest: [String]? = nil,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
@@ -22,39 +20,11 @@ public struct Xcodebuild {
 		self.xcode = xcode
 		self.configuration = configuration
 		self.scheme = scheme
-		self.sdkType = sdkType
-		self.destination = destination ?? Self.defaultDestination(sdkType: sdkType)
+		self.destination = destination
 		self.codesigning = codesigning
-		self.architecture = architecture
 		self.onlyTest = onlyTest
 		self.defaultParameters = defaultParameters
 		self.testParameters = testParameters
-	}
-
-	public init(
-		xcode: XcodeEnvironment,
-		scheme: String,
-		configuration: String = "Debug",
-		destination: Destination,
-		codesigning: Codesigning = .automatic,
-		architecture: Architecture = .arm64,
-		onlyTest: [String]? = nil,
-		defaultParameters: DefaultParameters = DefaultParameters(),
-		testParameters: TestParameters = TestParameters(),
-		path: XcodeBuildPaths = XcodeBuildPaths(),
-	) {
-		self.init(
-			xcode: xcode,
-			scheme: scheme,
-			configuration: configuration,
-			sdkType: destination.type,
-			destination: destination,
-			codesigning: codesigning,
-			architecture: architecture,
-			onlyTest: onlyTest,
-			defaultParameters: defaultParameters,
-			testParameters: testParameters,
-			path: path)
 	}
 
 
@@ -69,15 +39,14 @@ public struct Xcodebuild {
 	let xcode: XcodeEnvironment
 	let scheme: String
 	let configuration: String
-	let sdkType: SDKType
-	let destination: Destination?
+	let destination: Destination
 	let codesigning: Codesigning
 	let onlyTest: [String]?
 	let defaultParameters: DefaultParameters
 	let testParameters: TestParameters
+	var sdkType: SDKType { destination.type }
 	var commandRunner: CommandRunner { xcode.commandRunner }
 
-	let architecture: Architecture
 
 
 	public enum Command: String {
@@ -106,13 +75,7 @@ public struct Xcodebuild {
 			"SHARED_PRECOMPS_DIR=\(path.sharedPrecompiledHeadersDirectory.path)"
 		]
 
-		if let destination {
-			parameters.append("-destination")
-			parameters.append(destination.value)
-		} else {
-			parameters.append("-arch")
-			parameters.append(architecture.value)
-		}
+		parameters += destination.parameters
 
 		parameters += defaultParameters.parameters
 		parameters += codesigning.parameters
@@ -131,38 +94,40 @@ public struct Xcodebuild {
 	public func update(
 		scheme: String? = nil,
 		configuration: String? = nil,
-		sdkType: SDKType? = nil,
 		destination: Destination? = nil,
 		codesigning: Codesigning? = nil,
-		architecture: Architecture? = nil,
 		onlyTest: [String]? = nil,
 		defaultParameters: DefaultParameters? = nil,
 		testParameters: TestParameters? = nil
 	) -> Xcodebuild {
-		if let destination {
-			return Xcodebuild(
-				xcode: xcode,
-				scheme: scheme ?? self.scheme,
-				configuration: configuration ?? self.configuration,
-				destination: destination,
-				codesigning: codesigning ?? self.codesigning,
-				architecture: self.architecture,
-				onlyTest: onlyTest ?? self.onlyTest,
-				defaultParameters: defaultParameters ?? self.defaultParameters,
-				testParameters: self.testParameters,
-				path: path)
-		}
 		return Xcodebuild(
 			xcode: xcode,
 			scheme: scheme ?? self.scheme,
 			configuration: configuration ?? self.configuration,
-			sdkType: sdkType ?? self.sdkType,
+			destination: destination ?? self.destination,
 			codesigning: codesigning ?? self.codesigning,
-			architecture: self.architecture,
 			onlyTest: onlyTest ?? self.onlyTest,
 			defaultParameters: defaultParameters ?? self.defaultParameters,
 			testParameters: self.testParameters,
 			path: path)
+	}
+
+}
+
+extension Destination {
+	var parameters: [String] {
+		var result = [String]()
+		if type == .macOS {
+			if let architecture {
+				result.append("-arch")
+				result.append(architecture.value)
+				return result
+			}
+		}
+		result.append("-destination")
+		result.append(value)
+		return result
+
 	}
 
 }

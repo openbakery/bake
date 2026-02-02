@@ -34,7 +34,7 @@ final class Xcodebuild_Test {
 	func create(
 		scheme: String = "scheme",
 		configuration: String = "Debug",
-		sdkType: SDKType = .iOS,
+		destination: Destination = .iOSGeneric,
 		codesigning: Codesigning = .automatic,
 		onlyTest: [String]? = nil
 	) -> Xcodebuild {
@@ -42,7 +42,7 @@ final class Xcodebuild_Test {
 			xcode: XcodeSpy(commandRunner: commandRunner),
 			scheme: scheme,
 			configuration: configuration,
-			sdkType: sdkType,
+			destination: destination,
 			codesigning: codesigning,
 			onlyTest: onlyTest,
 			path: path)
@@ -79,7 +79,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = Xcodebuild(
 			xcode: XcodeSpy(commandRunner: commandRunner),
 			scheme: "scheme",
-			sdkType: .iOS,
+			destination: .iOSGeneric,
 			path: path)
 
 		// then
@@ -102,7 +102,7 @@ final class Xcodebuild_Test {
 	@Test(arguments: [SDKType.iOS, SDKType.tvOS, SDKType.macOS])
 	func has_sdk_type(sdkType: SDKType) {
 		// when
-		let xcodebuild = create(sdkType: sdkType)
+		let xcodebuild = create(destination: Destination(type: sdkType))
 
 		// then
 		assertThat(xcodebuild.sdkType, presentAnd(equalTo(sdkType)))
@@ -288,8 +288,7 @@ final class Xcodebuild_Test {
 		assertThat(xcodebuild.configuration, equalTo("Debug"))
 
 		assertThat(xcodebuild.update(configuration: "Release").configuration, equalTo("Release"))
-		assertThat(xcodebuild.update(sdkType: .macOS).sdkType, equalTo(.macOS))
-		assertThat(xcodebuild.update(destination: SDKType.watchOS.genericDestination).destination?.value, presentAnd(hasSuffix("watchOS")))
+		assertThat(xcodebuild.update(destination: SDKType.watchOS.genericDestination).destination.value, presentAnd(hasSuffix("watchOS")))
 		assertThat(xcodebuild.update(codesigning: Codesigning.none).codesigning, presentAnd(equalTo(.none)))
 		assertThat(xcodebuild.update(onlyTest: ["foo"]).onlyTest, equalTo(["foo"]))
 		assertThat(xcodebuild.update(defaultParameters: .default.update(skipMacroValidation: false)).defaultParameters.skipMacroValidation, equalTo(false))
@@ -299,7 +298,7 @@ final class Xcodebuild_Test {
 	@Test
 	func arch_is_added_when_destination_is_missing() async throws {
 		// given
-		let xcodebuild = create(sdkType: .macOS)
+		let xcodebuild = create(destination: .macOS)
 
 		// when
 		try await xcodebuild.execute(command: .build)
@@ -308,7 +307,8 @@ final class Xcodebuild_Test {
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
 		let arguments = try #require(commandRunner.arguments)
 
-		assertThat(xcodebuild.destination, nilValue())
+		assertThat(xcodebuild.destination, present())
+		assertThat(xcodebuild.destination.type, presentAnd(equalTo(.macOS)))
 		assertThat(arguments.first, presentAnd(equalTo("build")))
 		assertThat(arguments, hasParameter("-configuration", "Debug"))
 		assertThat(arguments, hasParameter("-arch", "arm64"))
@@ -324,7 +324,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = Xcodebuild(
 			xcode: XcodeSpy(commandRunner: commandRunner),
 			scheme: "",
-			sdkType: .iOS,
+			destination: .iOSGeneric,
 			path: path)
 
 		// when

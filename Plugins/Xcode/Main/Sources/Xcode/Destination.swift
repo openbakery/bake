@@ -30,6 +30,7 @@ public struct Destination: Sendable {
 		return tokens.joined(separator: "")
 	}
 
-	public static let iOSGeneric = SDKType.iOS.genericDestination
+	public static let iOSGeneric = Destination(type: .iOS)
+	public static let macOS = Destination(type: .macOS, architecture: .arm64)
 
 }
