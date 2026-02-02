@@ -6,7 +6,7 @@ import Bake
 public struct Xcodebuild {
 
 	public init(
-		xcode: XcodeEnvironment,
+		command: Command,
 		scheme: String,
 		configuration: String = "Debug",
 		destination: Destination,
@@ -14,10 +14,10 @@ public struct Xcodebuild {
 		onlyTest: [String]? = nil,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
+		xcode: XcodeEnvironment,
 		path: XcodeBuildPaths = XcodeBuildPaths(),
 	) {
-		self.path = path
-		self.xcode = xcode
+		self.command = command
 		self.configuration = configuration
 		self.scheme = scheme
 		self.destination = destination
@@ -25,6 +25,8 @@ public struct Xcodebuild {
 		self.onlyTest = onlyTest
 		self.defaultParameters = defaultParameters
 		self.testParameters = testParameters
+		self.xcode = xcode
+		self.path = path
 	}
 
 
@@ -35,6 +37,7 @@ public struct Xcodebuild {
 		return sdkType.genericDestination
 	}
 
+	let command: Command
 	let path: XcodeBuildPaths
 	let xcode: XcodeEnvironment
 	let scheme: String
@@ -56,7 +59,7 @@ public struct Xcodebuild {
 	}
 
 
-	public func execute(command: Command) async throws {
+	public func execute() async throws {
 		try path.prepare()
 		let xcodebuildCommand = "/usr/bin/xcodebuild"
 		let arguments = self.arguments(command: command)
@@ -92,6 +95,7 @@ public struct Xcodebuild {
 	}
 
 	public func update(
+		command: Command? = nil,
 		scheme: String? = nil,
 		configuration: String? = nil,
 		destination: Destination? = nil,
@@ -101,7 +105,7 @@ public struct Xcodebuild {
 		testParameters: TestParameters? = nil
 	) -> Xcodebuild {
 		return Xcodebuild(
-			xcode: xcode,
+			command: command ?? self.command,
 			scheme: scheme ?? self.scheme,
 			configuration: configuration ?? self.configuration,
 			destination: destination ?? self.destination,
@@ -109,6 +113,7 @@ public struct Xcodebuild {
 			onlyTest: onlyTest ?? self.onlyTest,
 			defaultParameters: defaultParameters ?? self.defaultParameters,
 			testParameters: self.testParameters,
+			xcode: xcode,
 			path: path)
 	}
 

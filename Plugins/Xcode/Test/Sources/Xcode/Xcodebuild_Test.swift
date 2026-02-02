@@ -32,6 +32,7 @@ final class Xcodebuild_Test {
 	}
 
 	func create(
+		command: Xcodebuild.Command = .build,
 		scheme: String = "scheme",
 		configuration: String = "Debug",
 		destination: Destination = .iOSGeneric,
@@ -39,12 +40,13 @@ final class Xcodebuild_Test {
 		onlyTest: [String]? = nil
 	) -> Xcodebuild {
 		return Xcodebuild(
-			xcode: XcodeSpy(commandRunner: commandRunner),
+			command: command,
 			scheme: scheme,
 			configuration: configuration,
 			destination: destination,
 			codesigning: codesigning,
 			onlyTest: onlyTest,
+			xcode: XcodeSpy(commandRunner: commandRunner),
 			path: path)
 	}
 
@@ -77,9 +79,10 @@ final class Xcodebuild_Test {
 	func default_configuration_is_debug() {
 		// when
 		let xcodebuild = Xcodebuild(
-			xcode: XcodeSpy(commandRunner: commandRunner),
+			command: .build,
 			scheme: "scheme",
 			destination: .iOSGeneric,
+			xcode: XcodeSpy(commandRunner: commandRunner),
 			path: path)
 
 		// then
@@ -89,9 +92,10 @@ final class Xcodebuild_Test {
 	func destination_defines_sdk_type() {
 		// when
 		let xcodebuild = Xcodebuild(
-			xcode: XcodeSpy(commandRunner: commandRunner),
+			command: .build,
 			scheme: "scheme",
 			destination: Destination.iOSGeneric,
+			xcode: XcodeSpy(commandRunner: commandRunner),
 			path: path)
 
 		// then
@@ -114,7 +118,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = create(scheme: value.stringValue, configuration: value.stringValue1)
 
 		// when
-		try await xcodebuild.execute(command: .build)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -141,10 +145,10 @@ final class Xcodebuild_Test {
 	@Test(arguments: TestValue.randomValue)
 	func execute_command_test(value: TestValue) async throws {
 		// given
-		let xcodebuild = create(scheme: value.stringValue, configuration: value.stringValue1)
+		let xcodebuild = create(command: .test, scheme: value.stringValue, configuration: value.stringValue1)
 
 		// when
-		try await xcodebuild.execute(command: .test)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -166,10 +170,16 @@ final class Xcodebuild_Test {
 	])
 	func execute_command_with_different_destinations(destination: Destination) async throws {
 		// given
-		let xcodebuild = Xcodebuild(xcode: XcodeSpy(commandRunner: commandRunner), scheme: "", configuration: "", destination: destination, path: path)
+		let xcodebuild = Xcodebuild(
+			command: .build,
+			scheme: "",
+			configuration: "",
+			destination: destination,
+			xcode: XcodeSpy(commandRunner: commandRunner),
+			path: path)
 
 		// when
-		try await xcodebuild.execute(command: .build)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -184,7 +194,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = create(scheme: "", configuration: "", codesigning: .identity("1234"))
 
 		// when
-		try await xcodebuild.execute(command: .build)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -200,7 +210,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = create(scheme: "", configuration: "", codesigning: .none)
 
 		// when
-		try await xcodebuild.execute(command: .build)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -215,10 +225,10 @@ final class Xcodebuild_Test {
 	@Test
 	func execute_command_test_with_onlyTest() async throws {
 		// given
-		let xcodebuild = create(scheme: "app", onlyTest: ["foo/bar"])
+		let xcodebuild = create(command: .test, scheme: "app", onlyTest: ["foo/bar"])
 
 		// when
-		try await xcodebuild.execute(command: .test)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -231,10 +241,10 @@ final class Xcodebuild_Test {
 	@Test
 	func execute_command_test_with_multiple_onlyTest() async throws {
 		// given
-		let xcodebuild = create(scheme: "app", onlyTest: ["foo/1", "foo/2", "foo/3"])
+		let xcodebuild = create(command: .test, scheme: "app", onlyTest: ["foo/1", "foo/2", "foo/3"])
 
 		// when
-		try await xcodebuild.execute(command: .test)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -252,7 +262,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = create(scheme: "app", onlyTest: ["foo/bar"])
 
 		// when
-		try await xcodebuild.execute(command: .build)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -266,10 +276,10 @@ final class Xcodebuild_Test {
 	@Test
 	func execute_command_build_for_test_ignores_test_parameter() async throws {
 		// given
-		let xcodebuild = create(scheme: "app", onlyTest: ["foo/bar"])
+		let xcodebuild = create(command: .buildForTest, scheme: "app", onlyTest: ["foo/bar"])
 
 		// when
-		try await xcodebuild.execute(command: .buildForTest)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -287,6 +297,7 @@ final class Xcodebuild_Test {
 		assertThat(xcodebuild.scheme, equalTo("test"))
 		assertThat(xcodebuild.configuration, equalTo("Debug"))
 
+		assertThat(xcodebuild.update(command: .buildForTest).command, equalTo(.buildForTest))
 		assertThat(xcodebuild.update(configuration: "Release").configuration, equalTo("Release"))
 		assertThat(xcodebuild.update(destination: SDKType.watchOS.genericDestination).destination.value, presentAnd(hasSuffix("watchOS")))
 		assertThat(xcodebuild.update(codesigning: Codesigning.none).codesigning, presentAnd(equalTo(.none)))
@@ -301,7 +312,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = create(destination: .macOS)
 
 		// when
-		try await xcodebuild.execute(command: .build)
+		try await xcodebuild.execute()
 
 		// then
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
@@ -322,13 +333,14 @@ final class Xcodebuild_Test {
 			path.clean()
 		}
 		let xcodebuild = Xcodebuild(
-			xcode: XcodeSpy(commandRunner: commandRunner),
+			command: .build,
 			scheme: "",
 			destination: .iOSGeneric,
+			xcode: XcodeSpy(commandRunner: commandRunner),
 			path: path)
 
 		// when
-		try await xcodebuild.execute(command: .build)
+		try await xcodebuild.execute()
 
 		// expect
 		let expectedUrl = base.appendingPathComponent("build")
