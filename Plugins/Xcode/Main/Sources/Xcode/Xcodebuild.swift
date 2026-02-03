@@ -14,7 +14,7 @@ public struct Xcodebuild: Executable {
 		onlyTest: [String]? = nil,
 		defaultParameters: DefaultParameters = DefaultParameters(),
 		testParameters: TestParameters = TestParameters(),
-		xcode: XcodeEnvironment,
+		xcode: XcodeEnvironment = Xcode(),
 		path: XcodeBuildPaths = XcodeBuildPaths(),
 	) {
 		self.command = command
@@ -118,6 +118,38 @@ public struct Xcodebuild: Executable {
 	}
 
 }
+
+extension Job {
+
+	static func xcodebuild(
+		name: String,
+		command: Xcodebuild.Command,
+		scheme: String,
+		configuration: String = "Debug",
+		destination: Destination,
+		codesigning: Codesigning = .automatic,
+		onlyTest: [String]? = nil,
+		defaultParameters: Xcodebuild.DefaultParameters = Xcodebuild.DefaultParameters(),
+		testParameters: Xcodebuild.TestParameters = Xcodebuild.TestParameters(),
+		xcode: XcodeEnvironment = Xcode(),
+		path: XcodeBuildPaths = XcodeBuildPaths(),
+	) -> Job {
+		let executable = Xcodebuild(
+			command: .build,
+			scheme: scheme,
+			configuration: configuration,
+			destination: destination,
+			codesigning: codesigning,
+			onlyTest: onlyTest,
+			xcode: xcode,
+			path: path)
+
+		return Job(name: name, executable: executable)
+
+	}
+
+}
+
 
 extension Destination {
 	var parameters: [String] {

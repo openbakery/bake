@@ -355,4 +355,5 @@ final class Xcodebuild_Test {
 		assertThat(path.buildDirectory, presentAnd(equalTo(expectedUrl)))
 		assertThat(path.buildDirectory.fileExists(), equalTo(true))
 	}
+
 }

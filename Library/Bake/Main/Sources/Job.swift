@@ -9,9 +9,9 @@ public class Job {
 		self.executable = executable
 	}
 
-	let name: String
-	let executable: any Executable
-	var dependencies = [Job]()
+	public let name: String
+	public let executable: any Executable
+	public private(set) var dependencies = [Job]()
 
 	func execute() async throws {
 		for job in dependencies {
