@@ -5,7 +5,7 @@
 import Foundation
 import OBExtra
 
-public struct XcodeBuildPaths: Sendable {
+public struct XcodeBuildPaths: Sendable, CustomStringConvertible {
 
 	public init(base: URL = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)) {
 		self.baseDirectory = base
@@ -37,6 +37,10 @@ public struct XcodeBuildPaths: Sendable {
 
 	public func clean() {
 		buildDirectory.deleteIfExists()
+	}
+
+	public var description: String {
+		return "XcodeBuildPaths - buildDirectory: \(buildDirectory)"
 	}
 }
 
