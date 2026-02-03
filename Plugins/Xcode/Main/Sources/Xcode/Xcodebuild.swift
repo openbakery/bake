@@ -119,7 +119,7 @@ public struct Xcodebuild: Executable {
 
 }
 
-extension Job {
+extension Job where T == Xcodebuild {
 
 	static func xcodebuild(
 		name: String,

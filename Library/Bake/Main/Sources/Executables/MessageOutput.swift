@@ -17,7 +17,7 @@ public struct MessageOutput: Executable {
 	}
 }
 
-extension Job {
+extension Job where T == MessageOutput {
 
 	public static func message(name: String, message: String, outputHandler: OutputHandler = PrintOutputHandler()) -> Job {
 		return Job(

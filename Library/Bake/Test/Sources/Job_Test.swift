@@ -14,8 +14,8 @@ struct Job_Test {
 
 	func create(
 		name: String = "Build",
-		executable: Executable = MessageOutput(message: "foobar")
-	) -> Job {
+		executable: MessageOutput = MessageOutput(message: "foobar")
+	) -> Job<MessageOutput> {
 		return Job(name: name, executable: executable)
 	}
 
