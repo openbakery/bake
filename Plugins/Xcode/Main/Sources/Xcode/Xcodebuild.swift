@@ -37,17 +37,17 @@ public struct Xcodebuild: Executable {
 		return sdkType.genericDestination
 	}
 
-	let command: Command
-	let path: XcodeBuildPaths
-	let xcode: XcodeEnvironment
-	let scheme: String
-	let configuration: String
-	let destination: Destination
-	let codesigning: Codesigning
-	let onlyTest: [String]?
-	let defaultParameters: DefaultParameters
-	let testParameters: TestParameters
-	var sdkType: SDKType { destination.type }
+	public let command: Command
+	public let path: XcodeBuildPaths
+	public let xcode: XcodeEnvironment
+	public let scheme: String
+	public let configuration: String
+	public let destination: Destination
+	public let codesigning: Codesigning
+	public let onlyTest: [String]?
+	public let defaultParameters: DefaultParameters
+	public let testParameters: TestParameters
+	public var sdkType: SDKType { destination.type }
 	var commandRunner: CommandRunner { xcode.commandRunner }
 
 
