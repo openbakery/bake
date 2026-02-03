@@ -50,6 +50,14 @@ final class Xcodebuild_Test {
 			path: path)
 	}
 
+	@Test func instance_is_task() {
+		// when
+		let xcodebuild = create()
+
+		// then
+		assertThat(xcodebuild, instanceOf(Executable.self))
+	}
+
 	@Test func instance_has_path() {
 		// when
 		let xcodebuild = create()

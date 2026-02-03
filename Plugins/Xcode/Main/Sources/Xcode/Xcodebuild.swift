@@ -3,7 +3,7 @@
 //
 import Bake
 
-public struct Xcodebuild {
+public struct Xcodebuild: Executable {
 
 	public init(
 		command: Command,
