@@ -334,6 +334,20 @@ final class Xcodebuild_Test {
 	}
 
 	@Test
+	func derivedData_path_is_set_to_build_directory() async throws {
+		// given
+		let xcodebuild = create(destination: .macOS)
+
+		// when
+		try await xcodebuild.execute()
+
+		// then
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcodebuild")))
+		let arguments = try #require(commandRunner.arguments)
+		assertThat(arguments, hasParameter("-derivedDataPath", path.buildDirectory.path))
+	}
+
+	@Test
 	func execute_prepares_the_xcodeBuildPaths() async throws {
 		let base = FileManager.default.temporaryDirectory.appendingPathComponent("bake_test")
 		let path = XcodeBuildPaths(base: base)

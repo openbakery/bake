@@ -75,7 +75,8 @@ public struct Xcodebuild: Executable {
 			"DSTROOT=\(path.destinationDirectory.path)",
 			"OBJROOT=\(path.objectDirectory.path)",
 			"SYMROOT=\(path.symbolDirectory.path)",
-			"SHARED_PRECOMPS_DIR=\(path.sharedPrecompiledHeadersDirectory.path)"
+			"SHARED_PRECOMPS_DIR=\(path.sharedPrecompiledHeadersDirectory.path)",
+			"-derivedDataPath", path.buildDirectory.path
 		]
 
 		parameters += destination.parameters
