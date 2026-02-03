@@ -2,7 +2,7 @@
 // Created by René Pirringer on 3.2.2026
 //
 
-struct MessageOutput: Executable {
+public struct MessageOutput: Executable {
 
 	public init(message: String, outputHandler: OutputHandler = PrintOutputHandler()) {
 		self.message = message
@@ -12,7 +12,17 @@ struct MessageOutput: Executable {
 	let message: String
 	let outputHandler: OutputHandler
 
-	func execute() async throws {
+	public func execute() async throws {
 		outputHandler.process(line: message)
 	}
+}
+
+extension Job {
+
+	public static func message(name: String, message: String, outputHandler: OutputHandler = PrintOutputHandler()) -> Job {
+		return Job(
+			name: name,
+			executable: MessageOutput(message: message, outputHandler: outputHandler))
+	}
+
 }
