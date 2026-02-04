@@ -109,11 +109,11 @@ struct SimulatorControl_Test {
 		try mockList()
 
 		// when
-		let device = try #require(try await control.device(name: "iPhone 17 Pro"))
-		try await control.create(device: device)
+		let deviceType = try #require(try await control.deviceType(name: "iPhone 17 Pro"))
+		try await control.create(deviceType: deviceType)
 
 		// then
-		assertThat(device, present())
+		assertThat(deviceType, present())
 		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcrun")))
 		assertThat(
 			commandRunner.arguments,

@@ -64,4 +64,11 @@ public struct Simulators {
 		return Destination(type: runtime.type, identifier: device.identifier, simulator: true)
 	}
 
+	public func deviceType(name: String) -> DeviceType? {
+		for type in deviceTypes where type.name.contains(name) {
+			return type
+		}
+		return nil
+
+	}
 }

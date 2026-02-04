@@ -37,6 +37,18 @@ struct Simulators_Test {
 		assertThat(runtime?.version.build, presentAnd(equalTo("23C52")))
 	}
 
+	@Test func find_deviceType() throws {
+		let simulators = try parseJson()
+
+		// when
+		let deviceType = simulators?.deviceType(name: "iPhone 17 Pro")
+
+		// then
+		assertThat(deviceType, present())
+		assertThat(deviceType?.name, presentAnd(equalTo("iPhone 17 Pro")))
+		assertThat(deviceType?.identifier, presentAnd(equalTo("com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro")))
+	}
+
 	@Test func find_tvOS_runtime_by_type_returns_newest() throws {
 		let simulators = try parseJson()
 
