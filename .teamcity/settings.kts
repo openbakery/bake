@@ -24,8 +24,7 @@ class Build : BuildType({
 
 	steps {
 		exec {
-			path = "/usr/bin/swift"
-			arguments = "test"
+			path = "./runTests"
 		}
 	}
 

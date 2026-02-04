@@ -1,0 +1,14 @@
+#!/usr/bin/swift sh
+import Bake
+import BakeXcode  // openbakery/Bake == main
+import Foundation
+
+let version = 26
+guard let xcode = try await Xcode(version: version) else {
+	print("No Xcode \(version) found")
+	exit(1)
+}
+
+print("Using: \(xcode)")
+
+try await xcode.commandRunner.run("/usr/bin/swift", "test")
