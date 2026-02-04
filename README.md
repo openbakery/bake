@@ -18,3 +18,17 @@ The difference is that a plugin can contain commands that is also added to the b
 curl -O https://raw.githubusercontent.com/openbakery/bake/refs/heads/main/bake
 chmod +x bake
 ```
+
+# Motivation
+
+I have created this project because I want to have a nice build tool for my needs. Until now I have
+used the gradle xcodebuild plugin I have started over a decade ago. Back then it looked like a 
+good idea using gradle as basis. Nowadays my opinion has changed and so this project was born.
+
+At the beginning of this file I stated that this project is experimental but I have to say that
+I already use it in production.
+
+# Contributing
+
+Help is always welcome. I But one thing is very important must be clear when sending pull requests:
+No unit tests means no merge!
