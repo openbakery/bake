@@ -127,4 +127,15 @@ struct SimulatorControl_Test {
 				)))
 	}
 
+	@Test func createDevice_clears_simulator_cache() async throws {
+		try mockList()
+
+		// when
+		let deviceType = try #require(try await control.deviceType(name: "iPhone 17 Pro"))
+		try await control.create(deviceType: deviceType)
+
+		// then
+		assertThat(deviceType, present())
+		assertThat(control.simulators, nilValue())
+	}
 }
