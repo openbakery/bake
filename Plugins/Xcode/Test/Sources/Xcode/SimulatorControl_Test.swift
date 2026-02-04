@@ -94,4 +94,15 @@ struct SimulatorControl_Test {
 	}
 
 
+	@Test func get_tvOS_destination_by_name_and_version() async throws {
+		try mockList()
+
+		// when
+		let destination = try await control.destination(name: "1080p", version: "26.0", type: .tvOS)
+
+		// then
+		assertThat(destination, present())
+		assertThat(destination?.value, presentAnd(equalTo("platform=tvOS Simulator,id=0F7EAF57-C5D9-4D8E-91C6-6EB0F6575EFC")))
+	}
+
 }

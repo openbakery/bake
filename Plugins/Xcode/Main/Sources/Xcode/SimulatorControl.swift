@@ -59,5 +59,11 @@ open class SimulatorControl: Target {
 
 	}
 
+	open func destination(name: String? = nil, version: String? = nil, type: SDKType = .iOS) async throws -> Destination? {
+		guard let device = try await self.device(name: name, version: version, type: type) else {
+			return nil
+		}
+		return simulators?.destination(device: device)
+	}
 
 }
