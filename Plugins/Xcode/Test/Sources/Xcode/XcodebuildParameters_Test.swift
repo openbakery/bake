@@ -13,7 +13,6 @@ import Testing
 
 @testable import BakeXcode
 
-@Suite(.serialized)
 final class Xcodebuild_Parameters_Test {
 
 	init() async throws {
