@@ -11,4 +11,5 @@ guard let xcode = try await Xcode(version: version) else {
 
 print("Using: \(xcode)")
 
+try await xcode.commandRunner.run("/usr/bin/swift", "--version")
 try await xcode.commandRunner.run("/usr/bin/swift", "test")
