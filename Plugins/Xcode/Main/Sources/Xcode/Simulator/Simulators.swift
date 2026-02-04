@@ -61,7 +61,7 @@ public struct Simulators {
 
 	public func destination(device: Device) -> Destination? {
 		guard let runtime = runtime(device: device) else { return nil }
-		return Destination(type: runtime.type, identifier: device.identifier)
+		return Destination(type: runtime.type, identifier: device.identifier, simulator: true)
 	}
 
 }

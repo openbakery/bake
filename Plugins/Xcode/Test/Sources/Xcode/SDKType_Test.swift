@@ -15,11 +15,17 @@ struct SDKType_Test {
 	}
 
 	@Test func value() {
-		assertThat(SDKType.iOS.value, equalTo("iOS"))
-		assertThat(SDKType.macOS.value, equalTo("macOS"))
-		assertThat(SDKType.tvOS.value, equalTo("tvOS"))
-		assertThat(SDKType.watchOS.value, equalTo("watchOS"))
-		assertThat(SDKType.visionOS.value, equalTo("visionOS"))
+		assertThat(SDKType.iOS.value(), equalTo("iOS"))
+		assertThat(SDKType.macOS.value(), equalTo("macOS"))
+		assertThat(SDKType.tvOS.value(), equalTo("tvOS"))
+		assertThat(SDKType.watchOS.value(), equalTo("watchOS"))
+		assertThat(SDKType.visionOS.value(), equalTo("visionOS"))
+
+		assertThat(SDKType.iOS.value(simulator: true), equalTo("iOS Simulator"))
+		assertThat(SDKType.macOS.value(simulator: true), equalTo("macOS"))
+		assertThat(SDKType.tvOS.value(simulator: true), equalTo("tvOS Simulator"))
+		assertThat(SDKType.watchOS.value(simulator: true), equalTo("watchOS Simulator"))
+		assertThat(SDKType.visionOS.value(simulator: true), equalTo("visionOS Simulator"))
 	}
 
 	@Test func genericDestination() {

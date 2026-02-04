@@ -5,22 +5,25 @@
 
 public struct Destination: Sendable {
 
-	public let type: SDKType
-	public let identifier: String?
-	public let architecture: Architecture?
-
-	public init(type: SDKType, identifier: String? = nil, architecture: Architecture? = nil) {
+	public init(type: SDKType, identifier: String? = nil, architecture: Architecture? = nil, simulator: Bool = false) {
 		self.type = type
 		self.identifier = identifier
 		self.architecture = architecture
+		self.simulator = simulator
 	}
+
+	public let type: SDKType
+	public let identifier: String?
+	public let architecture: Architecture?
+	public let simulator: Bool
+
 
 	public var value: String {
 		var tokens = [String]()
 		if identifier == nil && type != .macOS {
 			tokens.append("generic/")
 		}
-		tokens.append("platform=\(type.value)")
+		tokens.append("platform=\(type.value(simulator: simulator))")
 		if let identifier {
 			tokens.append(",id=\(identifier)")
 		}

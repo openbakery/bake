@@ -15,7 +15,7 @@ struct Destination_Test {
 	}
 
 	@Test func generic_destination() {
-		assertThat(Destination.iOSGeneric.type.value, presentAnd(equalTo("iOS")))
+		assertThat(Destination.iOSGeneric.type.value(), presentAnd(equalTo("iOS")))
 		assertThat(Destination.iOSGeneric.value, equalTo("generic/platform=iOS"))
 		assertThat(Destination(type: .iOS).value, equalTo("generic/platform=iOS"))
 		assertThat(Destination(type: .iOS, identifier: "234-234").value, equalTo("platform=iOS,id=234-234"))
@@ -31,6 +31,18 @@ struct Destination_Test {
 		let destination = simulators.destination(device: device)
 
 		// then
-		assertThat(destination?.value, presentAnd(equalTo("platform=iOS,id=\(device.identifier)")))
+		assertThat(destination?.value, presentAnd(equalTo("platform=iOS Simulator,id=\(device.identifier)")))
+	}
+
+	@Test func iOS_simualtor() throws {
+		let simulators = try #require(Simulators.create())
+		let device = try #require(simulators.device())
+		assertThat(device.name, equalTo("iPhone 17 Pro"))
+
+		// when
+		let destination = simulators.destination(device: device)
+
+		// then
+		assertThat(destination?.value, presentAnd(equalTo("platform=iOS Simulator,id=\(device.identifier)")))
 	}
 }

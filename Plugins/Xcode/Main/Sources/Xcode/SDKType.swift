@@ -5,13 +5,14 @@
 public enum SDKType: Sendable {
 	case iOS, macOS, tvOS, watchOS, visionOS
 
-	var value: String {
+	func value(simulator: Bool = false) -> String {
+		let suffix = simulator ? " Simulator" : ""
 		switch self {
-		case .iOS: return "iOS"
+		case .iOS: return "iOS" + suffix
 		case .macOS: return "macOS"
-		case .tvOS: return "tvOS"
-		case .watchOS: return "watchOS"
-		case .visionOS: return "visionOS"
+		case .tvOS: return "tvOS" + suffix
+		case .watchOS: return "watchOS" + suffix
+		case .visionOS: return "visionOS" + suffix
 		}
 	}
 
