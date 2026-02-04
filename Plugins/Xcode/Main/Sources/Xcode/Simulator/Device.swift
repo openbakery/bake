@@ -49,12 +49,12 @@ public struct Device: Encodable, Equatable, CustomStringConvertible {
 		return "Device(name: \(name), identifier: \(identifier))"
 	}
 
-	let identifier: String
-	let name: String
-	let isAvailable: Bool
-	let deviceTypeIdentifier: String
+	public let identifier: String
+	public let name: String
+	public let isAvailable: Bool
+	public let deviceTypeIdentifier: String
 	let dataPath: String
-	let state: String
+	public let state: String
 
 	public func encode(with coder: Coder) {
 		// only decode is supported
