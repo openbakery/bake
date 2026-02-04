@@ -66,4 +66,9 @@ open class SimulatorControl: Target {
 		return simulators?.destination(device: device)
 	}
 
+	open func create(device: Device) async throws {
+		guard let runtime = simulators?.runtime(device: device) else { return }
+		try await commandRunner.run("/usr/bin/xcrun", "simctl", "create", device.name, device.deviceTypeIdentifier, runtime.identifier)
+	}
+
 }

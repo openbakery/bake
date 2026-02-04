@@ -105,4 +105,26 @@ struct SimulatorControl_Test {
 		assertThat(destination?.value, presentAnd(equalTo("platform=tvOS Simulator,id=0F7EAF57-C5D9-4D8E-91C6-6EB0F6575EFC")))
 	}
 
+	@Test func createDevice() async throws {
+		try mockList()
+
+		// when
+		let device = try #require(try await control.device(name: "iPhone 17 Pro"))
+		try await control.create(device: device)
+
+		// then
+		assertThat(device, present())
+		assertThat(commandRunner.command, presentAnd(equalTo("/usr/bin/xcrun")))
+		assertThat(
+			commandRunner.arguments,
+			presentAnd(
+				contains(
+					"simctl",
+					"create",
+					"iPhone 17 Pro",
+					"com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro",
+					"com.apple.CoreSimulator.SimRuntime.iOS-26-2"
+				)))
+	}
+
 }
