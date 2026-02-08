@@ -55,7 +55,7 @@ final class Xcodebuild_Test {
 		let xcodebuild = create()
 
 		// then
-		assertThat(xcodebuild, instanceOf(Executable.self))
+		assertThat(xcodebuild, instanceOf(Runnable.self))
 	}
 
 	@Test func instance_has_path() {

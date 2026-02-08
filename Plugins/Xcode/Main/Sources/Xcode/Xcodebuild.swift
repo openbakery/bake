@@ -3,7 +3,7 @@
 //
 import Bake
 
-public struct Xcodebuild: Executable {
+public struct Xcodebuild: Runnable {
 
 	public init(
 		command: Command,
@@ -145,7 +145,7 @@ extension Job where T == Xcodebuild {
 			xcode: xcode,
 			path: path)
 
-		return Job(name: name, executable: executable)
+		return Job(name: name, runnable: executable)
 
 	}
 

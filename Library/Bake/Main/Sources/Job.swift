@@ -2,12 +2,12 @@
 // Created by René Pirringer on 2.2.2026
 //
 
-public class Job<T: Executable> {
+public class Job<T: Runnable> {
 
 
-	public init(name: String, executable: T) {
+	public init(name: String, runnable: T) {
 		self.name = name
-		self.executable = executable
+		self.executable = runnable
 	}
 
 	public let name: String

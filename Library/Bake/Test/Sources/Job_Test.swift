@@ -16,7 +16,7 @@ struct Job_Test {
 		name: String = "Build",
 		executable: MessageOutput = MessageOutput(message: "foobar")
 	) -> Job<MessageOutput> {
-		return Job(name: name, executable: executable)
+		return Job(name: name, runnable: executable)
 	}
 
 	@Test func has_name() {

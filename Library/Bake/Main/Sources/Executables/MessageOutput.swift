@@ -2,7 +2,7 @@
 // Created by René Pirringer on 3.2.2026
 //
 
-public struct MessageOutput: Executable {
+public struct MessageOutput: Runnable {
 
 	public init(message: String, outputHandler: OutputHandler = PrintOutputHandler()) {
 		self.message = message
@@ -22,7 +22,7 @@ extension Job where T == MessageOutput {
 	public static func message(name: String, message: String, outputHandler: OutputHandler = PrintOutputHandler()) -> Job {
 		return Job(
 			name: name,
-			executable: MessageOutput(message: message, outputHandler: outputHandler))
+			runnable: MessageOutput(message: message, outputHandler: outputHandler))
 	}
 
 }

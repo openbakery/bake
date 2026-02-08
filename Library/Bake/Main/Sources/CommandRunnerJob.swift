@@ -5,7 +5,7 @@
 
 import Foundation
 
-public struct CommandRunnerJob: Executable {
+public struct CommandRunnerJob: Runnable {
 
 	public init(command: String, arguments: [String], commandRunner: CommandRunner) {
 		self.command = command
@@ -34,7 +34,7 @@ extension Job where T == CommandRunnerJob {
 	) -> Job {
 		let executable = CommandRunnerJob(command: command, arguments: arguments, commandRunner: commandRunner)
 
-		return Job(name: name, executable: executable)
+		return Job(name: name, runnable: executable)
 
 	}
 

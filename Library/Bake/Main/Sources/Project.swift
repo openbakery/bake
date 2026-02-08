@@ -1,9 +1,12 @@
-
 public struct Project {
-    let name: String
 
-    public init(name: String) {
-        self.name = name
-    }
+	public init(name: String, jobs: [any Runnable] = []) {
+		self.name = name
+		self.jobs = jobs
+	}
+
+	let name: String
+	let jobs: [any Runnable]
+
 
 }
