@@ -118,7 +118,16 @@ struct Bootstrap {
 
 	func build() async throws {
 		Log.debug("build")
-		try await commandRunner.run("/usr/bin/swift", "build", "--package-path", bootstrapDirectory.path, outputHandler: LogOutputHandler())
+		let outputHandler = StringOutputHandler()
+		do {
+			try await commandRunner.run("/usr/bin/swift", "build", "--package-path", bootstrapDirectory.path, outputHandler: outputHandler)
+		} catch {
+			Log.info("Error: \(error)")
+			Log.info("============================")
+			// as soon as we have a swift build log parser, use this here for a nicer error output
+			Log.info("\(outputHandler.lines.joined(separator: "\n"))")
+			Log.info("============================")
+		}
 	}
 
 	static func load(config: URL) throws -> (dependencies: [Dependency], main: [String]) {
