@@ -59,10 +59,12 @@ struct BootstrapCommand: AsyncParsableCommand {
 		}
 		do {
 			Log.debug("Using configuration: \(url)")
-			let bootstrap = try Bootstrap(config: url, commandRunner: CommandRunner())
+			let outputHandler = StringOutputHandler()
+			let bootstrap = try Bootstrap(config: url, commandRunner: CommandRunner(outputHandler: outputHandler))
 			try await bootstrap.run()
 		} catch {
 			Log.info("Error: \(error)")
+			outputHandler.dump()
 		}
 
 	}

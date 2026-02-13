@@ -16,5 +16,12 @@ public class StringOutputHandler: OutputHandler, @unchecked Sendable {
 		self.lines.append(line)
 	}
 
+	public func dump() {
+		lines.forEach {
+			print($0)
+			print("\n")
+		}
+	}
+
 
 }
