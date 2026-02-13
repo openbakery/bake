@@ -8,9 +8,9 @@
 import Foundation
 
 @MainActor
-public func wait<T:Sendable>(source: T, timeout: TimeInterval = 1.0, closure: @escaping (T) -> Bool) async {
+public func wait<T: Sendable>(source: T, timeout: TimeInterval = 1.0, closure: @escaping @Sendable (T) -> Bool) async {
 	await withCheckedContinuation { continuation in
-		Task {
+		Task.detached(priority: .background) {
 			var count = 0
 			while count < 10 {
 				if closure(source) {

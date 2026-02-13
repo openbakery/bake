@@ -9,11 +9,11 @@ import Testing
 @testable import Bake
 
 @MainActor
+@Suite(.serialized)
 struct Log_Test {
 	init() async throws {
 		HamcrestSwiftTesting.enable()
 		stringOutputHandler = StringOutputHandler()
-		Log.instance.set(outputHandler: stringOutputHandler)
 	}
 
 	let stringOutputHandler: StringOutputHandler
@@ -26,19 +26,20 @@ struct Log_Test {
 	}
 
 	@Test
-	func log_debug() {
+	func log_debug() async {
 		let log = Log(outputHandler: stringOutputHandler, level: .debug)
 
 		// when
 		log.log(.debug, "Test")
 
 		// then
-		assertThat(stringOutputHandler.lines.first, presentAnd(equalTo("Test")))
+		let lines = await stringOutputHandler.waitForLines()
+		assertThat(lines.first, presentAnd(equalTo("Test")))
 	}
 
 
 	@Test
-	func log_debug_prints_debug() {
+	func log_debug_prints_debug() async {
 		let log = Log(outputHandler: stringOutputHandler, level: .debug)
 		log.showLevel = true
 
@@ -46,7 +47,8 @@ struct Log_Test {
 		log.log(.debug, "Test")
 
 		// then
-		assertThat(stringOutputHandler.lines.first, presentAnd(equalTo("[DEBUG] - Test")))
+		let lines = await stringOutputHandler.waitForLines()
+		assertThat(lines.first, presentAnd(equalTo("[DEBUG] - Test")))
 	}
 
 	@Test
@@ -62,11 +64,11 @@ struct Log_Test {
 		let log = Log()
 
 		// then
-		assertThat(log.outputHandler, presentAnd(instanceOf(PrintOutputHandler.self)))
+		assertThat(log.outputHandlers.first, presentAnd(instanceOf(PrintOutputHandler.self)))
 	}
 
 	@Test
-	func level_off_does_not_log_anything() {
+	func level_off_does_not_log_anything() async {
 		// when
 		let log = Log(outputHandler: stringOutputHandler, level: .off)
 
@@ -78,7 +80,7 @@ struct Log_Test {
 	}
 
 	@Test
-	func level_error_only_prints_errors() {
+	func level_error_only_prints_errors() async {
 		// when
 		let log = Log(outputHandler: stringOutputHandler, level: .error)
 
@@ -89,12 +91,13 @@ struct Log_Test {
 		log.log(.debug, "Debug")
 
 		// then
-		assertThat(stringOutputHandler.lines, hasCount(1))
-		assertThat(stringOutputHandler.lines.first, presentAnd(equalTo("Error")))
+		let lines = await stringOutputHandler.waitForLines()
+		assertThat(lines, hasCount(1))
+		assertThat(lines.first, presentAnd(equalTo("Error")))
 	}
 
 	@Test
-	func level_debug_only_prints_all_levels() {
+	func level_debug_only_prints_all_levels() async {
 		// when
 		let log = Log(outputHandler: stringOutputHandler, level: .debug)
 
@@ -105,11 +108,12 @@ struct Log_Test {
 		log.log(.debug, "Debug")
 
 		// then
-		assertThat(stringOutputHandler.lines, hasCount(4))
-		assertThat(stringOutputHandler.lines, hasItem("Error"))
-		assertThat(stringOutputHandler.lines, hasItem("Info"))
-		assertThat(stringOutputHandler.lines, hasItem("Debug"))
-		assertThat(stringOutputHandler.lines, hasItem("Warn"))
+		let lines = await stringOutputHandler.waitForLines()
+		assertThat(lines, hasCount(4))
+		assertThat(lines, hasItem("Error"))
+		assertThat(lines, hasItem("Info"))
+		assertThat(lines, hasItem("Debug"))
+		assertThat(lines, hasItem("Warn"))
 	}
 
 }

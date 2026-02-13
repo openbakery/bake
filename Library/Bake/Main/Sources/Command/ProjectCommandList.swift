@@ -1,0 +1,74 @@
+//
+// Created by René Pirringer on 13.2.2026
+//
+
+
+import ArgumentParser
+import Foundation
+
+struct ProjectCommandList: AsyncParsableCommand {
+	static let configuration = CommandConfiguration(
+		commandName: "list",
+		abstract: "Lists the project infos."
+	)
+
+	lazy var outputHandler: OutputHandler = PrintOutputHandler()
+
+	// @Argument(help: "The location of the Bake.swift configuration file.")
+	// var configPath: String = ""
+	//
+	// @Flag(help: "Hide the output")
+	// var quiet = false
+	//
+	// enum Kind: String, ExpressibleByArgument, CaseIterable {
+	// 	case bootstrap, clean
+	// }
+	//
+	// @Option(help: "The kind of average to provide.")
+	// var kind: Kind = .bootstrap
+	//
+	// @OptionGroup var options: Options
+	//
+	mutating func run() async throws {
+		// 	self.apply(options: options)
+		//
+		// 	let quiet = self.quiet
+		// 	Task { @MainActor in
+		// 		if quiet {
+		// 			Log.level = .off
+		// 		}
+		// 	}
+		//
+		Log.info("Project Info:")
+		//
+		// 	switch kind {
+		// 	case .bootstrap:
+		// 		try await bootstrap()
+		// 	case .clean:
+		// 		clean()
+		// 	}
+		//
+	}
+	//
+	//
+	// private func bootstrap() async throws {
+	//
+	//
+	// 	let url = URL(filePath: configPath)
+	// 	guard url.fileExists() else {
+	// 		Log.info("Config not found: \(url)")
+	// 		return
+	// 	}
+	// 	do {
+	// 		Log.debug("Using configuration: \(url)")
+	// 		let bootstrap = try Bootstrap(config: url, commandRunner: CommandRunner())
+	// 		try await bootstrap.run()
+	// 	} catch {
+	// 		Log.info("Error: \(error)")
+	// 	}
+	//
+	// }
+	//
+	// private func clean() {
+	// }
+}

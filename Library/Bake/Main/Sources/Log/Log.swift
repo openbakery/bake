@@ -6,7 +6,10 @@ import Foundation
 public class Log {
 
 	public init(outputHandler: OutputHandler? = PrintOutputHandler(), level: Level = .info) {
-		self.outputHandler = outputHandler
+		self.outputHandlers = []
+		if let outputHandler {
+			self.outputHandlers.append(outputHandler)
+		}
 		self.level = level
 	}
 
@@ -33,7 +36,7 @@ public class Log {
 		}
 	}
 
-	public var outputHandler: OutputHandler?
+	public var outputHandlers: [OutputHandler]
 	public var showLevel = false
 	public var level: Level
 
@@ -51,10 +54,14 @@ public class Log {
 
 
 	@MainActor
-	public func set(outputHandler: OutputHandler) {
-		self.outputHandler = outputHandler
+	public func add(outputHandler: OutputHandler) {
+		self.outputHandlers.append(outputHandler)
 	}
 
+	@MainActor
+	public func remove(outputHandler: OutputHandler) {
+		self.outputHandlers.removeAll { $0 as AnyObject === outputHandler as AnyObject }
+	}
 
 	private func format(level: Level, message: String) -> String {
 		if showLevel {
@@ -65,16 +72,16 @@ public class Log {
 
 	public func log(_ level: Level, _ message: String) {
 		guard level.rawValue <= self.level.rawValue else { return }
-		let handler = self.outputHandler
+		let handlers = self.outputHandlers
 		let string = format(level: level, message: message)
 
 		if Thread.isMainThread {
 			MainActor.assumeIsolated {
-				handler?.process(line: string)
+				handlers.process(line: string)
 			}
 		} else {
 			Task { @MainActor in
-				handler?.process(line: string)
+				handlers.process(line: string)
 			}
 		}
 
