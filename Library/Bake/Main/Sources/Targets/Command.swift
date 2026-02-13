@@ -25,7 +25,7 @@ public class Command: Target, CustomStringConvertible {
 	public required init(from decoder: Decoder) throws {
 		fatalError("not implemented")
 	}
-	
+
 	deinit {
 		if let token { NotificationCenter.default.removeObserver(token) }
 	}
@@ -44,21 +44,21 @@ public class Command: Target, CustomStringConvertible {
 	actor DataBuffer {
 		private var buffer: Data
 		private let outputHandler: OutputHandler
-		
+
 		init(outputHandler: OutputHandler) {
 			self.outputHandler = outputHandler
 			self.buffer = Data()
 		}
 
-			func append(_ data: Data) {
-					buffer.append(data)
-					if let string = String(data: buffer, encoding: .utf8), string.last?.isNewline == true {
-							buffer.removeAll()
-							for line in string.split(separator: "\n") {
-								outputHandler.process(line: String(line))
-							}
-					}
+		func append(_ data: Data) {
+			buffer.append(data)
+			if let string = String(data: buffer, encoding: .utf8), string.last?.isNewline == true {
+				buffer.removeAll()
+				for line in string.split(separator: "\n") {
+					outputHandler.process(line: "- " + String(line))
+				}
 			}
+		}
 	}
 
 
@@ -66,7 +66,7 @@ public class Command: Target, CustomStringConvertible {
 	func execute(process: Process, environment: [String: String]? = nil, outputHandler: OutputHandler = PrintOutputHandler()) async throws {
 		let standardOutput = Pipe()
 		let standardError = Pipe()
-		
+
 		let standardOutputBuffer = DataBuffer(outputHandler: outputHandler)
 
 		process.executableURL = self.executableURL
@@ -87,7 +87,7 @@ public class Command: Target, CustomStringConvertible {
 			guard let handle = note.object as? FileHandle else { return }
 			guard handle === standardOutput.fileHandleForReading || handle == standardError.fileHandleForReading else { return }
 			defer { handle.waitForDataInBackgroundAndNotify() }
-		
+
 			Task {
 				await standardOutputBuffer.append(handle.availableData)
 			}
@@ -96,7 +96,7 @@ public class Command: Target, CustomStringConvertible {
 
 		standardOutput.fileHandleForReading.waitForDataInBackgroundAndNotify()
 		standardError.fileHandleForReading.waitForDataInBackgroundAndNotify()
-		
+
 		try process.run()
 		process.waitUntilExit()
 
@@ -107,7 +107,7 @@ public class Command: Target, CustomStringConvertible {
 		if process.terminationStatus != 0 {
 			throw CommandError.failedExecution(terminationStatus: process.terminationStatus)
 		}
-		
+
 	}
 
 	private var executableURL: URL {
@@ -145,10 +145,10 @@ public class Command: Target, CustomStringConvertible {
 }
 
 extension OutputHandler {
-	
+
 	func process(data: Data) {
 		if !data.isEmpty {
-			if let string =  String(data: data, encoding: .utf8) {
+			if let string = String(data: data, encoding: .utf8) {
 				for line in string.split(separator: "\n") {
 					self.process(line: String(line))
 				}
@@ -157,4 +157,3 @@ extension OutputHandler {
 	}
 
 }
-
