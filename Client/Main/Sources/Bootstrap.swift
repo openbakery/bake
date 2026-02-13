@@ -12,7 +12,7 @@ public enum LoadingError: Error {
 
 struct Bootstrap {
 
-	init(config: URL, commandRunner: CommandRunner) throws {
+	init(config: URL, commandRunner: CommandRunner = CommandRunner()) throws {
 		let configFile: URL
 		if config.isDirectory {
 			configFile = config.appendingPathComponent("Bake.swift")
