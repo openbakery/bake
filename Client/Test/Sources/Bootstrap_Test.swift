@@ -271,6 +271,15 @@ class Bootstrap_Test {
 			"""
 		assertThat(contents, containsString(commandContents))
 	}
+	@Test
+	@MainActor
+	func main_contains_imports() throws {
+		let contents = try mainContents()
+
+		assertThat(contents, present())
+		assertThat(contents, containsString("import Bake\n"))
+
+	}
 
 
 	@Test func contains_multiple_commands() async throws {
@@ -297,4 +306,6 @@ class Bootstrap_Test {
 		assertThat(contents, containsString(commandContents))
 
 	}
+
+
 }

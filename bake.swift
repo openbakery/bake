@@ -9,3 +9,5 @@ let project = Project(
 		.command("hello", "echo", "Hello World!")
 	]
 )
+
+print("projects \(projects)")

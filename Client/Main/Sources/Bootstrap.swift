@@ -130,6 +130,7 @@ struct Bootstrap {
 		var mainSwift = [String]()
 		mainSwift.append("import ArgumentParser")
 		mainSwift.append("import Foundation")
+		mainSwift.append("import Bake")
 
 		while let line = parser.nextLine() {
 
