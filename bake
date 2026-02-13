@@ -10,6 +10,20 @@ progress() {
 	echo -ne "$1\033[0K\r"
 }
 
+run_silent() {
+    local output
+    output=$("$@" 2>&1)
+    local status=$?
+
+    if [ $status -ne 0 ]; then
+        echo "Command failed: $*"
+        echo "$output"
+        return $status
+    fi
+    return 0
+}
+
+
 bootstrap() {
 	progress "Bootstrap"
 	if [ -d "$WORKING_DIRECTORY" ]; then
@@ -22,7 +36,7 @@ bootstrap() {
 	git clone --quiet -b $BRANCH https://github.com/openbakery/bake.git $SOURCE_DIRECTORY
 
 	progress "Build"
-	swift build --quiet -c release --package-path $SOURCE_DIRECTORY
+	run_silent swift build --quiet -c release --package-path $SOURCE_DIRECTORY
 
 	mv $SOURCE_DIRECTORY/.build/arm64-apple-macosx/release/BakeCLI $BAKE_BOOTSTRAP_CLI
 
