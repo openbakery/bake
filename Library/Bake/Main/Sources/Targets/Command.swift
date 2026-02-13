@@ -55,7 +55,7 @@ public class Command: Target, CustomStringConvertible {
 			if let string = String(data: buffer, encoding: .utf8), string.last?.isNewline == true {
 				buffer.removeAll()
 				for line in string.split(separator: "\n") {
-					outputHandler.process(line: "- " + String(line))
+					outputHandler.process(line: String(line))
 				}
 			}
 		}
