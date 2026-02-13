@@ -6,10 +6,6 @@ BAKE_BOOTSTRAP_CLI=$BAKE_BOOTSTRAP_DIRECTORY/BakeCLI
 BAKE_CLI=$WORKING_DIRECTORY/bootstrap/bake
 BRANCH=main
 
-progress() {
-	echo -ne "$1\033[0K\r"
-}
-
 run_silent() {
     local output
     output=$("$@" 2>&1)
@@ -21,6 +17,30 @@ run_silent() {
         return $status
     fi
     return 0
+}
+
+progress() {
+	stop_spinner
+  start_spinner "$1" &
+  SPINNER_PID=$!
+}
+
+start_spinner() {
+    local text="$1"
+    local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+    local i=0
+
+    while true; do
+        i=$(( (i+1) % 10 ))
+        printf "\r${spin:$i:1} $text"
+        sleep 0.1
+    done
+}
+
+stop_spinner() {
+    kill $SPINNER_PID 2>/dev/null
+    wait $SPINNER_PID 2>/dev/null
+    printf "\r\033[K"  # Clear the spinner line
 }
 
 
@@ -54,6 +74,10 @@ for parameter in "$@"; do
     fi
 done
 
+trap stop_spinner EXIT
+start_spinner "Initializing build..." &
+SPINNER_PID=$!
+
 if [ ! -f "$BAKE_CLI" ]; then
 	bootstrap
 elif [ ! -f "$BAKE_BOOTSTRAP_CLI" ]; then
@@ -62,4 +86,5 @@ fi
 
 
 $BAKE_CLI "${parameters[@]}"
+
 

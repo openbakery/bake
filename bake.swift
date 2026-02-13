@@ -10,4 +10,4 @@ let project = Project(
 	]
 )
 
-print("projects \(projects)")
+print("projects \(project)")
