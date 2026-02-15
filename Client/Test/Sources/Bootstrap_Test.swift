@@ -18,18 +18,22 @@ class Bootstrap_Test {
 
 	init() async throws {
 		HamcrestSwiftTesting.enable()
-		config = try #require(try Bundle.module.url(filename: "Bake.txt"))
 		commandRunner = CommandRunnerFake()
-		bootstrap = try Bootstrap(config: config, commandRunner: commandRunner)
 	}
 
 
-	let config: URL
-	let bootstrap: Bootstrap
 	let commandRunner: CommandRunnerFake
+
+	func create() throws -> Bootstrap {
+		let config = try #require(try Bundle.module.url(filename: "Bake.txt"))
+		return try Bootstrap(config: config, commandRunner: commandRunner)
+	}
 
 
 	@Test func load_package_template() throws {
+		// given
+		let bootstrap = try create()
+
 		// then
 		assertThat(bootstrap.packageString, hasPrefix("// swift-tools-version: 6.1"))
 		assertThat(bootstrap.packageString, containsString(".executable(name: \"bake\", targets: [\"LocalBake\"])"))
@@ -79,6 +83,9 @@ class Bootstrap_Test {
 
 
 	@Test func dependencies_from_Bake_swift() throws {
+		// given
+		let bootstrap = try create()
+
 		// expect
 		assertThat(bootstrap.dependencies, presentAnd(hasCount(2)))
 		assertThat(bootstrap.dependencies.first?.name, presentAnd(equalTo("OBExtra")))
@@ -86,6 +93,9 @@ class Bootstrap_Test {
 	}
 
 	@Test func dependencies_from_Bake_swift_is_included() async throws {
+		// given
+		let bootstrap = try create()
+
 		// given
 		try await bootstrap.run()
 		defer {
@@ -104,6 +114,9 @@ class Bootstrap_Test {
 
 
 	@Test func import_is_removed_from_Bake_swift() throws {
+		// given
+		let bootstrap = try create()
+
 		// when
 		try bootstrap.createMainSwift()
 		defer {
@@ -121,6 +134,9 @@ class Bootstrap_Test {
 	}
 
 	@Test func plugin_is_removed_from_Bake_swift() throws {
+		// given
+		let bootstrap = try create()
+
 		// when
 		try bootstrap.createMainSwift()
 		defer {
@@ -137,6 +153,10 @@ class Bootstrap_Test {
 	}
 
 	@Test func has_default_bake_build_path() throws {
+		// given
+		let config = try #require(try Bundle.module.url(filename: "Bake.txt"))
+		let bootstrap = try Bootstrap(config: config, commandRunner: commandRunner)
+
 		// expect
 		assertThat(bootstrap.buildDirectory, presentAnd(instanceOf(URL.self)))
 		let rootPath = config.deletingLastPathComponent()
@@ -145,6 +165,10 @@ class Bootstrap_Test {
 	}
 
 	@Test func has_default_bake_bootstrap_path() throws {
+		// given
+		let config = try #require(try Bundle.module.url(filename: "Bake.txt"))
+		let bootstrap = try Bootstrap(config: config, commandRunner: commandRunner)
+
 		// then
 		assertThat(bootstrap.bootstrapDirectory, presentAnd(instanceOf(URL.self)))
 		let rootPath = config.deletingLastPathComponent()
@@ -155,6 +179,9 @@ class Bootstrap_Test {
 	@Test
 	@MainActor
 	func bootstrap_run_creates_main_swift() throws {
+		// given
+		let bootstrap = try create()
+
 		// when
 		try bootstrap.prepare()
 		defer {
@@ -167,6 +194,9 @@ class Bootstrap_Test {
 	}
 
 	@Test func clean() async throws {
+		// given
+		let bootstrap = try create()
+
 		// given
 		try await bootstrap.run()
 		assertThat(bootstrap.buildDirectory.fileExists(), equalTo(true))
@@ -182,6 +212,9 @@ class Bootstrap_Test {
 	@Test
 	func run_compiles_bundle() async throws {
 		// given
+		let bootstrap = try create()
+
+		// given
 		commandRunner.expect(command: "/usr/bin/swift", arguments: "build", "--package-path", bootstrap.bootstrapDirectory.path)
 		defer {
 			bootstrap.clean()
@@ -196,6 +229,9 @@ class Bootstrap_Test {
 
 	@Test
 	func copy_bake_to_build_bake() async throws {
+		// given
+		let bootstrap = try create()
+
 		// given
 		defer {
 			bootstrap.clean()
@@ -217,6 +253,9 @@ class Bootstrap_Test {
 	@Test
 	func copy_dylib_to_build_bake() async throws {
 		// given
+		let bootstrap = try create()
+
+		// given
 		defer {
 			bootstrap.clean()
 		}
@@ -234,7 +273,11 @@ class Bootstrap_Test {
 		assertThat(bake.fileExists(), equalTo(true), message: "File exists \(bake)")
 	}
 
-	func mainContents() throws -> String {
+	func mainContents(filename: String = "Bake.txt") throws -> String {
+		// given
+		let config = try #require(try Bundle.module.url(filename: filename))
+		let bootstrap = try Bootstrap(config: config, commandRunner: commandRunner)
+
 		// when
 		try bootstrap.prepare()
 		defer {
@@ -304,8 +347,31 @@ class Bootstrap_Test {
 				}
 			"""
 		assertThat(contents, containsString(commandContents))
-
 	}
 
+	@Test
+	@MainActor
+	func add_project_command() throws {
+		let main = """
+			@MainActor
+			let project = Project(
+				name: "Bake-Example",
+				jobs: [
+					Job.command(name: "hello", command: "echo", "Hello World!")
+				]
+			)
+			"""
+		
+		let result = try Bootstrap.parse(contents: main)
+		let contents = result.main.joined(separator: "\n")
 
+		// then
+		assertThat(contents, containsString("let project = Project("))
+		let commandContents = """
+				private func subcommands() -> [any AsyncParsableCommand.Type] {
+					return [ProjectCommandList.Type]
+				}
+			"""
+		assertThat(contents, containsString(commandContents))
+	}
 }

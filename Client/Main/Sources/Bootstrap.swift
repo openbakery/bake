@@ -130,6 +130,10 @@ struct Bootstrap {
 
 	static func load(config: URL) throws -> (dependencies: [Dependency], main: [String]) {
 		let contents = try String(contentsOf: config, encoding: .utf8)
+		return try self.parse(contents: contents)
+	}
+		
+	static func parse(contents: String) throws -> (dependencies: [Dependency], main: [String]) {
 
 		let parser = LineParser(contents)
 
@@ -138,6 +142,8 @@ struct Bootstrap {
 		mainSwift.append("import ArgumentParser")
 		mainSwift.append("import Foundation")
 		mainSwift.append("import Bake")
+
+		var subcommands = [String]()
 
 		while let line = parser.nextLine() {
 
@@ -151,15 +157,19 @@ struct Bootstrap {
 					dependencies.append(dependency)
 					mainSwift.append("import \(dependency.name)")
 				}
+			} else if line.hasPrefix("let project = Project(") {
+				subcommands.append("[ProjectCommandList.Type]")
+				mainSwift.append(line)
 			} else {
 				mainSwift.append(line)
 			}
 		}
 
-		var subcommands = [String]()
 		for dependency in dependencies where dependency.plugin {
 			subcommands.append("\(dependency.name).commands")
 		}
+
+
 
 		let commandContents = """
 				private func subcommands() -> [any AsyncParsableCommand.Type] {
