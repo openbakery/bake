@@ -3,11 +3,10 @@
 @plugin("BakeXcode", package: "bake")
 
 
+@MainActor
 let project = Project(
 	name: "Bake-Example",
 	jobs: [
-		.command("hello", "echo", "Hello World!")
+		Job.command(name: "hello", command: "echo", "Hello World!")
 	]
 )
-
-print("projects \(project)")

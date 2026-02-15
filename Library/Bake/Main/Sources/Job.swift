@@ -2,7 +2,7 @@
 // Created by René Pirringer on 2.2.2026
 //
 
-public class Job<T: Runnable> {
+public class Job<T: Runnable>: Runnable {
 
 
 	public init(name: String, runnable: T) {
@@ -14,7 +14,7 @@ public class Job<T: Runnable> {
 	public let executable: T
 	public private(set) var dependencies = [Job]()
 
-	func execute() async throws {
+	public func execute() async throws {
 		for job in dependencies {
 			try await job.execute()
 		}

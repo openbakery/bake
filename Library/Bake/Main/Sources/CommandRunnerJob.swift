@@ -26,7 +26,7 @@ public struct CommandRunnerJob: Runnable {
 
 extension Job where T == CommandRunnerJob {
 
-	static func command(
+	public static func command(
 		name: String,
 		command: String,
 		_ arguments: String...,
