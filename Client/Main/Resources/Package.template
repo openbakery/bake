@@ -11,13 +11,12 @@ let package = Package(
 		.executable(name: "bake", targets: ["LocalBake"])
 	],
 	dependencies: [
-		.package(url: "https://github.com/openbakery/bake/", branch: "develop")
+		.package(url: "https://github.com/openbakery/bake/", branch: "main")
 	],
 	targets: [
 		.executableTarget(
 			name: "LocalBake",
 			dependencies: [
-				.product(name: "Bake", package: "bake"),
 				{{DEPENDENCIES}}
 			],
 			path: "Sources",
