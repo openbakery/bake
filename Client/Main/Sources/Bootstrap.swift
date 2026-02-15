@@ -123,10 +123,8 @@ struct Bootstrap {
 			try await commandRunner.run("/usr/bin/swift", "build", "--package-path", bootstrapDirectory.path, outputHandler: outputHandler)
 		} catch {
 			Log.info("Error: \(error)")
-			Log.info("============================")
 			// as soon as we have a swift build log parser, use this here for a nicer error output
 			Log.info("\(outputHandler.lines.joined(separator: "\n"))")
-			Log.info("============================")
 		}
 	}
 
