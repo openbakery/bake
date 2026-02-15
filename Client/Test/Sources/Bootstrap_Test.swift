@@ -361,7 +361,7 @@ class Bootstrap_Test {
 				]
 			)
 			"""
-		
+
 		let result = try Bootstrap.parse(contents: main)
 		let contents = result.main.joined(separator: "\n")
 
@@ -369,7 +369,7 @@ class Bootstrap_Test {
 		assertThat(contents, containsString("let project = Project("))
 		let commandContents = """
 				private func subcommands() -> [any AsyncParsableCommand.Type] {
-					return [ProjectCommandList.Type]
+					return Project.commands
 				}
 			"""
 		assertThat(contents, containsString(commandContents))

@@ -132,7 +132,7 @@ struct Bootstrap {
 		let contents = try String(contentsOf: config, encoding: .utf8)
 		return try self.parse(contents: contents)
 	}
-		
+
 	static func parse(contents: String) throws -> (dependencies: [Dependency], main: [String]) {
 
 		let parser = LineParser(contents)
@@ -158,7 +158,7 @@ struct Bootstrap {
 					mainSwift.append("import \(dependency.name)")
 				}
 			} else if line.hasPrefix("let project = Project(") {
-				subcommands.append("[ProjectCommandList.Type]")
+				subcommands.append("Project.commands")
 				mainSwift.append(line)
 			} else {
 				mainSwift.append(line)
