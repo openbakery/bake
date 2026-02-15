@@ -4,7 +4,7 @@
 
 
 @MainActor
-let project = Project(
+let project = Bake.Project(
 	name: "Bake-Example",
 	jobs: [
 		Job.command(name: "hello", command: "echo", "Hello World!")
