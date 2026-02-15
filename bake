@@ -5,8 +5,15 @@ BAKE_BOOTSTRAP_DIRECTORY=$WORKING_DIRECTORY/cli
 BAKE_BOOTSTRAP_CLI=$BAKE_BOOTSTRAP_DIRECTORY/BakeCLI
 BAKE_CLI=$WORKING_DIRECTORY/bootstrap/bake
 BRANCH=main
+QUIET=--quiet
+DEBUG=false
 
 run_silent() {
+	if [ "$DEBUG" = true ]; then
+		"$@"
+		return $?
+	fi
+
     local output
     output=$("$@" 2>&1)
     local status=$?
@@ -20,21 +27,28 @@ run_silent() {
 }
 
 progress() {
+	if [ "$DEBUG" = true ]; then
+		echo $1
+		return
+	fi
 	stop_spinner
   start_spinner "$1" &
   SPINNER_PID=$!
 }
 
 start_spinner() {
-    local text="$1"
-    local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
-    local i=0
+	if [ "$DEBUG" = true ]; then
+		return
+	fi
+	local text="$1"
+	local spin='⠋⠙⠹⠸⠼⠴⠦⠧⠇⠏'
+	local i=0
 
-    while true; do
-        i=$(( (i+1) % 10 ))
-        printf "\r${spin:$i:1} $text"
-        sleep 0.1
-    done
+	while true; do
+		i=$(( (i+1) % 10 ))
+		printf "\r${spin:$i:1} $text "
+		sleep 0.1
+	done
 }
 
 stop_spinner() {
@@ -45,6 +59,10 @@ stop_spinner() {
 
 
 bootstrap() {
+	trap stop_spinner EXIT
+	start_spinner "Initializing build..." &
+	SPINNER_PID=$!
+
 	progress "Bootstrap"
 	if [ -d "$WORKING_DIRECTORY" ]; then
 		rm -rf "$WORKING_DIRECTORY"
@@ -52,31 +70,50 @@ bootstrap() {
 
 	mkdir -p $BAKE_BOOTSTRAP_DIRECTORY
 	SOURCE_DIRECTORY=$BAKE_BOOTSTRAP_DIRECTORY/checkout
-	progress "Clone"
-	git clone --quiet -b $BRANCH https://github.com/openbakery/bake.git $SOURCE_DIRECTORY
+	progress "Bootstrap - Clone Bake"
+	git clone $QUIET -b $BRANCH https://github.com/openbakery/bake.git $SOURCE_DIRECTORY
 
-	progress "Build"
-	run_silent swift build --quiet -c release --package-path $SOURCE_DIRECTORY
+	progress "Bootstrap - Build base project"
+	run_silent swift build $QUIET -c release --package-path $SOURCE_DIRECTORY
 
 	mv $SOURCE_DIRECTORY/.build/arm64-apple-macosx/release/BakeCLI $BAKE_BOOTSTRAP_CLI
 
-	progress "Bootstrap"
-	$BAKE_BOOTSTRAP_CLI bootstrap > /dev/null
+	progress "Bootstrap - Build using project configuration bake.swift"
+
+	run_silent $BAKE_BOOTSTRAP_CLI bootstrap
+
+	stop_spinner
 }
 
 parameters=()
 
-for parameter in "$@"; do
-    if [ "$parameter" != "--refresh" ]; then
-        parameters+=("$parameter")
-		else
-		rm -rf "$WORKING_DIRECTORY"
-    fi
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+	case $1 in
+		--debug|-d)
+			DEBUG=true
+			QUIET=""
+			shift
+			;;
+		--refresh|-r)
+			rm -rf "$WORKING_DIRECTORY"
+			shift
+			;;
+		--help|-h)
+			echo "Usage: $0 [OPTIONS]"
+			echo "Options:"
+			echo "  --debug, -d      Enable debug mode"
+			echo "  --refresh, -r    Force run bootstrap"
+			exit 0
+			;;
+		*)
+			parameters+=("$parameter")
+			;;
+	esac
 done
 
-trap stop_spinner EXIT
-start_spinner "Initializing build..." &
-SPINNER_PID=$!
+
 
 if [ ! -f "$BAKE_CLI" ]; then
 	bootstrap
