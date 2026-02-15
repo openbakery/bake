@@ -108,7 +108,8 @@ while [[ $# -gt 0 ]]; do
 			exit 0
 			;;
 		*)
-			parameters+=("$parameter")
+			parameters+=("$1")
+			shift
 			;;
 	esac
 done

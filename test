@@ -291,6 +291,10 @@ class SwiftTestParser {
 }
 
 
+// do {
+// 	await try commandRunner.run("rm", arguments: ["-rf", "Plugins/HelloWorld/.build"])
+// } catch {
+// }
 
 let commandRunner = await CommandRunner()
 var output = [String]()
